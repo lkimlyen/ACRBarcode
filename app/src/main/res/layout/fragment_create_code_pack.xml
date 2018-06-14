@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_toolbar"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal"
+        app:contentInsetEnd="0dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetRight="0dp"
+        app:contentInsetStart="0dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/img_back"
+                android:layout_width="@dimen/size_40dp"
+                android:layout_height="@dimen/size_40dp"
+                android:layout_centerVertical="true"
+                android:padding="@dimen/distance_10dp"
+                android:src="@drawable/ic_back" />
+
+
+            <TextView
+                android:id="@+id/txt_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/distance_8dp"
+                android:layout_toRightOf="@+id/img_back"
+                android:gravity="center"
+                android:text="@string/text_create_code_package"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/ic_refresh"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:padding="@dimen/distance_10dp"
+                android:src="@drawable/ic_refresh" />
+
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/distance_8dp"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:weightSum="5"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_request_produce"
+                    android:textColor="@android:color/black"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/text_16sp"
+                    android:textStyle="bold" />
+
+                <com.demo.architect.utils.view.SearchableSpinner
+                    android:id="@+id/ss_produce"
+                    android:layout_weight="4"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:weightSum="5"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_code_so"
+                    android:textColor="@android:color/black"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/text_16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txt_code_so"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_16sp"
+                    android:layout_weight="4"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:orientation="horizontal"
+                android:weightSum="5"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_customer_name"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_16sp"
+                    android:layout_weight="1"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txt_customer_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_16sp"
+                    android:layout_weight="4"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="1"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/edt_barcode"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="@dimen/size_40dp"
+                    android:hint="Nhập mã barcode"
+                    android:padding="@dimen/distance_5dp"
+                    android:inputType="textMultiLine"
+                    android:layout_marginEnd="@dimen/distance_5dp"
+                    android:textColor="@android:color/black"
+                    android:background="@drawable/bg_edittext_stroke_white"
+                    android:textSize="@dimen/text_16sp" />
+
+                <Button
+                    android:id="@+id/btn_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/size_40dp"
+                    android:gravity="center"
+                    android:textColor="@android:color/white"
+                    android:textAllCaps="false"
+                    android:layout_weight="0"
+                    android:background="@drawable/bg_button_blue_small"
+                    android:text="@string/text_add"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_code"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:padding="5dp">
+
+        <Button
+            android:id="@+id/btn_scanQrCode"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/bg_button_blue"
+            android:text="Quét QR CODE"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</LinearLayout>

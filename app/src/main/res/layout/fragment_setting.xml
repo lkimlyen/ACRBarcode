@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_toolbar"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal"
+        app:contentInsetEnd="0dp"
+        app:contentInsetLeft="0dp"
+        app:contentInsetRight="0dp"
+        app:contentInsetStart="0dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/img_back"
+                android:layout_width="@dimen/size_40dp"
+                android:layout_height="@dimen/size_40dp"
+                android:layout_centerVertical="true"
+                android:padding="@dimen/distance_10dp"
+                android:src="@drawable/ic_back" />
+
+
+            <TextView
+                android:id="@+id/txt_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/distance_8dp"
+                android:layout_toRightOf="@+id/img_back"
+                android:gravity="center"
+                android:text="@string/text_setting"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold" />
+
+
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <ScrollView
+        android:id="@+id/scrollView_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <Button
+                android:id="@+id/btn_check_update"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_update"
+                android:text="@string/text_check_app_update"
+                android:textStyle="bold"
+                android:background="@drawable/bg_button_stroke_white"
+                android:paddingLeft="@dimen/distance_16dp"
+                android:gravity="left|center_vertical"
+                android:drawablePadding="@dimen/distance_16dp"
+                android:textAllCaps="false"/>
+            <Button
+                android:id="@+id/btn_change_ip_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_config_address_ip"
+                android:text="@string/text_change_ip_address"
+                android:background="@drawable/bg_button_stroke_white"
+                android:paddingLeft="@dimen/distance_16dp"
+                android:gravity="left|center_vertical"
+                android:drawablePadding="@dimen/distance_16dp"
+                android:textAllCaps="false"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btn_main_clone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_clone"
+                android:text="Sao lưu data"
+                android:background="@drawable/bg_button_stroke_white"
+                android:paddingLeft="@dimen/distance_16dp"
+                android:gravity="left|center_vertical"
+                android:drawablePadding="@dimen/distance_16dp"
+                android:textAllCaps="false"
+                android:textStyle="bold" />
+            <Button
+                android:id="@+id/btn_change_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_lock"
+                android:text="@string/text_change_password"
+                android:textStyle="bold"
+                android:background="@drawable/bg_button_stroke_white"
+                android:paddingLeft="@dimen/distance_16dp"
+                android:gravity="left|center_vertical"
+                android:drawablePadding="@dimen/distance_16dp"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_main_resetAllData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_delete"
+                android:text="@string/text_reset_all_data"
+                android:textStyle="bold"
+                android:background="@drawable/bg_button_stroke_white"
+                android:paddingLeft="@dimen/distance_16dp"
+                android:gravity="left|center_vertical"
+                android:drawablePadding="@dimen/distance_16dp"
+                android:textAllCaps="false"/>
+
+            <TextView
+                android:id="@+id/txt_version"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_version"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

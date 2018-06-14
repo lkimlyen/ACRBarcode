@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="distance_18dp">18dp</dimen>
+    <dimen name="distance_16dp">16dp</dimen>
+    <dimen name="size_toolbar">47dp</dimen>
+    <dimen name="size_40dp">40dp</dimen>
+    <dimen name="distance_10dp">10dp</dimen>
+    <dimen name="distance_8dp">8dp</dimen>
+    <dimen name="text_16sp">16sp</dimen>
+    <dimen name="text_14sp">14sp</dimen>
+    <dimen name="distance_5dp">5dp</dimen>
+    <dimen name="size_300dp">300dp</dimen>
+</resources>

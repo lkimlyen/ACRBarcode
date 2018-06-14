@@ -1,0 +1,64 @@
+<resources>
+    <string name="app_name">merchandisemot</string>
+    <string name="text_login">Đăng nhập</string>
+    <string name="text_title_noti">Thông báo</string>
+    <string name="text_ok">OK</string>
+    <string name="text_username_null">Vui lòng nhập tên đăng nhập</string>
+    <string name="text_password_null">Vui lòng nhập mật khẩu</string>
+    <string name="text_create_code_package">Quét tạo mã gói</string>
+    <string name="text_history_create_code">Lịch sử tạo mã gói</string>
+    <string name="text_scan_warehouse">Quét nhập kho ACRYLIC</string>
+    <string name="text_scan_delivery">Quét giao hàng</string>
+    <string name="text_logout">Thoát</string>
+    <string name="text_upload_all_data">Tải dữ liệu lên server</string>
+    <string name="text_setting">Thiết lập - Hướng dẫn</string>
+    <string name="text_import_works">Nhập công trình</string>
+    <string name="text_check_code_scan">Xác nhận mã đã quét giao hàng trước khi tải dữ liệu</string>
+    <string name="text_cancel">Cancel</string>
+    <string name="text_do_you_want_logout">Bạn có muốn đăng xuất không?</string>
+    <string name="text_yes">Có</string>
+    <string name="text_no">Không</string>
+    <string name="text_check_app_update">Kiểm tra cập nhật phần mềm</string>
+    <string name="text_change_ip_address">Thay đổi địa chỉ IP</string>
+    <string name="text_change_password">Đổi mật khảu</string>
+    <string name="text_reset_all_data">Xóa tất cả dữ liệu</string>
+    <string name="text_old_password">Mật khẩu cũ</string>
+    <string name="text_enter_old_password">Nhập mật khẩu cũ</string>
+    <string name="text_new_password">Mật khẩu mới</string>
+    <string name="text_enter_new_password">Nhập mật khẩu mới</string>
+    <string name="text_confirm_password">Xác nhận mật khẩu</string>
+    <string name="text_enter_confirm_password">Nhập lại mật khẩu mới</string>
+    <string name="text_old_password_null">Mật khẩu cũ không được để trống</string>
+    <string name="text_new_password_null">Vui lòng nhập mật khẩu mới</string>
+    <string name="text_confirm_password_null">Vui lòng xác nhận mật khẩu mới</string>
+    <string name="text_change_password_succes">Thay đổi mật khẩu thành công</string>
+    <string name="text_confirm_pass_no_equal">Mật khẩu nhập lại không trùng khớp</string>
+    <string name="text_version" formatted="true">Phiên bản: %s</string>
+    <string name="text_report_detail_create_pack">Báo cáo chi tiết tạo gói</string>
+    <string name="text_url_report">http://acctest.imark.com.vn/Report/ReportInOutPackageDetailACRApp</string>
+    <string name="text_download_list_prodution_success">Tải danh sách Sản Xuất thành công</string>
+    <string name="text_choose_request_produce">Chọn lệnh sản xuất</string>
+    <string name="text_save_barcode">Bạn có muốn lưu mã này?</string>
+    <string name="text_home">Trang chủ</string>
+    <string name="text_minus">-</string>
+    <string name="text_barcode_error_type">Mã quét loại này không đúng! Xin chọn mã khác!</string>
+    <string name="text_barcode_error_lenght">Độ dài mã quét không đúng, Hãy kiểm tra lại!</string>
+    <string name="text_product_empty">Không có SP nào trong Lệnh SX, Vui lòng tải lại!</string>
+    <string name="text_barcode_no_exist">Mã quét không tồn tại trong Lệnh SX! Vui lòng thử mã khác!</string>
+    <string name="text_save_barcode_success">Hợp lệ! Lưu Thành Công</string>
+    <string name="text_add">Thêm</string>
+    <string name="text_request_produce">Lệnh SX</string>
+    <string name="text_code_so">Mã SO</string>
+    <string name="text_customer_name">Tên KH</string>
+    <string name="text_sum_detail">Tổng chi tiết:</string>
+    <string name="text_number_bigger_zero">Số lượng nhập vào phải khác 0!</string>
+    <string name="text_quantity_input_bigger_quantity_rest">Số lượng nhập vào không được vượt quá số lượng cho phép.</string>
+    <string name="text_code_request" formatted="true">Mã quét: %s</string>
+    <string name="text_date_scan" formatted="true">Ngày quét mã: %s</string>
+    <string name="text_not_done_pack_current">Chưa hoàn thành gói hiện tại!</string>
+    <string name="text_back_cancel_order_not_print">Quay lại sẽ HỦY những mã chưa IN! \n Bạn có muốn hủy không?.</string>
+    <string name="text_ip_address">Địa chỉ ip</string>
+    <string name="text_port">Port</string>
+    <string name="text_exit">Thoát</string>
+    <string name="text_save">Lưu</string>
+</resources>

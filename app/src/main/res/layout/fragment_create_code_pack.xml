@@ -81,7 +81,7 @@
                     android:textSize="@dimen/text_16sp"
                     android:textStyle="bold" />
 
-                <com.demo.architect.utils.view.SearchableSpinner
+                <com.demo.scanacr.widgets.spinner.SearchableSpinner
                     android:id="@+id/ss_produce"
                     android:layout_weight="4"
                     android:layout_width="0dp"

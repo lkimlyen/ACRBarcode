@@ -1,4 +1,4 @@
-package com.demo.architect.utils.view;
+package com.demo.scanacr.widgets.spinner;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,9 +12,13 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import com.demo.scanacr.R;
+import com.demo.scanacr.app.CoreApplication;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class SearchableSpinner extends Spinner implements View.OnTouchListener,
         SearchableListDialog.SearchableItem {
@@ -23,11 +27,20 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
     private Context _context;
     private List _items;
     private SearchableListDialog _searchableListDialog;
-
+    private int countListScan;
     private boolean _isDirty;
     private ArrayAdapter _arrayAdapter;
     private String _strHintText;
     private boolean _isFromInit;
+    private OnClickListener listener;
+
+    public void setListener(OnClickListener listener) {
+        this.listener = listener;
+    }
+
+    public void setCountListScan(int countListScan) {
+        this.countListScan = countListScan;
+    }
 
     public SearchableSpinner(Context context) {
         super(context);
@@ -38,11 +51,11 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
     public SearchableSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
         this._context = context;
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SearchableSpinner);
+        TypedArray a = context.obtainStyledAttributes(attrs, com.demo.architect.utils.view.R.styleable.SearchableSpinner);
         final int N = a.getIndexCount();
         for (int i = 0; i < N; ++i) {
             int attr = a.getIndex(i);
-            if (attr == R.styleable.SearchableSpinner_hintText) {
+            if (attr == com.demo.architect.utils.view.R.styleable.SearchableSpinner_hintText) {
                 _strHintText = a.getString(attr);
             }
         }
@@ -77,8 +90,22 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
         if (_searchableListDialog.isAdded()) {
             return true;
         }
-        if (event.getAction() == MotionEvent.ACTION_UP) {
 
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            listener.onClick();
+            if (countListScan > 0){
+                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText(getContext().getString(R.string.text_title_noti))
+                        .setContentText(getContext().getString(R.string.text_not_done_pack_current))
+                        .setConfirmText(getContext().getString(R.string.text_ok))
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                            }
+                        }).show();
+                return true;
+            }
             if (null != _arrayAdapter) {
 
                 // Refresh content #6
@@ -126,7 +153,8 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
             setSelection(_items.indexOf(item));
         }
     }
-    public void closeSpinnerSearch(){
+
+    public void closeSpinnerSearch() {
         _searchableListDialog.dismiss();
     }
 
@@ -173,5 +201,9 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
         } else {
             return super.getSelectedItem();
         }
+    }
+
+    public interface OnClickListener {
+        void onClick();
     }
 }

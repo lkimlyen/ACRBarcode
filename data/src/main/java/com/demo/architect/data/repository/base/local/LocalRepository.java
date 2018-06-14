@@ -33,7 +33,7 @@ public interface LocalRepository {
 
     Observable<List<ProductModel>> findProductByOrderId(int orderId);
 
-    Observable<LogScanCreatePack> addLogScanCreatePack(LogScanCreatePack item, int orderId);
+    Observable<String> addLogScanCreatePack(LogScanCreatePack item, int orderId, final String barcode);
 
     Observable<OrderModel> findOrder(int orderId);
 
@@ -50,4 +50,6 @@ public interface LocalRepository {
     Observable<IPAddress> insertOrUpdateIpAddress(IPAddress model);
 
     Observable<IPAddress> findIPAddress();
+
+    Observable<String> deleteAllLog();
 }

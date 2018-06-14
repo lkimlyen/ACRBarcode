@@ -168,8 +168,6 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
             @Override
             public void call(List<ProductModel> productModels) {
                 list = productModels;
-
-
             }
         });
 
@@ -211,10 +209,12 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                                 latitude, longitude, phone, product.getProductId(), orderModel.getId(), product.getSerial(),
                                 0, product.getNumber(), 0, 1, product.getNumberRest(), Constants.WAITING_UPLOAD, -1, userId);
 
-
-                        localRepository.updateNumberRestProduct(1, orderModel.getId(),
-                                product.getProductId(), product.getSerial()).subscribe();
-                        localRepository.addLogScanCreatePack(model, orderModel.getId()).subscribe();
+                        localRepository.addLogScanCreatePack(model, orderModel.getId(),barcode).subscribe(new Action1<String>() {
+                            @Override
+                            public void call(String String) {
+                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
+                            }
+                        });
 
                     }
 
@@ -230,8 +230,8 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
         localRepository.findAllLog(orderId).subscribe(new Action1<LogScanCreatePackList>() {
             @Override
             public void call(LogScanCreatePackList logScanCreatePackList) {
-                view.showLogScanCreatePack(logScanCreatePackList.getItemList());
-                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
+                view.showLogScanCreatePack(logScanCreatePackList);
+
             }
         });
     }
@@ -243,15 +243,28 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
 
     @Override
     public void updateNumberInput(int number, LogScanCreatePack item, int serial) {
-        localRepository.updateNumberRestProduct(number, orderModel.getId(), item.getProductId(), serial).subscribe();
         localRepository.updateNumberLog(number, item.getId()).subscribe();
     }
 
     @Override
-    public void deleteAllItemLog(List<LogScanCreatePack> list) {
-        for (LogScanCreatePack item : list) {
-            localRepository.deleteLogScanItem(item);
-        }
+    public void deleteAllItemLog() {
+        localRepository.deleteAllLog().subscribe();
+    }
+
+    private int count = 0;
+
+    @Override
+    public int countListScan(int orderId) {
+
+        localRepository.findAllLog(orderId).subscribe(new Action1<LogScanCreatePackList>() {
+            @Override
+            public void call(LogScanCreatePackList logScanCreatePackList) {
+                count = logScanCreatePackList.getItemList().size();
+
+            }
+        });
+
+        return count;
     }
 
 }

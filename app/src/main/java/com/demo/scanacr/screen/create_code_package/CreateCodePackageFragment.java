@@ -20,24 +20,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.offline.LogScanCreatePack;
+import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
-import com.demo.architect.utils.view.SearchableSpinner;
 import com.demo.scanacr.R;
 import com.demo.scanacr.adapter.CreateCodePackAdapter;
 import com.demo.scanacr.app.base.BaseFragment;
 import com.demo.scanacr.util.Precondition;
+import com.demo.scanacr.widgets.spinner.SearchableSpinner;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
-import io.realm.OrderedRealmCollection;
 
 /**
  * Created by MSI on 26/11/2017.
@@ -66,7 +65,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
 
     private int orderId = 0;
     private Location mLocation;
-    List<LogScanCreatePack> createPackList = new ArrayList<>();
+    private int countList = 0;
 
     public CreateCodePackageFragment() {
         // Required empty public constructor
@@ -104,6 +103,14 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
         checkPermissionLocation();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         rvCode.setLayoutManager(layoutManager);
+
+        ssProduce.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public void onClick() {
+                ssProduce.setCountListScan(mPresenter.countListScan(orderId));
+            }
+        });
+
     }
 
 
@@ -186,27 +193,10 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     }
 
     @Override
-    public void showLogScanCreatePack(OrderedRealmCollection<LogScanCreatePack> list) {
-        //if (list.size() > 0) {
-//            ssProduce.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
-//                            .setTitleText(getString(R.string.text_title_noti))
-//                            .setContentText(getString(R.string.text_not_done_pack_current))
-//                            .setConfirmText(getString(R.string.text_ok))
-//                            .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-//                                @Override
-//                                public void onClick(SweetAlertDialog sweetAlertDialog) {
-//                                    sweetAlertDialog.dismiss();
-//                                }
-//                            });
-//                }
-//            });
-//        } else {
-//            ssProduce.setOnClickListener(null);
-//        }
-        adapter = new CreateCodePackAdapter(list, new CreateCodePackAdapter.OnItemClearListener() {
+    public void showLogScanCreatePack(LogScanCreatePackList list) {
+
+
+        adapter = new CreateCodePackAdapter(list.getItemList(), new CreateCodePackAdapter.OnItemClearListener() {
             @Override
             public void onItemClick(LogScanCreatePack item) {
                 mPresenter.deleteItemLog(item);
@@ -316,7 +306,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
 
     @OnClick(R.id.img_back)
     public void back() {
-        if (createPackList.size() > 0) {
+        if (mPresenter.countListScan(orderId) > 0) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.text_title_noti))
                     .setContentText(getString(R.string.text_back_cancel_order_not_print))
@@ -324,7 +314,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            mPresenter.deleteAllItemLog(createPackList);
+                            mPresenter.deleteAllItemLog();
                             sweetAlertDialog.dismiss();
                             getActivity().finish();
                         }
@@ -339,7 +329,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
                     .show();
 
         } else {
-
+            getActivity().finish();
         }
     }
 }

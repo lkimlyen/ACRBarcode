@@ -135,7 +135,7 @@ public class CreateCodePackAdapter extends RealmRecyclerViewAdapter<LogScanCreat
                                 return;
                             }
 
-                            if (numberInput > Integer.parseInt(txtQuantityRest.getText().toString())){
+                            if (numberInput > (Integer.parseInt(txtQuantityRest.getText().toString())+numberInput)){
                                 Toast.makeText(CoreApplication.getInstance(),
                                         CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest)
                                         , Toast.LENGTH_SHORT).show();
@@ -152,6 +152,7 @@ public class CreateCodePackAdapter extends RealmRecyclerViewAdapter<LogScanCreat
                     }
                 }
             });
+
 
         }
     }

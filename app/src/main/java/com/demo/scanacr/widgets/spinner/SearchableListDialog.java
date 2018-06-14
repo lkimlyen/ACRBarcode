@@ -1,4 +1,4 @@
-package com.demo.architect.utils.view;
+package com.demo.scanacr.widgets.spinner;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -87,7 +87,7 @@ public class SearchableListDialog extends DialogFragment implements
         }
         // Change End
 
-        View rootView = inflater.inflate(R.layout.searchable_list_dialog, null);
+        View rootView = inflater.inflate(com.demo.architect.utils.view.R.layout.searchable_list_dialog, null);
         setData(rootView);
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
@@ -141,7 +141,7 @@ public class SearchableListDialog extends DialogFragment implements
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context
                 .SEARCH_SERVICE);
 
-        _searchView = (SearchView) rootView.findViewById(R.id.search);
+        _searchView = (SearchView) rootView.findViewById(com.demo.architect.utils.view.R.id.search);
         _searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName
                 ()));
         _searchView.setIconifiedByDefault(false);
@@ -155,7 +155,7 @@ public class SearchableListDialog extends DialogFragment implements
 
         List items = (List) getArguments().getSerializable(ITEMS);
 
-        _listViewItems = (ListView) rootView.findViewById(R.id.listItems);
+        _listViewItems = (ListView) rootView.findViewById(com.demo.architect.utils.view.R.id.listItems);
 
         //create the adapter by passing your ArrayList data
         listAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1,

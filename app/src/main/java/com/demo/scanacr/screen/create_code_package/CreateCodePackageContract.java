@@ -1,6 +1,7 @@
 package com.demo.scanacr.screen.create_code_package;
 
 import com.demo.architect.data.model.offline.LogScanCreatePack;
+import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.scanacr.app.base.BasePresenter;
 import com.demo.scanacr.app.base.BaseView;
@@ -21,7 +22,7 @@ public interface CreateCodePackageContract {
 
         void showRequestProduction(List<OrderModel> list);
 
-        void showLogScanCreatePack(OrderedRealmCollection<LogScanCreatePack> list);
+        void showLogScanCreatePack(LogScanCreatePackList list);
     }
 
     interface Presenter extends BasePresenter {
@@ -39,6 +40,7 @@ public interface CreateCodePackageContract {
 
         void updateNumberInput(int number, LogScanCreatePack item, int serial);
 
-        void deleteAllItemLog(List<LogScanCreatePack> list);
+        void deleteAllItemLog();
+        int countListScan(int orderId);
     }
 }

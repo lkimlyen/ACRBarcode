@@ -10,6 +10,7 @@ import com.demo.architect.data.model.offline.ProductModel;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 
@@ -58,9 +59,11 @@ public class DatabaseRealm {
     public <T extends RealmObject> T findFirst(Class<T> clazz) {
         return getRealmInstance().where(clazz).findFirst();
     }
+
     public <T extends RealmObject> T findFirstById(Class<T> clazz, int id) {
         return getRealmInstance().where(clazz).equalTo("id", id).findFirst();
     }
+
     public void close() {
         getRealmInstance().close();
     }
@@ -125,22 +128,32 @@ public class DatabaseRealm {
         });
     }
 
-    public void updateNumber(final int number, final int id) {
+    public ProductModel findProductByLog(int productId, int orderId, int serial) {
+        Realm realm = getRealmInstance();
+        return realm.where(ProductModel.class).equalTo("productId", productId)
+                .equalTo("orderId", orderId).equalTo("serial", serial).findFirst();
+    }
+
+    public void updateNumber(final int id, final int number) {
         Realm realm = getRealmInstance();
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 LogScanCreatePack model = realm.where(LogScanCreatePack.class).equalTo("id", id).findFirst();
                 ProductModel product = realm.where(ProductModel.class).equalTo("productId", model.getProductId()).findFirst();
+                int numberInput = number - model.getNumInput();
                 model.setNumInput(number);
+                product.setNumberScan(product.getNumberScan() + numberInput);
+                product.setNumberRest(product.getNumber() - product.getNumberScan());
                 model.setNumRest(product.getNumberRest());
+
             }
         });
     }
 
-    public ProductModel updateNumberRestProduct(final int number, final int orderId, final int productId, final int serial) {
-        Realm realm = getRealmInstance();
-        realm.executeTransactionAsync(new Realm.Transaction() {
+    public void updateNumberRestProduct(final int number, final int orderId, final int productId, final int serial) {
+        Realm mRealm = getRealmInstance();
+        mRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 ProductModel model = realm.where(ProductModel.class).equalTo("productId", productId)
@@ -149,9 +162,41 @@ public class DatabaseRealm {
                 model.setNumberRest(model.getNumber() - model.getNumberScan());
             }
         });
-        return realm.where(ProductModel.class).equalTo("productId", productId)
-                .equalTo("orderId", orderId).equalTo("serial", serial).findFirst();
+    }
 
+    public void updateLogModel(final LogScanCreatePack model) {
+        Realm mRealm = getRealmInstance();
+        mRealm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                LogScanCreatePack current = realm.where(LogScanCreatePack.class).equalTo("id", model.getId()).findFirst();
+                final int numberCurrent = current.getNumInput();
+                LogScanCreatePack logScanCreatePack = realm.copyToRealmOrUpdate(model);
+                ProductModel product = realm.where(ProductModel.class).equalTo("productId", model.getProductId()).findFirst();
+                int numberInput = model.getNumInput() - numberCurrent;
+                product.setNumberScan(product.getNumberScan() + numberInput);
+                product.setNumberRest(product.getNumber() - product.getNumberScan());
+                logScanCreatePack.setNumRest(product.getNumberRest());
+
+            }
+        });
+    }
+
+    public int sumNumInputLog(final int orderId) {
+        int sum = 0;
+        Realm realm = getRealmInstance();
+        RealmList<LogScanCreatePack> results = realm.where(LogScanCreatePackList.class).equalTo("orderId", orderId).findFirst().getItemList();
+        for (LogScanCreatePack item : results) {
+            sum += item.getNumInput();
+        }
+        return sum;
+    }
+
+    public int getNumberRest(final int number, final int orderId, final int productId, final int serial) {
+        Realm realm = getRealmInstance();
+        ProductModel model = realm.where(ProductModel.class).equalTo("productId", productId)
+                .equalTo("orderId", orderId).equalTo("serial", serial).findFirst();
+        return model.getNumberRest();
     }
 
     public int getIdCurrent() {

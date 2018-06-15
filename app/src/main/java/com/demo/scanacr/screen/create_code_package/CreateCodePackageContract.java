@@ -38,7 +38,7 @@ public interface CreateCodePackageContract {
 
         void deleteItemLog(LogScanCreatePack item);
 
-        void updateNumberInput(int number, LogScanCreatePack item, int serial);
+        void updateNumberInput(int id, int number);
 
         void deleteAllItemLog();
         int countListScan(int orderId);

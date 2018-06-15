@@ -48,10 +48,22 @@
                 android:id="@+id/ic_refresh"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/txt_print"
+                android:padding="@dimen/distance_10dp"
+                android:layout_marginEnd="@dimen/distance_5dp"
+                android:src="@drawable/ic_refresh" />
+
+            <TextView
+                android:id="@+id/txt_print"
+                android:layout_width="@dimen/size_40dp"
+                android:layout_height="match_parent"
+                android:text="@string/text_print"
+                android:gravity="center"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:padding="@dimen/distance_10dp"
-                android:src="@drawable/ic_refresh" />
+                android:textSize="@dimen/text_16sp"
+                android:textAllCaps="true"
+                android:textColor="@android:color/white"/>
 
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
@@ -175,7 +187,7 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <ListView
         android:id="@+id/rv_code"
         android:layout_width="match_parent"
         android:layout_height="0dp"

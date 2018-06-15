@@ -9,6 +9,7 @@ import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.data.model.offline.ProductModel;
 
+import java.util.HashMap;
 import java.util.List;
 
 import rx.Observable;
@@ -39,17 +40,19 @@ public interface LocalRepository {
 
     Observable<LogScanCreatePackList> findAllLog(int orderId);
 
+    Observable<HashMap<LogScanCreatePack,ProductModel>> findLogPrint(int orderId);
+
     Observable<String> deleteLogScanItem(LogScanCreatePack item);
 
-    Observable<String> updateNumberLog(int number, int id);
+    Observable<String> updateNumberLog(final int id, final int number);
 
     Observable<String> deleteProduct();
-
-    Observable<String> updateNumberRestProduct(int number, int orderId,int productId, int serial);
 
     Observable<IPAddress> insertOrUpdateIpAddress(IPAddress model);
 
     Observable<IPAddress> findIPAddress();
 
     Observable<String> deleteAllLog();
+
+    Observable<Integer> getSumLogPack(int orderId);
 }

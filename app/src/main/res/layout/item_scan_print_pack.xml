@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/view_ScCode_print"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/distance_10dp">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="STT: " />
+
+                <TextView
+                    android:id="@+id/txt_serial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+            <TableRow
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Mã màu: " />
+
+                <TextView
+                    android:id="@+id/txt_code_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+            <LinearLayout
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Quy cách: " />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="*">
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+
+                    <TextView
+                        android:gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dài(L)" />
+
+                    <TextView
+                        android:gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rộng(W)" />
+                    <TextView
+                        android:gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dày(H)" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/txt_lenght"
+                        android:gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="..." />
+
+                    <TextView
+                        android:id="@+id/txt_width"
+                        android:gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="..." />
+                    <TextView
+                        android:id="@+id/txt_height"
+                        android:gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="..." />
+                </TableRow>
+                </TableLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Số lượng: " />
+                <TextView
+                    android:id="@+id/txt_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </TableRow>
+
+
+        </TableLayout>
+    </LinearLayout>
+
+</LinearLayout>

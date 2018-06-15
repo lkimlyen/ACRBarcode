@@ -10,4 +10,5 @@
     <dimen name="text_14sp">14sp</dimen>
     <dimen name="distance_5dp">5dp</dimen>
     <dimen name="size_300dp">300dp</dimen>
+    <dimen name="distance_15dp">15dp</dimen>
 </resources>

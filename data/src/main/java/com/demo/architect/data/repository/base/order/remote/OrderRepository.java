@@ -21,7 +21,7 @@ public interface OrderRepository {
 
     Observable<BaseListResponse<PackageEntity>> getAllPackageForRequest(int requestId);
 
-    Observable<BaseResponse> getMaxPackageForSO(int requestId, int orderId);
+    Observable<BaseResponse> getMaxPackageForSO(int orderId);
 
     Observable<BaseResponse> addPackageACR(int requestId, int orderId,
                                            int stt, int productId, String codeScan,

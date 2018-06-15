@@ -11,6 +11,7 @@ import com.demo.architect.data.model.offline.ProductModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import rx.Observable;
@@ -182,13 +183,13 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    ProductModel productModel = databaseRealm.updateNumberRestProduct(item.getNumInput(), orderId, item.getProductId(), item.getSerial());
+                    // databaseRealm.updateNumberRestProduct(item.getNumInput(), orderId, item.getProductId(), item.getSerial());
                     LogScanCreatePack model = databaseRealm.findLogByBarcode(barcode);
-                    item.setNumRest(productModel.getNumberRest());
+
                     if (model != null) {
                         item.setId(model.getId());
                         item.setNumInput(model.getNumInput() + item.getNumInput());
-                        databaseRealm.insertOrUpdate(item);
+                        databaseRealm.updateLogModel(item);
                     } else {
                         databaseRealm.addLogScanCreatePackAsync(item, orderId);
                     }
@@ -236,6 +237,29 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
+    public Observable<HashMap<LogScanCreatePack, ProductModel>> findLogPrint(final int orderId) {
+        return Observable.create(new Observable.OnSubscribe<HashMap<LogScanCreatePack, ProductModel>>() {
+            @Override
+            public void call(Subscriber<? super HashMap<LogScanCreatePack, ProductModel>> subscriber) {
+                try {
+
+                    HashMap<LogScanCreatePack, ProductModel> map = new HashMap<>();
+                    LogScanCreatePackList model = databaseRealm.findLogById(orderId);
+                    for (LogScanCreatePack pack : model.getItemList()) {
+                        ProductModel product = databaseRealm.findProductByLog(pack.getProductId(),
+                                pack.getOrderId(), pack.getSerial());
+                        map.put(pack, product);
+                    }
+                    subscriber.onNext(map);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
     public Observable<String> deleteLogScanItem(final LogScanCreatePack item) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
@@ -262,18 +286,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> updateNumberLog(final int number, final int id) {
+    public Observable<String> updateNumberLog(final int id, final int number) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    LogScanCreatePack logScanCreatePack = databaseRealm.findFirstById(LogScanCreatePack.class, id);
-                    int numberInput = number - logScanCreatePack.getNumInput();
-                    databaseRealm.updateNumberRestProduct(
-                            numberInput, logScanCreatePack.getOrderId(),
-                            logScanCreatePack.getProductId(), logScanCreatePack.getSerial());
-
-                    databaseRealm.updateNumber(number, id);
+                    databaseRealm.updateNumber(id, number);
                     subscriber.onNext(String.valueOf(id));
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -290,22 +308,6 @@ public class LocalRepositoryImpl implements LocalRepository {
             public void call(Subscriber<? super String> subscriber) {
                 try {
                     databaseRealm.deleteAll(ProductModel.class);
-                    subscriber.onNext("");
-                    subscriber.onCompleted();
-                } catch (Exception e) {
-                    subscriber.onError(e);
-                }
-            }
-        });
-    }
-
-    @Override
-    public Observable<String> updateNumberRestProduct(final int number, final int orderId, final int productId, final int serial) {
-        return Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                try {
-                    databaseRealm.updateNumberRestProduct(number, orderId, productId, serial);
                     subscriber.onNext("");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -355,6 +357,22 @@ public class LocalRepositoryImpl implements LocalRepository {
                 try {
                     databaseRealm.deleteLogAll();
                     subscriber.onNext("");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<Integer> getSumLogPack(final int orderId) {
+        return Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                try {
+                   int sum =  databaseRealm.sumNumInputLog(orderId);
+                    subscriber.onNext(sum);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

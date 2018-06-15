@@ -42,6 +42,7 @@
         </activity>
         <activity android:name=".screen.chang_password.ChangePasswordActivity"/>
         <activity android:name=".screen.create_code_package.CreateCodePackageActivity"/>
+        <activity android:name=".screen.print_stemp.PrintStempActivity"/>
     </application>
 
 </manifest>

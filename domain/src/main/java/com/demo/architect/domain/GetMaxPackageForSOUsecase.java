@@ -22,9 +22,8 @@ public class GetMaxPackageForSOUsecase extends BaseUseCase {
 
     @Override
     protected Observable buildUseCaseObservable() {
-        int requestId = ((RequestValue) requestValues).requestId;
         int orderId = ((RequestValue) requestValues).orderId;
-        return remoteRepository.getMaxPackageForSO(requestId, orderId);
+        return remoteRepository.getMaxPackageForSO(orderId);
     }
 
     @Override
@@ -59,11 +58,9 @@ public class GetMaxPackageForSOUsecase extends BaseUseCase {
     }
 
     public static final class RequestValue implements RequestValues {
-        private final int requestId;
         private final int orderId;
 
-        public RequestValue(int requestId, int orderId) {
-            this.requestId = requestId;
+        public RequestValue(int orderId) {
             this.orderId = orderId;
         }
     }

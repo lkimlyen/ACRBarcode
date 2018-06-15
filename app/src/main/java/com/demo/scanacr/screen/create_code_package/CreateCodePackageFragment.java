@@ -7,8 +7,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,8 +22,9 @@ import com.demo.architect.data.model.offline.LogScanCreatePack;
 import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.scanacr.R;
-import com.demo.scanacr.adapter.CreateCodePackAdapter;
+import com.demo.scanacr.adapter.CreateCodePackListViewAdapter;
 import com.demo.scanacr.app.base.BaseFragment;
+import com.demo.scanacr.screen.print_stemp.PrintStempActivity;
 import com.demo.scanacr.util.Precondition;
 import com.demo.scanacr.widgets.spinner.SearchableSpinner;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -47,7 +47,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     private final String TAG = CreateCodePackageFragment.class.getName();
     private CreateCodePackageContract.Presenter mPresenter;
     private FusedLocationProviderClient mFusedLocationClient;
-    private CreateCodePackAdapter adapter;
+    private CreateCodePackListViewAdapter adapter;
     @Bind(R.id.ss_produce)
     SearchableSpinner ssProduce;
 
@@ -61,7 +61,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     EditText edtBarcode;
 
     @Bind(R.id.rv_code)
-    RecyclerView rvCode;
+    ListView rvCode;
 
     private int orderId = 0;
     private Location mLocation;
@@ -101,8 +101,6 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     private void initView() {
         ssProduce.setTitle(getString(R.string.text_choose_request_produce));
         checkPermissionLocation();
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        rvCode.setLayoutManager(layoutManager);
 
         ssProduce.setListener(new SearchableSpinner.OnClickListener() {
             @Override
@@ -137,13 +135,8 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
 
     @Override
     public void onPause() {
-//        if (ssProduce != null) {
-//            if (ssProduce.isShown())
-//                ssProduce.closeSpinnerSearch();
-//        }
         super.onPause();
         mPresenter.stop();
-
     }
 
     public void showNotification(String content, int type) {
@@ -196,18 +189,17 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     public void showLogScanCreatePack(LogScanCreatePackList list) {
 
 
-        adapter = new CreateCodePackAdapter(list.getItemList(), new CreateCodePackAdapter.OnItemClearListener() {
+        adapter = new CreateCodePackListViewAdapter(list.getItemList(), new CreateCodePackListViewAdapter.OnItemClearListener() {
             @Override
             public void onItemClick(LogScanCreatePack item) {
                 mPresenter.deleteItemLog(item);
             }
-        }, new CreateCodePackAdapter.OnEditTextChangeListener() {
+        }, new CreateCodePackListViewAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanCreatePack item, int number) {
-                mPresenter.updateNumberInput(number, item, item.getSerial());
+                mPresenter.updateNumberInput(item.getId(), number);
             }
         });
-
         rvCode.setAdapter(adapter);
 
     }
@@ -228,6 +220,11 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
         if (edtBarcode.getText().toString().equals("")) {
             return;
         }
+
+        if (mPresenter.countListScan(orderId) == 11) {
+            showNotification(getString(R.string.text_list_had_enough), SweetAlertDialog.WARNING_TYPE);
+            return;
+        }
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -244,6 +241,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
                         }
                     }
                 });
+
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.dialog_default_title))
                 .setContentText(getString(R.string.text_save_barcode))
@@ -331,5 +329,10 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
         } else {
             getActivity().finish();
         }
+    }
+
+    @OnClick(R.id.txt_print)
+    public void print() {
+        PrintStempActivity.start(getContext(), orderId);
     }
 }

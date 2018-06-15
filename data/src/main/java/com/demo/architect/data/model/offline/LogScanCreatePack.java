@@ -142,6 +142,11 @@ public class LogScanCreatePack extends RealmObject {
         }
         RealmList<LogScanCreatePack> items = parent.getItemList();
         LogScanCreatePack present = realm.copyToRealmOrUpdate(item);
+        ProductModel model = realm.where(ProductModel.class).equalTo("productId", present.getProductId())
+                .equalTo("orderId", orderId).equalTo("serial", present.getSerial()).findFirst();
+        model.setNumberScan(model.getNumberScan() + present.getNumInput());
+        model.setNumberRest(model.getNumber() - model.getNumberScan());
+        present.setNumRest(model.getNumberRest());
         items.add(present);
 
     }

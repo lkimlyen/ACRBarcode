@@ -13,6 +13,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by Skull on 04/01/2018.
@@ -31,8 +32,8 @@ public interface OrderApiInterface {
     @GET("http://acctest.imark.com.vn//WS/api/GetAllPackageForRequest?pRequestacrID={id}")
     Call<BaseListResponse<PackageEntity>> getAllPackageForRequest(@Path("id") int requestId);
 
-    @GET("http://acctest.imark.com.vn/WS/api/GetMaxPackageForSO?pRequest_ACR_ID={requestId}&&pOrde_ACR_ID={orderId}")
-    Call<BaseResponse> getMaxPackageForSO(@Path("requestId") int requestId, @Path("orderId") int orderId);
+    @GET("http://acctest.imark.com.vn/WS/api/GetMaxPackageForSO")
+    Call<BaseResponse> getMaxPackageForSO(@Query("pOrde_ACR_ID") int orderId);
 
     @FormUrlEncoded
     @POST("http://acctest.imark.com.vn/WS/api/AddPackageACR")

@@ -141,11 +141,11 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Observable<BaseResponse> getMaxPackageForSO(final int requestId, final int orderId) {
+    public Observable<BaseResponse> getMaxPackageForSO(final int orderId) {
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
-                handleBaseResponse(mRemoteApiInterface.getMaxPackageForSO(requestId, orderId), subscriber);
+                handleBaseResponse(mRemoteApiInterface.getMaxPackageForSO(orderId), subscriber);
             }
         });
     }

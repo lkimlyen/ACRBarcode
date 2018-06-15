@@ -61,4 +61,12 @@
     <string name="text_port">Port</string>
     <string name="text_exit">Thoát</string>
     <string name="text_save">Lưu</string>
+    <string name="text_number_input_had_enough">Số lượng nhập vào đã đủ</string>
+    <string name="text_print">In</string>
+    <string name="text_list_had_enough">Bạn đã quét đủ 11 mã cho một kiện, Không thể quét tiếp</string>
+    <string name="tex_print_stemp">In tem</string>
+    <string name="text_total">Tổng cộng:</string>
+    <string name="text_serial_pack">STT Kiện:</string>
+    <string name="text_date_create">Ngày đóng gói: </string>
+    <string name="text_confirm_create_pack">Xác nhận tạo mã gói</string>
 </resources>

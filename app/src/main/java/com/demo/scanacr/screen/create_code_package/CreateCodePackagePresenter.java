@@ -183,10 +183,14 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
             String barcodeMain = orderModel.getCodeProduction() + model.getSerial();
             if (barcode.equals(barcodeMain)) {
                 checkBarcode++;
-                saveBarcode(latitude,
-                        longitude, barcode, model);
+                if (model.getNumberRest() > 0) {
+                    saveBarcode(latitude,
+                            longitude, barcode, model);
+                } else {
+                    view.showError(CoreApplication.getInstance().getString(R.string.text_number_input_had_enough));
+                }
 
-                break;
+                return;
             }
         }
 
@@ -209,7 +213,7 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                                 latitude, longitude, phone, product.getProductId(), orderModel.getId(), product.getSerial(),
                                 0, product.getNumber(), 0, 1, product.getNumberRest(), Constants.WAITING_UPLOAD, -1, userId);
 
-                        localRepository.addLogScanCreatePack(model, orderModel.getId(),barcode).subscribe(new Action1<String>() {
+                        localRepository.addLogScanCreatePack(model, orderModel.getId(), barcode).subscribe(new Action1<String>() {
                             @Override
                             public void call(String String) {
                                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
@@ -242,8 +246,9 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
     }
 
     @Override
-    public void updateNumberInput(int number, LogScanCreatePack item, int serial) {
-        localRepository.updateNumberLog(number, item.getId()).subscribe();
+    public void updateNumberInput(int id, int number) {
+
+        localRepository.updateNumberLog(id, number).subscribe();
     }
 
     @Override
@@ -255,7 +260,7 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
 
     @Override
     public int countListScan(int orderId) {
-
+        count = 0;
         localRepository.findAllLog(orderId).subscribe(new Action1<LogScanCreatePackList>() {
             @Override
             public void call(LogScanCreatePackList logScanCreatePackList) {

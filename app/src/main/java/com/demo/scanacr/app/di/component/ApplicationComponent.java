@@ -17,6 +17,8 @@ import com.demo.scanacr.screen.dashboard.DashboardComponent;
 import com.demo.scanacr.screen.dashboard.DashboardModule;
 import com.demo.scanacr.screen.login.LoginComponent;
 import com.demo.scanacr.screen.login.LoginModule;
+import com.demo.scanacr.screen.print_stemp.PrintStempComponent;
+import com.demo.scanacr.screen.print_stemp.PrintStempModule;
 import com.demo.scanacr.screen.setting.SettingComponent;
 import com.demo.scanacr.screen.setting.SettingModule;
 import javax.inject.Singleton;
@@ -49,5 +51,7 @@ public interface ApplicationComponent {
     SettingComponent plus(SettingModule module);
 
     ChangePasswordComponent plus(ChangePasswordModule module);
+
+    PrintStempComponent plus(PrintStempModule module);
 
 }

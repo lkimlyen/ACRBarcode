@@ -2,7 +2,7 @@ package com.demo.architect.domain;
 
 import android.util.Log;
 
-import com.demo.architect.data.BaseListResponse;
+import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.OrderRequestEntity;
 import com.demo.architect.data.repository.base.order.remote.OrderRepository;
 

@@ -1,6 +1,6 @@
 package com.demo.architect.data.repository.base.order.remote;
 
-import com.demo.architect.data.BaseListResponse;
+import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.OrderACRResponse;
 import com.demo.architect.data.model.OrderRequestEntity;
@@ -23,9 +23,8 @@ public interface OrderRepository {
 
     Observable<BaseResponse> getMaxPackageForSO(int orderId);
 
-    Observable<BaseResponse> addPackageACR(int requestId, int orderId,
-                                           int stt, int productId, String codeScan,
-                                           int number, float latitude, float longitude,
+    Observable<BaseResponse> addPackageACR(int orderId,int stt, int productId, String codeScan,
+                                           int number, double latitude, double longitude,
                                            String dateCreate, int userId);
 
     Observable<BaseResponse> addLogScanInStoreACR(String phone, int orderId, int packageId,

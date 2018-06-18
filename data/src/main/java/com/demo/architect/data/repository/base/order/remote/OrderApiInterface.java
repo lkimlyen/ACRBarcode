@@ -1,7 +1,7 @@
 package com.demo.architect.data.repository.base.order.remote;
 
 
-import com.demo.architect.data.BaseListResponse;
+import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.OrderACRResponse;
 import com.demo.architect.data.model.OrderRequestEntity;
@@ -37,14 +37,13 @@ public interface OrderApiInterface {
 
     @FormUrlEncoded
     @POST("http://acctest.imark.com.vn/WS/api/AddPackageACR")
-    Call<BaseResponse> addPackageACR(@Field("pRequest_ACR_ID") int requestId,
-                                     @Field("pOrde_ACR_ID") int orderId,
+    Call<BaseResponse> addPackageACR(@Field("pOrde_ACR_ID") int orderId,
                                      @Field("pNo") int stt,
                                      @Field("pProductID") int productId,
                                      @Field("pCodeScan") String codeScan,
                                      @Field("pNumber") int number,
-                                     @Field("pLatGPS") float latitude,
-                                     @Field("pLongGPS") float longitude,
+                                     @Field("pLatGPS") double latitude,
+                                     @Field("pLongGPS") double longitude,
                                      @Field("pDateDevice") String dateCreate,
                                      @Field("pUserID") int userId);
 

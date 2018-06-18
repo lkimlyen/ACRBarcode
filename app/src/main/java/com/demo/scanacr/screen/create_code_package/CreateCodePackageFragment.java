@@ -60,7 +60,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     @Bind(R.id.edt_barcode)
     EditText edtBarcode;
 
-    @Bind(R.id.rv_code)
+    @Bind(R.id.lv_code)
     ListView rvCode;
 
     private int orderId = 0;
@@ -86,6 +86,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
     }
 
     @Override
@@ -333,6 +334,10 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
 
     @OnClick(R.id.txt_print)
     public void print() {
-        PrintStempActivity.start(getContext(), orderId);
+        if (mPresenter.countListScan(orderId) > 0) {
+            PrintStempActivity.start(getActivity(), orderId);
+        }else {
+            showNotification(getString(R.string.text_no_data), SweetAlertDialog.WARNING_TYPE);
+        }
     }
 }

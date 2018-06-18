@@ -1,4 +1,4 @@
-package com.demo.scanacr.screen.print_stemp;
+package com.demo.scanacr.screen.history_pack;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,6 +13,7 @@ import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.app.base.BaseActivity;
 import com.demo.scanacr.app.di.Precondition;
+import com.demo.scanacr.screen.print_stemp.PrintStempActivity;
 
 import javax.inject.Inject;
 
@@ -20,18 +21,15 @@ import javax.inject.Inject;
  * Created by MSI on 26/11/2017.
  */
 
-public class PrintStempActivity extends BaseActivity {
-    public static final String ORDER_ID = "order_id";
-    public static final int REQUEST_CODE = 117;
+public class HistoryPackageActivity extends BaseActivity {
     @Inject
-    PrintStempPresenter PrintStempPresenter;
+    HistoryPackagePresenter HistoryPackagePresenter;
 
-    PrintStempFragment fragment;
+    HistoryPackageFragment fragment;
 
-    public static void start(Activity context, int orderId) {
-        Intent intent = new Intent(context, PrintStempActivity.class);
-        intent.putExtra(ORDER_ID, orderId);
-        context.startActivityForResult(intent,REQUEST_CODE);
+    public static void start(Context context) {
+        Intent intent = new Intent(context, HistoryPackageActivity.class);
+        context.startActivity(intent);
     }
 
     @Override
@@ -43,7 +41,7 @@ public class PrintStempActivity extends BaseActivity {
 
         // Create the presenter
         CoreApplication.getInstance().getApplicationComponent()
-                .plus(new PrintStempModule(fragment))
+                .plus(new HistoryPackageModule(fragment))
                 .inject(this);
 
         Window w = getWindow(); // in Activity's onCreate() for instance
@@ -54,14 +52,14 @@ public class PrintStempActivity extends BaseActivity {
     }
 
     private void initFragment() {
-        fragment = (PrintStempFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        fragment = (HistoryPackageFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (fragment == null) {
-            fragment = PrintStempFragment.newInstance();
+            fragment = HistoryPackageFragment.newInstance();
             addFragmentToBackStack(fragment, R.id.fragmentContainer);
         }
     }
 
-    private void addFragmentToBackStack(PrintStempFragment fragment, int frameId) {
+    private void addFragmentToBackStack(HistoryPackageFragment fragment, int frameId) {
         Precondition.checkNotNull(fragment);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(frameId, fragment);
@@ -71,6 +69,18 @@ public class PrintStempActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-       super.onBackPressed();
+        fragment.back();
+       // super.onBackPressed();
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PrintStempActivity.REQUEST_CODE) {
+            if(resultCode == Activity.RESULT_OK){
+                fragment.showSuccess(getString(R.string.text_print_success));
+            }
+        }
+    }
+
 }

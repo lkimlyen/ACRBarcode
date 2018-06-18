@@ -1,6 +1,6 @@
 package com.demo.architect.data.repository.base.product.remote;
 
-import com.demo.architect.data.BaseListResponse;
+import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.ProductEntity;
 
 import retrofit2.Call;

@@ -1,29 +1,24 @@
-package com.demo.scanacr.screen.print_stemp;
+package com.demo.scanacr.screen.history_pack;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.demo.architect.data.model.offline.LogScanCreatePack;
 import com.demo.architect.data.model.offline.OrderModel;
-import com.demo.architect.data.model.offline.ProductModel;
 import com.demo.scanacr.R;
-import com.demo.scanacr.adapter.PrintTempAdapter;
 import com.demo.scanacr.app.base.BaseFragment;
-import com.demo.scanacr.util.ConvertUtils;
 import com.demo.scanacr.util.Precondition;
+import com.demo.scanacr.widgets.spinner.SearchableSpinner;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -34,72 +29,66 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
  * Created by MSI on 26/11/2017.
  */
 
-public class PrintStempFragment extends BaseFragment implements PrintStempContract.View {
-    public static final String ORDER_ID = "order_id";
-    private final String TAG = PrintStempFragment.class.getName();
-    private PrintStempContract.Presenter mPresenter;
-    private PrintTempAdapter adapter;
-    private int orderId;
-    @Bind(R.id.lv_codes)
-    ListView lvCode;
-
-    @Bind(R.id.txt_request_code)
-    TextView txtRequestCode;
+public class HistoryPackageFragment extends BaseFragment implements HistoryPackageContract.View {
+    private final String TAG = HistoryPackageFragment.class.getName();
+    private HistoryPackageContract.Presenter mPresenter;
+    @Bind(R.id.ss_produce)
+    SearchableSpinner ssProduce;
 
     @Bind(R.id.txt_code_so)
     TextView txtCodeSO;
 
-    @Bind(R.id.txt_customer_name)
-    TextView txtCustomerName;
+    @Bind(R.id.lv_code)
+    ListView rvCode;
 
-    @Bind(R.id.txt_total)
-    TextView txtTotal;
 
-    @Bind(R.id.txt_serial)
-    TextView txtSerial;
-
-    @Bind(R.id.txt_date_create)
-    TextView txtDate;
-
-    public PrintStempFragment() {
+    public HistoryPackageFragment() {
         // Required empty public constructor
     }
 
 
-    public static PrintStempFragment newInstance() {
-        PrintStempFragment fragment = new PrintStempFragment();
+    public static HistoryPackageFragment newInstance() {
+        HistoryPackageFragment fragment = new HistoryPackageFragment();
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_print_stemp, container, false);
+        View view = inflater.inflate(R.layout.fragment_history_pack, container, false);
         ButterKnife.bind(this, view);
-        orderId = getActivity().getIntent().getIntExtra(ORDER_ID, 0);
         initView();
         return view;
     }
 
     private void initView() {
-        txtDate.setText(ConvertUtils.ConvertStringToShortDate(ConvertUtils.getDateTimeCurrent()));
+        ssProduce.setTitle(getString(R.string.text_choose_request_produce));
+
+
+//        ssProduce.setListener(new SearchableSpinner.OnClickListener() {
+//            @Override
+//            public void onClick() {
+//                ssProduce.setCountListScan(mPresenter.countListScan(orderId));
+//            }
+//        });
+
     }
 
 
     @Override
-    public void setPresenter(PrintStempContract.Presenter presenter) {
+    public void setPresenter(HistoryPackageContract.Presenter presenter) {
         this.mPresenter = Precondition.checkNotNull(presenter);
     }
 
@@ -117,9 +106,6 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     public void onResume() {
         super.onResume();
         mPresenter.start();
-        mPresenter.getMaxNumberOrder(orderId);
-        mPresenter.getListCreatePack(orderId);
-        mPresenter.getOrder(orderId);
     }
 
     @Override
@@ -154,40 +140,23 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     }
 
     @Override
-    public void showSerialPack(int serial) {
-        txtSerial.setText(serial + "");
+    public void showRequestProduction(List<OrderModel> list) {
+        ArrayAdapter<OrderModel> adapter = new ArrayAdapter<OrderModel>(getContext(), android.R.layout.simple_spinner_item, list);
+        ssProduce.setAdapter(adapter);
+        ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                txtCodeSO.setText(list.get(position).getCodeSO());
+              //  mPresenter.getProduct(list.get(position).getId());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
-    @Override
-    public void showOrder(OrderModel model) {
-        txtCodeSO.setText(model.getCodeSO());
-        txtCustomerName.setText(model.getCustomerName());
-        txtRequestCode.setText(model.getCodeProduction());
-    }
-
-    @Override
-    public void showListCreatePack(HashMap<LogScanCreatePack, ProductModel> list) {
-        List<LogScanCreatePack> packList = new ArrayList<>();
-        List<ProductModel> productList = new ArrayList<>();
-        for (Map.Entry<LogScanCreatePack, ProductModel> entry : list.entrySet()) {
-            packList.add(entry.getKey());
-            productList.add(entry.getValue());
-        }
-        adapter = new PrintTempAdapter(getContext(), packList, productList);
-        lvCode.setAdapter(adapter);
-    }
-
-    @Override
-    public void showSumPack(int sum) {
-        txtTotal.setText(sum + "");
-    }
-
-    @Override
-    public void backToCreatePack() {
-        Intent returnIntent = new Intent();
-        getActivity().setResult(Activity.RESULT_OK,returnIntent);
-        getActivity().finish();
-    }
 
     public void showToast(String message) {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
@@ -199,10 +168,8 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     @OnClick(R.id.img_back)
     public void back() {
         getActivity().finish();
+
     }
 
-    @OnClick(R.id.btn_save)
-    public void save(){
-        mPresenter.printStemp(orderId,Integer.parseInt(txtSerial.getText().toString()),0);
-    }
+
 }

@@ -2,10 +2,8 @@ package com.demo.architect.domain;
 
 import android.util.Log;
 
-import com.demo.architect.data.BaseListResponse;
-import com.demo.architect.data.model.PackageEntity;
+import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.ProductEntity;
-import com.demo.architect.data.repository.base.order.remote.OrderRepository;
 import com.demo.architect.data.repository.base.product.remote.ProductRepository;
 
 import java.util.List;

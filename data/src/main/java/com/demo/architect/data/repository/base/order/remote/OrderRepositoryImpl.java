@@ -1,6 +1,6 @@
 package com.demo.architect.data.repository.base.order.remote;
 
-import com.demo.architect.data.BaseListResponse;
+import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.OrderACRResponse;
 import com.demo.architect.data.model.OrderRequestEntity;
@@ -151,13 +151,13 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Observable<BaseResponse> addPackageACR(final int requestId, final int orderId, final int stt, final
-    int productId, final String codeScan, final int number, final float latitude, final float longitude,
+    public Observable<BaseResponse> addPackageACR(final int orderId, final int stt, final
+    int productId, final String codeScan, final int number, final double latitude, final double longitude,
                                                   final String dateCreate, final int userId) {
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
-                handleBaseResponse(mRemoteApiInterface.addPackageACR(requestId, orderId, stt, productId, codeScan,
+                handleBaseResponse(mRemoteApiInterface.addPackageACR(orderId, stt, productId, codeScan,
                         number, latitude, longitude, dateCreate, userId), subscriber);
             }
         });

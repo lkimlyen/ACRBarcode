@@ -26,6 +26,8 @@ public interface PrintStempContract {
         void showListCreatePack(HashMap<LogScanCreatePack, ProductModel> list);
 
         void showSumPack(int sum);
+
+        void backToCreatePack();
     }
 
     interface Presenter extends BasePresenter {
@@ -34,5 +36,7 @@ public interface PrintStempContract {
         void getOrder(int order);
 
         void getListCreatePack(int orderId);
+
+        void printStemp(int orderId, int serial, int serverId);
     }
 }

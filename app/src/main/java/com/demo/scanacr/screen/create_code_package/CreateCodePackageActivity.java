@@ -1,5 +1,6 @@
 package com.demo.scanacr.screen.create_code_package;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -12,6 +13,7 @@ import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.app.base.BaseActivity;
 import com.demo.scanacr.app.di.Precondition;
+import com.demo.scanacr.screen.print_stemp.PrintStempActivity;
 
 import javax.inject.Inject;
 
@@ -70,4 +72,15 @@ public class CreateCodePackageActivity extends BaseActivity {
         fragment.back();
        // super.onBackPressed();
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PrintStempActivity.REQUEST_CODE) {
+            if(resultCode == Activity.RESULT_OK){
+                fragment.showSuccess(getString(R.string.text_print_success));
+            }
+        }
+    }
+
 }

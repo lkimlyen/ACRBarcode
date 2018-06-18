@@ -12,6 +12,7 @@ public class ConvertUtils {
 
     public static final String DATE_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
 
+    public static final String APP_DATETIME_FORMAT = "MM/dd/yyyy HH:mm:ss";
     public static int ConvertStringMoneyToInt(String s) {
         if (s.toString().trim().equals("")) {
             return 0;
@@ -28,7 +29,7 @@ public class ConvertUtils {
     public static String ConvertStringToShortDate(String s) {
         Date date = null;
         String sDate = "";
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_TIME_FORMAT);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(APP_DATETIME_FORMAT);
         String expectedPattern = "dd/MM/yyyy";
         SimpleDateFormat formatter = new SimpleDateFormat(expectedPattern);
         try {
@@ -42,7 +43,7 @@ public class ConvertUtils {
     }
 
     public static String getDateTimeCurrent() {
-        SimpleDateFormat formatter = new SimpleDateFormat(DATE_TIME_FORMAT);
+        SimpleDateFormat formatter = new SimpleDateFormat(APP_DATETIME_FORMAT);
         String newFormat = formatter.format(new Date());
         return newFormat;
     }

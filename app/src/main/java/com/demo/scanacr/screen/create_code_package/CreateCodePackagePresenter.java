@@ -85,7 +85,7 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                         int userId = UserManager.getInstance().getUser().getUserId();
                         for (OrderACREntity entity : successResponse.getEntity()) {
                             OrderModel model = new OrderModel(entity.getId(), entity.getCustomerID(), entity.getCode(), entity.getCodeSX(), entity.getCustomerName(), userId,
-                                    ConvertUtils.getDateTimeCurrent());
+                                    ConvertUtils.getDateTimeCurrent(),Constants.WAITING_UPLOAD);
                             localRepository.addItemAsyns(model).subscribe(new Action1<OrderModel>() {
                                 @Override
                                 public void call(OrderModel model) {
@@ -128,7 +128,7 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                         for (ProductEntity item : successResponse.getEntity()) {
                             ProductModel model = new ProductModel(item.getProductID(), orderId, item.getCodeColor(),
                                     item.getStt(), item.getLength(), item.getWide(), item.getDeep(), item.getGrain(),
-                                    item.getNumber(), item.getNumber(), 0);
+                                    item.getNumber(), item.getNumber(), 0, 0);
                             localRepository.addProduct(model).subscribe();
                         }
                     }
@@ -242,7 +242,7 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
 
     @Override
     public void deleteItemLog(LogScanCreatePack item) {
-        localRepository.deleteLogScanItem(item).subscribe();
+        localRepository.deleteLogScanItem(item.getId()).subscribe();
     }
 
     @Override

@@ -16,11 +16,12 @@ public class ProductModel extends RealmObject {
     private int status;
     private int numberRest;
     private int numberScan;
+    private int numCompleteScan;
 
     public ProductModel() {
     }
 
-    public ProductModel(int productId, int orderId, String codeColor, int serial, int lenght, int wide, int deep, String grain, int number, int numberRest, int numberScan) {
+    public ProductModel(int productId, int orderId, String codeColor, int serial, int lenght, int wide, int deep, String grain, int number, int numberRest, int numberScan, int numCompleteScan) {
         this.productId = productId;
         this.orderId = orderId;
         this.codeColor = codeColor;
@@ -32,6 +33,7 @@ public class ProductModel extends RealmObject {
         this.number = number;
         this.numberRest = numberRest;
         this.numberScan = numberScan;
+        this.numCompleteScan = numCompleteScan;
     }
 
 
@@ -93,5 +95,17 @@ public class ProductModel extends RealmObject {
 
     public void setNumberScan(int numberScan) {
         this.numberScan = numberScan;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
+    public int getNumCompleteScan() {
+        return numCompleteScan;
+    }
+
+    public void setNumCompleteScan(int numCompleteScan) {
+        this.numCompleteScan = numCompleteScan;
     }
 }

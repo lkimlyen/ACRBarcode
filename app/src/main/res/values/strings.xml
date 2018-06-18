@@ -69,4 +69,9 @@
     <string name="text_serial_pack">STT Kiện:</string>
     <string name="text_date_create">Ngày đóng gói: </string>
     <string name="text_confirm_create_pack">Xác nhận tạo mã gói</string>
+    <string name="text_no_connect_printer">Không có kết nối vs máy In! Không thể IN!!!</string>
+    <string name="text_print_success">In thành công.</string>
+    <string name="text_no_ip_address">Vui lòng nhập địa chỉ IP để kết nối máy in.</string>
+    <string name="text_no_data">Không có dữ liệu</string>
+    <string name="text_search">Tìm</string>
 </resources>

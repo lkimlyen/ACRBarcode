@@ -1,4 +1,4 @@
-package com.demo.architect.data;
+package com.demo.architect.data.model;
 
 import com.google.gson.annotations.Expose;
 
@@ -16,7 +16,6 @@ public class BaseListResponse<T> {
     private int Status;
     @Expose
     private String Description;
-
 
     public int getStatus() {
         return Status;

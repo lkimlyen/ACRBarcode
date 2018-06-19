@@ -124,7 +124,7 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                     public void onSuccess(GetAllDetailForSOACRUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
                         localRepository.deleteProduct().subscribe();
-                        //localRepository.updateStatusProduct(orderId).subscribe();
+                        //localRepository.updateStatusAndNumberProduct(orderId).subscribe();
                         for (ProductEntity item : successResponse.getEntity()) {
                             ProductModel model = new ProductModel(item.getProductID(), orderId, item.getCodeColor(),
                                     item.getStt(), item.getLength(), item.getWide(), item.getDeep(), item.getGrain(),

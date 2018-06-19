@@ -23,16 +23,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
-        <activity android:name=".screen.login.LoginActivity">
-
-        </activity>
+        <activity android:name=".screen.login.LoginActivity"></activity>
         <activity android:name=".screen.dashboard.DashboardActivity" />
         <activity android:name=".screen.setting.SettingActivity" />
-
         <activity
             android:name="com.thefinestartist.finestwebview.FinestWebViewActivity"
             android:theme="@style/AppTheme" />
-
         <activity android:name=".screen.splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,9 +36,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".screen.chang_password.ChangePasswordActivity"/>
-        <activity android:name=".screen.create_code_package.CreateCodePackageActivity"/>
-        <activity android:name=".screen.print_stemp.PrintStempActivity"/>
+        <activity android:name=".screen.chang_password.ChangePasswordActivity" />
+        <activity android:name=".screen.create_code_package.CreateCodePackageActivity" />
+        <activity android:name=".screen.print_stemp.PrintStempActivity" />
+        <activity android:name=".screen.capture.CaptureActivity"></activity>
     </application>
 
 </manifest>

@@ -1,7 +1,6 @@
-package com.demo.scanacr.screen.history_pack;
+package com.demo.scanacr.screen.detail_package;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +12,7 @@ import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.app.base.BaseActivity;
 import com.demo.scanacr.app.di.Precondition;
+import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.screen.print_stemp.PrintStempActivity;
 
 import javax.inject.Inject;
@@ -21,15 +21,18 @@ import javax.inject.Inject;
  * Created by MSI on 26/11/2017.
  */
 
-public class HistoryPackageActivity extends BaseActivity {
+public class DetailPackageActivity extends BaseActivity {
+    public static final int REQUEST_CODE = 123;
     @Inject
-    HistoryPackagePresenter HistoryPackagePresenter;
+    DetailPackagePresenter DetailPackagePresenter;
 
-    HistoryPackageFragment fragment;
+    DetailPackageFragment fragment;
 
-    public static void start(Context context) {
-        Intent intent = new Intent(context, HistoryPackageActivity.class);
-        context.startActivity(intent);
+    public static void start(Activity activity, int orderId, int logId) {
+        Intent intent = new Intent(activity, DetailPackageActivity.class);
+        intent.putExtra(Constants.KEY_ORDER_ID, orderId);
+        intent.putExtra(Constants.KEY_ID, logId);
+        activity.startActivityForResult(intent, REQUEST_CODE);
     }
 
     @Override
@@ -41,7 +44,7 @@ public class HistoryPackageActivity extends BaseActivity {
 
         // Create the presenter
         CoreApplication.getInstance().getApplicationComponent()
-                .plus(new HistoryPackageModule(fragment))
+                .plus(new DetailPackageModule(fragment))
                 .inject(this);
 
         Window w = getWindow(); // in Activity's onCreate() for instance
@@ -52,14 +55,14 @@ public class HistoryPackageActivity extends BaseActivity {
     }
 
     private void initFragment() {
-        fragment = (HistoryPackageFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        fragment = (DetailPackageFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (fragment == null) {
-            fragment = HistoryPackageFragment.newInstance();
+            fragment = DetailPackageFragment.newInstance();
             addFragmentToBackStack(fragment, R.id.fragmentContainer);
         }
     }
 
-    private void addFragmentToBackStack(HistoryPackageFragment fragment, int frameId) {
+    private void addFragmentToBackStack(DetailPackageFragment fragment, int frameId) {
         Precondition.checkNotNull(fragment);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(frameId, fragment);
@@ -70,15 +73,15 @@ public class HistoryPackageActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         fragment.back();
-       // super.onBackPressed();
+        // super.onBackPressed();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PrintStempActivity.REQUEST_CODE) {
-            if(resultCode == Activity.RESULT_OK){
-                fragment.showSuccess(getString(R.string.text_delete_success));
+            if (resultCode == Activity.RESULT_OK) {
+                fragment.showSuccess(getString(R.string.text_print_success));
             }
         }
     }

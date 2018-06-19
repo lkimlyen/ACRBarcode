@@ -12,6 +12,8 @@ import com.demo.architect.domain.AddLogScanACRUsecase;
 import com.demo.architect.domain.AddLogScanInStoreACRUsecase;
 import com.demo.architect.domain.AddPackageACRUsecase;
 import com.demo.architect.domain.ChangePasswordUsecase;
+import com.demo.architect.domain.DeletePackageDetailUsecase;
+import com.demo.architect.domain.DeletePackageUsecase;
 import com.demo.architect.domain.DownloadFileUsecase;
 import com.demo.architect.domain.GetAllDetailForSOACRUsecase;
 import com.demo.architect.domain.GetAllPackageForRequestUsecase;
@@ -116,5 +118,13 @@ public class UseCaseModule {
         return new GetDateServerUsecase(authRepository);
     }
 
+    @Provides
+    DeletePackageDetailUsecase provideDeletePackageDetailUsecase(OrderRepository authRepository){
+        return new DeletePackageDetailUsecase(authRepository);
+    }
+    @Provides
+    DeletePackageUsecase provideDeletePackageUsecase(OrderRepository authRepository){
+        return new DeletePackageUsecase(authRepository);
+    }
 }
 

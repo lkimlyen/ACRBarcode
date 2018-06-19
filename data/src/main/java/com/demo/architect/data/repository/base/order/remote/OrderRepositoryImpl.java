@@ -209,4 +209,24 @@ public class OrderRepositoryImpl implements OrderRepository {
             }
         });
     }
+
+    @Override
+    public Observable<BaseResponse> deletePackageDetailACR(final int packageId, final int productId, final int userId) {
+        return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
+            @Override
+            public void call(Subscriber<? super BaseResponse> subscriber) {
+                handleBaseResponse(mRemoteApiInterface.deletePackageDetailACR(packageId, productId, userId), subscriber);
+            }
+        });
+    }
+
+    @Override
+    public Observable<BaseResponse> deletePackage(final int packageID, final int userId) {
+        return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
+            @Override
+            public void call(Subscriber<? super BaseResponse> subscriber) {
+                handleBaseResponse(mRemoteApiInterface.deletePackageACR(packageID, userId), subscriber);
+            }
+        });
+    }
 }

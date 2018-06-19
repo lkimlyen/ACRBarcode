@@ -24,12 +24,16 @@ import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.scanacr.R;
 import com.demo.scanacr.adapter.CreateCodePackListViewAdapter;
 import com.demo.scanacr.app.base.BaseFragment;
+import com.demo.scanacr.constants.Constants;
+import com.demo.scanacr.screen.capture.CaptureActivity;
 import com.demo.scanacr.screen.print_stemp.PrintStempActivity;
 import com.demo.scanacr.util.Precondition;
 import com.demo.scanacr.widgets.spinner.SearchableSpinner;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.List;
 
@@ -37,6 +41,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+
+import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
 
 /**
  * Created by MSI on 26/11/2017.
@@ -65,7 +71,8 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
 
     private int orderId = 0;
     private Location mLocation;
-    private int countList = 0;
+
+    private IntentIntegrator integrator = new IntentIntegrator(getActivity());
 
     public CreateCodePackageFragment() {
         // Required empty public constructor
@@ -86,7 +93,30 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() != null) {
+                String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
+                String barcode = contents.replace("DEMO", "");
+                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
+                }
+                mFusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                // Got last known location. In some rare situations this can be null.
+                                if (location != null) {
+                                    // Logic to handle location object
+                                    mLocation = location;
+                                }
+                            }
+                        });
+                mPresenter.checkBarcode(barcode, orderId, mLocation.getLatitude(), mLocation.getLongitude());
+            }
+        }
     }
 
     @Override
@@ -336,8 +366,20 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     public void print() {
         if (mPresenter.countListScan(orderId) > 0) {
             PrintStempActivity.start(getActivity(), orderId);
-        }else {
+        } else {
             showNotification(getString(R.string.text_no_data), SweetAlertDialog.WARNING_TYPE);
         }
+    }
+
+    @OnClick(R.id.btn_scan)
+    public void scan() {
+        integrator.setCaptureActivity(CaptureActivity.class);
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+        integrator.setPrompt("Đặt mã cần quét vào khung");
+        integrator.setCameraId(CAMERA_FACING_BACK);  // Use a specific camera of the device
+        integrator.setBeepEnabled(false);
+        integrator.setBarcodeImageEnabled(true);
+        integrator.setOrientationLocked(false);
+        integrator.initiateScan();
     }
 }

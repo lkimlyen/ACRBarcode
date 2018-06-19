@@ -3,6 +3,7 @@ package com.demo.scanacr.screen.history_pack;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.demo.architect.data.model.offline.LogCompleteMainList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 
@@ -52,9 +53,17 @@ public class HistoryPackagePresenter implements HistoryPackageContract.Presenter
         localRepository.findOrderByLogComplete().subscribe(new Action1<List<OrderModel>>() {
             @Override
             public void call(List<OrderModel> orderModels) {
-                if (orderModels == null)
-                    return;
                 view.showRequestProduction(orderModels);
+            }
+        });
+    }
+
+    @Override
+    public void search(int orderId) {
+        localRepository.findPackage(orderId).subscribe(new Action1<LogCompleteMainList>() {
+            @Override
+            public void call(LogCompleteMainList logCompleteMainList) {
+                view.showListHistory(logCompleteMainList);
             }
         });
     }

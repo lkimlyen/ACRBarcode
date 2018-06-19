@@ -79,4 +79,16 @@ public interface OrderApiInterface {
 
     @GET("http://acctest.imark.com.vn//WS/api/GetAllRequestINACR")
     Call<BaseListResponse<OrderRequestEntity>> getAllRequestINACR();
+
+    @FormUrlEncoded
+    @POST("http://acctest.imark.com.vn/WS/api/DeletePackageDetailACR")
+    Call<BaseResponse> deletePackageDetailACR(@Field("pPackageID") int packageId,
+                                     @Field("pProductID") int productId,
+                                     @Field("pUserID") int userId);
+
+    @FormUrlEncoded
+    @POST("http://acctest.imark.com.vn/WS/api/DeletePackageACR")
+    Call<BaseResponse> deletePackageACR(@Field("pPackageID") int packageId,
+                                              @Field("pUserID") int userId);
+
 }

@@ -3,16 +3,17 @@ package com.demo.architect.data.repository.base.local;
 import com.demo.architect.data.model.MessageModel;
 import com.demo.architect.data.model.offline.CustomerModel;
 import com.demo.architect.data.model.offline.IPAddress;
+import com.demo.architect.data.model.offline.LogCompleteCreatePack;
+import com.demo.architect.data.model.offline.LogCompleteCreatePackList;
+import com.demo.architect.data.model.offline.LogCompleteMainList;
 import com.demo.architect.data.model.offline.LogScanCreatePack;
 import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.data.model.offline.ProductModel;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import io.realm.RealmResults;
 import rx.Observable;
 
 public interface LocalRepository {
@@ -31,13 +32,17 @@ public interface LocalRepository {
 
     Observable<ProductModel> addProduct(ProductModel model);
 
-    Observable<String> updateStatusProduct(int serverId);
+    Observable<String> updateStatusAndNumberProduct(int serverId);
+
+    Observable<String> updateStatusLog(int logId);
 
     Observable<List<ProductModel>> findProductByOrderId(int orderId);
 
     Observable<String> addLogScanCreatePack(LogScanCreatePack item, int orderId, final String barcode);
 
-    Observable<String> addLogCompleteCreatePack(int id, final int serverId, final int serial);
+    Observable<String> addLogCompleteCreatePack(int id, final int serverId, final int serial, final int numTotal, final String dateCreate);
+
+    Observable<String> addLogCompleteCreatePack(final LogCompleteCreatePack model, final int serverId);
 
     Observable<OrderModel> findOrder(int orderId);
 
@@ -60,4 +65,19 @@ public interface LocalRepository {
     Observable<Integer> getSumLogPack(int orderId);
 
     Observable<List<OrderModel>> findOrderByLogComplete();
+
+    Observable<LogCompleteMainList> findPackage(int orderId);
+
+    Observable<LogCompleteCreatePackList> findLogCreatePack(int logId);
+
+    Observable<LogCompleteCreatePackList> findLogCompletById(int logId);
+
+    Observable<String> deleteLogComplete(int id, int logId);
+
+    Observable<String> deletePack(int logId, final int orderId);
+
+    Observable<Boolean> checkExistCode(String barcode);
+
+    Observable<Integer> countCodeNotUp(int logId);
+
 }

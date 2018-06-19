@@ -39,4 +39,8 @@ public interface OrderRepository {
     Observable<BaseResponse> getMaxTimesACR(int requestId);
 
     Observable<BaseListResponse<OrderRequestEntity>> getAllRequestINACR();
+    Observable<BaseResponse> deletePackageDetailACR(int packageID,int productId, int userId);
+
+    Observable<BaseResponse> deletePackage(int packageID,int userId);
+
 }

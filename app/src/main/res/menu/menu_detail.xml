@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.Bill_Activity">
+
+       <item
+           android:id="@+id/it_done"
+           android:orderInCategory="2"
+           android:title="@string/text_done"
+           app:showAsAction=""/>
+
+       <item
+        android:id="@+id/it_print"
+        android:orderInCategory="3"
+        android:title="@string/text_print_again"
+        app:showAsAction=""/>
+
+       <item
+           android:id="@+id/it_delete"
+           android:orderInCategory="4"
+           android:title="@string/text_delete_pack"
+           app:showAsAction=""/>
+
+
+</menu>

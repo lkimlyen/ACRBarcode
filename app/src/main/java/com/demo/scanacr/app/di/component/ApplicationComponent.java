@@ -15,6 +15,8 @@ import com.demo.scanacr.screen.create_code_package.CreateCodePackageComponent;
 import com.demo.scanacr.screen.create_code_package.CreateCodePackageModule;
 import com.demo.scanacr.screen.dashboard.DashboardComponent;
 import com.demo.scanacr.screen.dashboard.DashboardModule;
+import com.demo.scanacr.screen.detail_package.DetailPackageComponent;
+import com.demo.scanacr.screen.detail_package.DetailPackageModule;
 import com.demo.scanacr.screen.history_pack.HistoryPackageComponent;
 import com.demo.scanacr.screen.history_pack.HistoryPackageModule;
 import com.demo.scanacr.screen.login.LoginComponent;
@@ -57,5 +59,7 @@ public interface ApplicationComponent {
     PrintStempComponent plus(PrintStempModule module);
 
     HistoryPackageComponent plus(HistoryPackageModule module);
+
+    DetailPackageComponent plus(DetailPackageModule module);
 
 }

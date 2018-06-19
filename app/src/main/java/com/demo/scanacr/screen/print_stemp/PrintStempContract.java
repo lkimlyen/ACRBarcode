@@ -37,6 +37,6 @@ public interface PrintStempContract {
 
         void getListCreatePack(int orderId);
 
-        void printStemp(int orderId, int serial, int serverId);
+        void printStemp(int orderId, int serial, int serverId, int numTotal);
     }
 }

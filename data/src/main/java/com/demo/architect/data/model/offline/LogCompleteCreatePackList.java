@@ -8,9 +8,13 @@ public class LogCompleteCreatePackList extends RealmObject {
     @PrimaryKey
     private int id;
 
-    private int orderId;
+    private String codeRequest;
 
     private int serial;
+
+    private int numTotal;
+
+    private String dateCreate;
 
     @SuppressWarnings("unused")
     private RealmList<LogCompleteCreatePack> itemList;
@@ -18,10 +22,12 @@ public class LogCompleteCreatePackList extends RealmObject {
     public LogCompleteCreatePackList() {
     }
 
-    public LogCompleteCreatePackList(int id, int orderId, int serial) {
+    public LogCompleteCreatePackList(int id, String codeRequest, int serial, int numTotal,String dateCreate) {
         this.id = id;
-        this.orderId = orderId;
+        this.codeRequest = codeRequest;
         this.serial = serial;
+        this.numTotal = numTotal;
+        this.dateCreate = dateCreate;
     }
 
     public RealmList<LogCompleteCreatePack> getItemList() {
@@ -32,7 +38,23 @@ public class LogCompleteCreatePackList extends RealmObject {
         return id;
     }
 
-    public int getOrderId() {
-        return orderId;
+    public String getCodeRequest() {
+        return codeRequest;
+    }
+
+    public int getSerial() {
+        return serial;
+    }
+
+    public int getNumTotal() {
+        return numTotal;
+    }
+
+    public String getDateCreate() {
+        return dateCreate;
+    }
+
+    public void setNumTotal(int numTotal) {
+        this.numTotal = numTotal;
     }
 }

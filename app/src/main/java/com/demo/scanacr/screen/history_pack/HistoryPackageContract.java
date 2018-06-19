@@ -1,5 +1,6 @@
 package com.demo.scanacr.screen.history_pack;
 
+import com.demo.architect.data.model.offline.LogCompleteMainList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.scanacr.app.base.BasePresenter;
 import com.demo.scanacr.app.base.BaseView;
@@ -16,9 +17,11 @@ public interface HistoryPackageContract {
 
         void showSuccess(String message);
         void showRequestProduction(List<OrderModel> list);
+        void showListHistory(LogCompleteMainList list);
     }
 
     interface Presenter extends BasePresenter {
         void getRequestProduce();
+        void search(int orderId);
     }
 }

@@ -15,6 +15,7 @@ public class LogCompleteCreatePack extends RealmObject {
     private double longitude;
     private String createByPhone;
     private int productId;
+    private ProductModel productModel;
     private int orderId;
     private int serial;
     private int numTotal;
@@ -25,8 +26,11 @@ public class LogCompleteCreatePack extends RealmObject {
     public LogCompleteCreatePack() {
     }
 
-    public LogCompleteCreatePack( String barcode, String deviceTime, String serverTime, double latitude, double longitude, String createByPhone, int productId, int orderId, int serial, int numTotal, int numInput, int status,int createBy) {
+    public LogCompleteCreatePack(String barcode, String deviceTime, String serverTime, double latitude,
+                                 double longitude, String createByPhone, int productId, ProductModel productModel,
+                                 int orderId, int serial, int numTotal, int numInput, int status, int createBy) {
         this.productId = productId;
+        this.productModel = productModel;
         this.orderId = orderId;
         this.numTotal = numTotal;
         this.createBy = createBy;
@@ -106,18 +110,28 @@ public class LogCompleteCreatePack extends RealmObject {
     }
 
 
-    public static void create(Realm realm, LogCompleteCreatePack item, int id, int serial) {
-        item.setId(id(realm)+1);
+    public static void create(Realm realm, LogCompleteCreatePack item, int id, int serial, int numTotal, String dateCreate) {
+        item.setId(id(realm) + 1);
+
+        LogCompleteMainList mainList = realm.where(LogCompleteMainList.class).equalTo("orderId", item.getOrderId()).findFirst();
+        if (mainList == null) {
+            mainList = new LogCompleteMainList(item.getOrderId());
+            mainList = realm.copyToRealmOrUpdate(mainList);
+        }
+        RealmList<LogCompleteCreatePackList> itemList = mainList.getItemList();
         LogCompleteCreatePackList parent = realm.where(LogCompleteCreatePackList.class).equalTo("id", id).findFirst();
         if (parent == null) {
-            parent = new LogCompleteCreatePackList(id, item.getOrderId(), serial);
+            OrderModel orderModel = realm.where(OrderModel.class).equalTo("id", item.getOrderId()).findFirst();
+            parent = new LogCompleteCreatePackList(id, orderModel.getCodeProduction(), serial, numTotal, dateCreate);
             parent = realm.copyToRealmOrUpdate(parent);
+            itemList.add(parent);
         }
         RealmList<LogCompleteCreatePack> items = parent.getItemList();
         LogCompleteCreatePack present = realm.copyToRealm(item);
         items.add(present);
 
     }
+
     public static int id(Realm realm) {
         int nextId = 0;
         Number maxValue = realm.where(LogCompleteCreatePack.class).max("id");
@@ -134,5 +148,11 @@ public class LogCompleteCreatePack extends RealmObject {
         }
     }
 
+    public ProductModel getProductModel() {
+        return productModel;
+    }
 
+    public void setStatus(int status) {
+        this.status = status;
+    }
 }

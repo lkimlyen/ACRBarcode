@@ -128,7 +128,7 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/btn_save"
+            android:id="@+id/btn_search"
             android:layout_width="match_parent"
             android:layout_height="@dimen/size_40dp"
             android:layout_weight="0"
@@ -138,7 +138,6 @@
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
-
 
     </LinearLayout>
 

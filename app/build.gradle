@@ -171,7 +171,7 @@ dependencies {
 
     prodReleaseCompile project(path: ':thirdparty', configuration: 'prodRelease')
 
-
+    compile 'com.journeyapps:zxing-android-embedded:3.6.0'
     compile 'com.thefinestartist:finestwebview:1.2.7'
     compile 'com.android.support:support-v4:26.0.1'
 }

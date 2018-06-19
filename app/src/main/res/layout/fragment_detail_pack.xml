@@ -11,6 +11,7 @@
         android:layout_height="@dimen/size_toolbar"
         android:background="@color/colorPrimary"
         android:orientation="horizontal"
+        android:id="@+id/toolbar"
         app:contentInsetEnd="0dp"
         app:contentInsetLeft="0dp"
         app:contentInsetRight="0dp"
@@ -32,14 +33,13 @@
 
 
             <TextView
-                android:id="@+id/txt_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="@dimen/distance_8dp"
                 android:layout_toRightOf="@+id/img_back"
                 android:gravity="center"
-                android:text="@string/text_create_code_package"
+                android:text="@string/text_detail_package"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/text_16sp"
                 android:textStyle="bold" />
@@ -93,11 +93,14 @@
                     android:textSize="@dimen/text_16sp"
                     android:textStyle="bold" />
 
-                <com.demo.scanacr.widgets.spinner.SearchableSpinner
-                    android:id="@+id/ss_produce"
-                    android:layout_weight="4"
+
+                <TextView
+                    android:id="@+id/txt_code_request"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_16sp"
+                    android:layout_weight="4"/>
+
 
             </LinearLayout>
 
@@ -152,38 +155,6 @@
                     android:layout_weight="4"/>
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:weightSum="1"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/edt_barcode"
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:layout_height="@dimen/size_40dp"
-                    android:hint="Nhập mã barcode"
-                    android:padding="@dimen/distance_5dp"
-                    android:inputType="textMultiLine"
-                    android:layout_marginEnd="@dimen/distance_5dp"
-                    android:textColor="@android:color/black"
-                    android:background="@drawable/bg_edittext_stroke_white"
-                    android:textSize="@dimen/text_16sp" />
-
-                <Button
-                    android:id="@+id/btn_save"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/size_40dp"
-                    android:gravity="center"
-                    android:textColor="@android:color/white"
-                    android:textAllCaps="false"
-                    android:layout_weight="0"
-                    android:background="@drawable/bg_button_blue_small"
-                    android:text="@string/text_add"
-                    android:textStyle="bold" />
-            </LinearLayout>
 
     </LinearLayout>
 
@@ -192,7 +163,86 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:padding="5dp">
 
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="*">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_gravity="center"
+                    android:ellipsize="none"
+                    android:scrollHorizontally="false"
+                    android:text="@string/text_total"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txt_total"
+                    android:ellipsize="none"
+                    android:scrollHorizontally="false"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_gravity="center"
+                    android:ellipsize="none"
+                    android:scrollHorizontally="false"
+                    android:text="@string/text_serial_pack"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txt_serial"
+                    android:ellipsize="none"
+                    android:scrollHorizontally="false"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_gravity="center"
+                    android:ellipsize="none"
+                    android:scrollHorizontally="false"
+                    android:text="@string/text_date_create"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold" />
+
+                <TextView
+
+                    android:id="@+id/txt_date_create"
+                    android:ellipsize="none"
+                    android:scrollHorizontally="false"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold" />
+            </TableRow>
+        </TableLayout>
+
+
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

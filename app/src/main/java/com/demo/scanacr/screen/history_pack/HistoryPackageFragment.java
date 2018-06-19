@@ -12,9 +12,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.demo.architect.data.model.offline.LogCompleteMainList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.scanacr.R;
+import com.demo.scanacr.adapter.HistoryCreatePackAdapter;
 import com.demo.scanacr.app.base.BaseFragment;
+import com.demo.scanacr.screen.detail_package.DetailPackageActivity;
 import com.demo.scanacr.util.Precondition;
 import com.demo.scanacr.widgets.spinner.SearchableSpinner;
 
@@ -32,6 +35,8 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class HistoryPackageFragment extends BaseFragment implements HistoryPackageContract.View {
     private final String TAG = HistoryPackageFragment.class.getName();
     private HistoryPackageContract.Presenter mPresenter;
+    private HistoryCreatePackAdapter adapter;
+    private int orderId = 0;
     @Bind(R.id.ss_produce)
     SearchableSpinner ssProduce;
 
@@ -39,8 +44,7 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
     TextView txtCodeSO;
 
     @Bind(R.id.lv_code)
-    ListView rvCode;
-
+    ListView lvCode;
 
     public HistoryPackageFragment() {
         // Required empty public constructor
@@ -76,13 +80,12 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
     private void initView() {
         ssProduce.setTitle(getString(R.string.text_choose_request_produce));
 
-
-//        ssProduce.setListener(new SearchableSpinner.OnClickListener() {
-//            @Override
-//            public void onClick() {
-//                ssProduce.setCountListScan(mPresenter.countListScan(orderId));
-//            }
-//        });
+        ssProduce.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public void onClick() {
+                //ssProduce.setCountListScan(mPresenter.countListScan(orderId));
+            }
+        });
 
     }
 
@@ -147,12 +150,25 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 txtCodeSO.setText(list.get(position).getCodeSO());
-              //  mPresenter.getProduct(list.get(position).getId());
+                orderId = list.get(position).getId();
+                //  mPresenter.getProduct(list.get(position).getId());
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
+            }
+        });
+    }
+
+    @Override
+    public void showListHistory(LogCompleteMainList list) {
+        adapter = new HistoryCreatePackAdapter(list.getItemList());
+        lvCode.setAdapter(adapter);
+        lvCode.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                DetailPackageActivity.start(getActivity(), list.getOrderId(), list.getItemList().get(position).getId());
             }
         });
     }
@@ -169,6 +185,15 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
     public void back() {
         getActivity().finish();
 
+    }
+
+    @OnClick(R.id.btn_search)
+    public void search() {
+        if (orderId == 0) {
+            showError(getString(R.string.text_order_id_null));
+            return;
+        }
+        mPresenter.search(orderId);
     }
 
 

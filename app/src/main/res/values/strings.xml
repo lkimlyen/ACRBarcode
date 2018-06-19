@@ -14,7 +14,7 @@
     <string name="text_setting">Thiết lập - Hướng dẫn</string>
     <string name="text_import_works">Nhập công trình</string>
     <string name="text_check_code_scan">Xác nhận mã đã quét giao hàng trước khi tải dữ liệu</string>
-    <string name="text_cancel">Cancel</string>
+    <string name="text_cancel">Hủy</string>
     <string name="text_do_you_want_logout">Bạn có muốn đăng xuất không?</string>
     <string name="text_yes">Có</string>
     <string name="text_no">Không</string>
@@ -74,4 +74,16 @@
     <string name="text_no_ip_address">Vui lòng nhập địa chỉ IP để kết nối máy in.</string>
     <string name="text_no_data">Không có dữ liệu</string>
     <string name="text_search">Tìm</string>
+    <string name="text_order_id_null">Bạn chưa chọn lệnh sản xuất cần tìm</string>
+    <string name="text_detail_package">Chi tiết mã gói</string>
+    <string name="text_done">Hoàn tất</string>
+    <string name="text_print_again">In lại gói này</string>
+    <string name="text_delete_pack">Bạn có muốn xóa gói này không?</string>
+    <string name="text_delete_code">Bạn có muốn xóa mã này không?</string>
+    <string name="text_delete_success">Xóa thành công</string>
+    <string name="text_done_pack">Bạn muốn hoàn tất gói này không?</string>
+    <string name="text_print_pack">Bạn có muôn sin gói này không?</string>
+    <string name="text_code_exist_in_pack">Mã quét đã tồn tại trong gói này</string>
+    <string name="text_not_complete">Bạn vừa quét thêm mã chi tiết, \n chưa Hoàn tất không thể quay lại.</string>
+    <string name="text_cancel_create_barcode">Bạn có muốn hủy mã quét này?</string>
 </resources>

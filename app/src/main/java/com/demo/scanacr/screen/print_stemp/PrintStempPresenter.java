@@ -16,6 +16,7 @@ import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.GetMaxPackageForSOUsecase;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
+import com.demo.scanacr.util.ConvertUtils;
 
 import java.util.HashMap;
 
@@ -110,7 +111,7 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
     }
 
     @Override
-    public void printStemp(int orderId, int serial, int serverId) {
+    public void printStemp(int orderId, int serial, int serverId, int numTotal) {
 
         localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
             @Override
@@ -126,9 +127,9 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
                     public void onPostExecute(SocketRespone respone) {
                         if (respone.getConnect() == 1 && respone.getResult() == 1) {
                             if (serverId == 0) {
-                                updateData(orderId, serial);
+                                updateData(orderId, serial, numTotal);
                             } else {
-                                localRepository.updateStatusProduct(serverId).subscribe();
+                                localRepository.updateStatusAndNumberProduct(serverId).subscribe();
                                 view.backToCreatePack();
                                 view.hideProgressBar();
                             }
@@ -149,7 +150,7 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
     private int serverId = 0;
     private int count = 0;
 
-    public void updateData(int orderId, int serial) {
+    public void updateData(int orderId, int serial, int numTotal) {
 
         localRepository.findAllLog(orderId).subscribe(new Action1<LogScanCreatePackList>() {
             @Override
@@ -166,12 +167,13 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
                                 public void onSuccess(AddPackageACRUsecase.ResponseValue successResponse) {
                                     serverId = successResponse.getId();
                                     view.hideProgressBar();
-                                    localRepository.addLogCompleteCreatePack(pack.getId(), successResponse.getId(), serial).subscribe(new Action1<String>() {
+                                    localRepository.addLogCompleteCreatePack(pack.getId(), successResponse.getId(), serial, numTotal, ConvertUtils.getDateTimeCurrent())
+                                            .subscribe(new Action1<String>() {
                                         @Override
                                         public void call(String s) {
                                             count++;
                                             if (count == countList) {
-                                                printStemp(orderId, serial, serverId);
+                                                printStemp(orderId, serial, serverId, numTotal);
 
                                             }
                                         }

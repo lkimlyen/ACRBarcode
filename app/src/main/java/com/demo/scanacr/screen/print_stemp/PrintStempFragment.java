@@ -203,6 +203,6 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
 
     @OnClick(R.id.btn_save)
     public void save(){
-        mPresenter.printStemp(orderId,Integer.parseInt(txtSerial.getText().toString()),0);
+        mPresenter.printStemp(orderId,Integer.parseInt(txtSerial.getText().toString()),0, Integer.parseInt(txtTotal.getText().toString()));
     }
 }

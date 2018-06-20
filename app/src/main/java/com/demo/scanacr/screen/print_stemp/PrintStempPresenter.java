@@ -16,9 +16,12 @@ import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.GetMaxPackageForSOUsecase;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
+import com.demo.scanacr.manager.ScanCreatePackManager;
 import com.demo.scanacr.util.ConvertUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -127,9 +130,18 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
                     public void onPostExecute(SocketRespone respone) {
                         if (respone.getConnect() == 1 && respone.getResult() == 1) {
                             if (serverId == 0) {
-                                updateData(orderId, serial, numTotal);
+                                localRepository.findAllLog(orderId).subscribe(new Action1<LogScanCreatePackList>() {
+                                    @Override
+                                    public void call(LogScanCreatePackList list) {
+                                        ScanCreatePackManager.getInstance().setPackList(list);
+                                        updateData(orderId, serial, numTotal);
+                                    }
+                                });
+
+
                             } else {
                                 localRepository.updateStatusAndNumberProduct(serverId).subscribe();
+                                localRepository.deleteLogCompleteAll().subscribe();
                                 view.backToCreatePack();
                                 view.hideProgressBar();
                             }
@@ -152,48 +164,36 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
 
     public void updateData(int orderId, int serial, int numTotal) {
 
-        localRepository.findAllLog(orderId).subscribe(new Action1<LogScanCreatePackList>() {
-            @Override
-            public void call(LogScanCreatePackList list) {
-                final int countList = list.getItemList().size();
-                count = 0;
-                for (LogScanCreatePack pack : list.getItemList()) {
-                    addPackageACRUsecase.executeIO(new AddPackageACRUsecase.RequestValue(pack.getOrderId(),
-                                    serial, pack.getProductId(), pack.getBarcode(), pack.getNumInput(),
-                                    pack.getLatitude(), pack.getLongitude(), pack.getDeviceTime(), pack.getCreateBy()),
-                            new BaseUseCase.UseCaseCallback<AddPackageACRUsecase.ResponseValue,
-                                    AddPackageACRUsecase.ErrorValue>() {
-                                @Override
-                                public void onSuccess(AddPackageACRUsecase.ResponseValue successResponse) {
-                                    serverId = successResponse.getId();
-                                    view.hideProgressBar();
-                                    localRepository.addLogCompleteCreatePack(pack.getId(), successResponse.getId(), serial, numTotal, ConvertUtils.getDateTimeCurrent())
-                                            .subscribe(new Action1<String>() {
-                                        @Override
-                                        public void call(String s) {
-                                            count++;
-                                            if (count == countList) {
-                                                printStemp(orderId, serial, serverId, numTotal);
+        count = 0;
+        final List<LogScanCreatePack> packList = ScanCreatePackManager.getInstance().getCreatePackList();
+        final int countList = packList.size();
+        for (LogScanCreatePack pack : packList) {
+            addPackageACRUsecase.executeIO(new AddPackageACRUsecase.RequestValue(pack.getOrderId(),
+                            serial, pack.getProductId(), pack.getBarcode(), pack.getNumInput(),
+                            pack.getLatitude(), pack.getLongitude(), pack.getDeviceTime(), pack.getCreateBy()),
+                    new BaseUseCase.UseCaseCallback<AddPackageACRUsecase.ResponseValue,
+                            AddPackageACRUsecase.ErrorValue>() {
+                        @Override
+                        public void onSuccess(AddPackageACRUsecase.ResponseValue successResponse) {
+                            serverId = successResponse.getId();
+                            view.hideProgressBar();
+                            count++;
+                            if (count == countList) {
+                                printStemp(orderId, serial, serverId, numTotal);
+                                localRepository.addLogCompleteCreatePack(orderId, successResponse.getId(), serial, numTotal, ConvertUtils.getDateTimeCurrent())
+                                        .subscribe();
+                            }
 
-                                            }
-                                        }
-                                    });
+                        }
 
+                        @Override
+                        public void onError(AddPackageACRUsecase.ErrorValue errorResponse) {
+                            view.hideProgressBar();
+                            view.showError(errorResponse.getDescription());
+                        }
+                    });
 
+        }
 
-                                }
-
-                                @Override
-                                public void onError(AddPackageACRUsecase.ErrorValue errorResponse) {
-                                    view.hideProgressBar();
-                                    view.showError(errorResponse.getDescription());
-                                }
-                            });
-
-                }
-
-
-            }
-        });
     }
 }

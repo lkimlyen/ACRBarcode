@@ -4,6 +4,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.SocketRespone;
 import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.model.offline.LogCompleteCreatePack;
@@ -16,10 +17,12 @@ import com.demo.architect.domain.AddPackageACRUsecase;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.DeletePackageDetailUsecase;
 import com.demo.architect.domain.DeletePackageUsecase;
+import com.demo.architect.domain.GetAllDetailForSOACRUsecase;
 import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.constants.Constants;
+import com.demo.scanacr.manager.ProductManager;
 import com.demo.scanacr.manager.UserManager;
 import com.demo.scanacr.util.ConvertUtils;
 
@@ -42,18 +45,20 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
     private final DeletePackageUsecase deletePackageUsecase;
     private final AddPackageACRUsecase addPackageACRUsecase;
     private final GetDateServerUsecase getDateServerUsecase;
+    private final GetAllDetailForSOACRUsecase getAllDetailForSOACRUsecase;
     @Inject
     LocalRepository localRepository;
 
     @Inject
     DetailPackagePresenter(@NonNull DetailPackageContract.View view, DeletePackageDetailUsecase deletePackageDetailUsecase,
-                           DeletePackageUsecase deletePackageUsecase, AddPackageACRUsecase addPackageACRUsecase, GetDateServerUsecase getDateServerUsecase) {
+                           DeletePackageUsecase deletePackageUsecase, AddPackageACRUsecase addPackageACRUsecase, GetDateServerUsecase getDateServerUsecase, GetAllDetailForSOACRUsecase getAllDetailForSOACRUsecase) {
         this.view = view;
 
         this.deletePackageDetailUsecase = deletePackageDetailUsecase;
         this.deletePackageUsecase = deletePackageUsecase;
         this.addPackageACRUsecase = addPackageACRUsecase;
         this.getDateServerUsecase = getDateServerUsecase;
+        this.getAllDetailForSOACRUsecase = getAllDetailForSOACRUsecase;
     }
 
     @Inject
@@ -82,6 +87,8 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                 view.showOrder(model);
             }
         });
+
+        getProduct(orderId);
 
     }
 
@@ -174,7 +181,9 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                             if (serverId == 0) {
                                 updateData(logId, orderId, serial, true);
                             } else {
-                                localRepository.updateStatusAndNumberProduct(serverId).subscribe();
+                                if (countNumNotUp == count && countNumNotUp != 0) {
+                                    localRepository.updateStatusAndNumberProduct(serverId).subscribe();
+                                }
                                 view.hideProgressBar();
                             }
                         } else {
@@ -192,6 +201,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
     }
 
     private int count = 0;
+    private int countNumNotUp = 0;
 
     @Override
     public void updateData(int logId, int orderId, int serial, boolean print) {
@@ -199,7 +209,6 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
             @Override
             public void call(LogCompleteCreatePackList logCompleteCreatePackList) {
                 count = 0;
-                int countNumNotUp = 0;
                 for (LogCompleteCreatePack item : logCompleteCreatePackList.getItemList()) {
                     if (item.getStatus() == Constants.WAITING_UPLOAD) {
                         countNumNotUp++;
@@ -224,7 +233,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                     }
                 }
                 if ((countNumNotUp == 0 || count == countNumNotUp) && print) {
-                    printStemp(orderId, serial, logCompleteCreatePackList.getId(), logId);
+                    printStemp(orderId, logId, logCompleteCreatePackList.getId(), logId);
                 }
             }
         });
@@ -235,7 +244,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
     private OrderModel orderModel;
 
     @Override
-    public void checkBarcode(String barcode, int orderId) {
+    public void checkBarcode(String barcode, int orderId, int logId) {
         list = new ArrayList<>();
         orderModel = new OrderModel();
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
@@ -273,12 +282,12 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
             if (barcode.equals(barcodeMain)) {
                 checkBarcode++;
                 if (model.getNumberRest() > 0) {
-                    localRepository.checkExistCode(barcode).subscribe(new Action1<Boolean>() {
+                    localRepository.checkExistCode(logId, barcode).subscribe(new Action1<Boolean>() {
                         @Override
                         public void call(Boolean aBoolean) {
-                            if (aBoolean){
+                            if (!aBoolean) {
                                 view.showDialogNumber(model, barcode);
-                            }else {
+                            } else {
                                 view.showError(CoreApplication.getInstance().getString(R.string.text_code_exist_in_pack));
                             }
                         }
@@ -296,6 +305,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
         }
     }
+
     @Override
     public int countListScan(int logId) {
         count = 0;
@@ -309,7 +319,8 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
     }
 
     @Override
-    public void saveBarcode(double latitude, double longitude, String barcode, ProductModel product, int logId, int numberInput) {
+    public void saveBarcode(double latitude, double longitude, String barcode, int logId, int numberInput) {
+        view.showProgressBar();
         String deviceTime = ConvertUtils.getDateTimeCurrent();
         int userId = UserManager.getInstance().getUser().getUserId();
         String phone = Settings.Secure.getString(CoreApplication.getInstance().getContentResolver(),
@@ -320,10 +331,11 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                     @Override
                     public void onSuccess(GetDateServerUsecase.ResponseValue successResponse) {
                         LogCompleteCreatePack model = new LogCompleteCreatePack(barcode, deviceTime, successResponse.getDate(),
-                                latitude, longitude, phone, product.getProductId(), product, orderModel.getId(), product.getSerial(),
-                                product.getNumber(), numberInput, Constants.WAITING_UPLOAD, userId);
+                                latitude, longitude, phone, 0, null, orderModel.getId(), 0,
+                               0, numberInput, Constants.WAITING_UPLOAD, userId);
 
                         localRepository.addLogCompleteCreatePack(model, logId).subscribe();
+                        view.hideProgressBar();
 
                     }
 
@@ -334,4 +346,30 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                 });
     }
 
+    public void getProduct(int orderId) {
+        view.showProgressBar();
+        getAllDetailForSOACRUsecase.executeIO(new GetAllDetailForSOACRUsecase.RequestValue(orderId),
+                new BaseUseCase.UseCaseCallback<GetAllDetailForSOACRUsecase.ResponseValue,
+                        GetAllDetailForSOACRUsecase.ErrorValue>() {
+                    @Override
+                    public void onSuccess(GetAllDetailForSOACRUsecase.ResponseValue successResponse) {
+                        view.hideProgressBar();
+                        localRepository.deleteProduct().subscribe();
+                        //localRepository.updateStatusAndNumberProduct(orderId).subscribe();
+                        for (ProductEntity item : successResponse.getEntity()) {
+                            ProductModel model = new ProductModel(item.getProductID(), orderId, item.getCodeColor(),
+                                    item.getStt(), item.getLength(), item.getWide(), item.getDeep(), item.getGrain(),
+                                    item.getNumber(), item.getNumber(), 0, 0);
+                            localRepository.addProduct(model).subscribe();
+                        }
+                    }
+
+                    @Override
+                    public void onError(GetAllDetailForSOACRUsecase.ErrorValue errorResponse) {
+                        view.hideProgressBar();
+                        view.showError(errorResponse.getDescription());
+                    }
+                });
+
+    }
 }

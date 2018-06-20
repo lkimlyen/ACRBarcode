@@ -11,6 +11,7 @@ import com.demo.architect.data.model.UserResponse;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.base.BaseFragment;
 import com.demo.scanacr.screen.create_code_package.CreateCodePackageActivity;
+import com.demo.scanacr.screen.history_pack.HistoryPackageActivity;
 import com.demo.scanacr.screen.login.LoginActivity;
 import com.demo.scanacr.screen.setting.SettingActivity;
 import com.demo.scanacr.util.Precondition;
@@ -172,5 +173,10 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     @OnClick(R.id.btn_create_package)
     public void createPackage(){
         CreateCodePackageActivity.start(getContext());
+    }
+
+    @OnClick(R.id.btn_history_pack)
+    public void historyPack(){
+        HistoryPackageActivity.start(getContext());
     }
 }

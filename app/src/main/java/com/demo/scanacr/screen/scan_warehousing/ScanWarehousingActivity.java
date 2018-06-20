@@ -1,4 +1,4 @@
-package com.demo.scanacr.screen.detail_package;
+package com.demo.scanacr.screen.scan_warehousing;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -21,15 +21,15 @@ import javax.inject.Inject;
  * Created by MSI on 26/11/2017.
  */
 
-public class DetailPackageActivity extends BaseActivity {
+public class ScanWarehousingActivity extends BaseActivity {
     public static final int REQUEST_CODE = 123;
     @Inject
-    DetailPackagePresenter DetailPackagePresenter;
+    ScanWarehousingPresenter ScanWarehousingPresenter;
 
-    DetailPackageFragment fragment;
+    ScanWarehousingFragment fragment;
 
     public static void start(Activity activity, int orderId, int logId) {
-        Intent intent = new Intent(activity, DetailPackageActivity.class);
+        Intent intent = new Intent(activity, ScanWarehousingActivity.class);
         intent.putExtra(Constants.KEY_ORDER_ID, orderId);
         intent.putExtra(Constants.KEY_ID, logId);
         activity.startActivityForResult(intent, REQUEST_CODE);
@@ -44,7 +44,7 @@ public class DetailPackageActivity extends BaseActivity {
 
         // Create the presenter
         CoreApplication.getInstance().getApplicationComponent()
-                .plus(new DetailPackageModule(fragment))
+                .plus(new ScanWarehousingModule(fragment))
                 .inject(this);
 
         Window w = getWindow(); // in Activity's onCreate() for instance
@@ -55,14 +55,14 @@ public class DetailPackageActivity extends BaseActivity {
     }
 
     private void initFragment() {
-        fragment = (DetailPackageFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        fragment = (ScanWarehousingFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (fragment == null) {
-            fragment = DetailPackageFragment.newInstance();
+            fragment = ScanWarehousingFragment.newInstance();
             addFragmentToBackStack(fragment, R.id.fragmentContainer);
         }
     }
 
-    private void addFragmentToBackStack(DetailPackageFragment fragment, int frameId) {
+    private void addFragmentToBackStack(ScanWarehousingFragment fragment, int frameId) {
         Precondition.checkNotNull(fragment);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(frameId, fragment);
@@ -80,11 +80,7 @@ public class DetailPackageActivity extends BaseActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         fragment.onActivityResult(requestCode,resultCode, data);
-        if (requestCode == PrintStempActivity.REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                fragment.showSuccess(getString(R.string.text_print_success));
-            }
-        }
+
     }
 
 }

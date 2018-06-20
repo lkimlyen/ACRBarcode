@@ -56,10 +56,11 @@ public class CreateBarcodeDialog extends DialogFragment {
         txtRequestCode.setText(String.format(CoreApplication.getInstance().getString(R.string.text_code_request), barcode));
         txtDate.setText(String.format(CoreApplication.getInstance().getString(R.string.text_date_scan), ConvertUtils.ConvertStringToShortDate(ConvertUtils.getDateTimeCurrent())));
         txtQuantityProduct.setText(model.getNumber() + "");
-        txtQuantityRest.setText(model.getNumberRest() + "");
+        txtQuantityRest.setText((model.getNumberRest() - 1) + "");
         txtQuantityScan.setText(model.getNumCompleteScan() + "");
         edtNumberScan.setText("1");
-
+        int numberRest = Integer.parseInt(txtQuantityRest.getText().toString());
+        final int numTotal = model.getNumber();
         TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -82,15 +83,15 @@ public class CreateBarcodeDialog extends DialogFragment {
                         edtNumberScan.setText("1");
                         return;
                     }
-                    if (numberInput - numberOld > model.getNumberRest()) {
+                    if (numberInput - numberOld > numberRest) {
                         Toast.makeText(CoreApplication.getInstance(),
                                 CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest)
                                 , Toast.LENGTH_SHORT).show();
-                        edtNumberScan.setText(model.getNumberRest() + "");
+                        edtNumberScan.setText(numberOld + numberRest + "");
                         return;
                     }
                     numberOld = numberInput;
-                    txtQuantityRest.setText(String.valueOf(model.getNumber() - numberOld));
+                    txtQuantityRest.setText(String.valueOf(numTotal - numberOld));
 
                 } catch (Exception e) {
 
@@ -119,7 +120,8 @@ public class CreateBarcodeDialog extends DialogFragment {
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 sweetAlertDialog.dismiss();
                             }
-                        });
+                        })
+                        .show();
             }
         });
 
@@ -130,6 +132,7 @@ public class CreateBarcodeDialog extends DialogFragment {
                 listener.onSave(Integer.parseInt(edtNumberScan.getText().toString()));
             }
         });
+        dialog.setCancelable(false);
         return dialog;
     }
 

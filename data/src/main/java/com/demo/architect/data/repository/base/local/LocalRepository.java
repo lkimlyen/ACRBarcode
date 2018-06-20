@@ -10,6 +10,8 @@ import com.demo.architect.data.model.offline.LogScanCreatePack;
 import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.data.model.offline.ProductModel;
+import com.demo.architect.data.model.offline.ScanWarehousingList;
+import com.demo.architect.data.model.offline.ScanWarehousingModel;
 
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +64,8 @@ public interface LocalRepository {
 
     Observable<String> deleteAllLog();
 
+    Observable<String> deleteLogCompleteAll();
+
     Observable<Integer> getSumLogPack(int orderId);
 
     Observable<List<OrderModel>> findOrderByLogComplete();
@@ -76,8 +80,17 @@ public interface LocalRepository {
 
     Observable<String> deletePack(int logId, final int orderId);
 
-    Observable<Boolean> checkExistCode(String barcode);
+    Observable<Boolean> checkExistCode(int logId, String barcode);
 
     Observable<Integer> countCodeNotUp(int logId);
+
+    Observable<Boolean> checkExistBarcode(String barcode, int idList);
+
+    Observable<String> addScanWareHousing(ScanWarehousingModel scanWarehousingModel, int idList);
+
+    Observable<Integer> getIdScanWarehousingList();
+
+    Observable<ScanWarehousingList> findScanWarehousingList(int idList);
+
 
 }

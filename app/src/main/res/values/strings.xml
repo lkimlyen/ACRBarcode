@@ -82,8 +82,12 @@
     <string name="text_delete_code">Bạn có muốn xóa mã này không?</string>
     <string name="text_delete_success">Xóa thành công</string>
     <string name="text_done_pack">Bạn muốn hoàn tất gói này không?</string>
-    <string name="text_print_pack">Bạn có muôn sin gói này không?</string>
+    <string name="text_print_pack">Bạn có muốn in gói này không?</string>
     <string name="text_code_exist_in_pack">Mã quét đã tồn tại trong gói này</string>
     <string name="text_not_complete">Bạn vừa quét thêm mã chi tiết, \n chưa Hoàn tất không thể quay lại.</string>
     <string name="text_cancel_create_barcode">Bạn có muốn hủy mã quét này?</string>
+    <string name="text_delete_pack_it">Xóa gói này</string>
+    <string name="text_package_no_create">Mã gói này chưa được tạo! Hãy thử mã khác!</string>
+    <string name="text_barcode_saved">Mã gói này đã được quét! Hãy thử mã khác!</string>
+    <string name="text_into_warehousing_success">Nhập vào kho thành công</string>
 </resources>

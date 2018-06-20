@@ -19,7 +19,7 @@
        <item
            android:id="@+id/it_delete"
            android:orderInCategory="4"
-           android:title="@string/text_delete_pack"
+           android:title="@string/text_delete_pack_it"
            app:showAsAction=""/>
 
 

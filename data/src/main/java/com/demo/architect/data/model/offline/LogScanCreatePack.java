@@ -133,6 +133,10 @@ public class LogScanCreatePack extends RealmObject {
         return orderId;
     }
 
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public void setNumCodeScan(int numCodeScan) {
         this.numCodeScan = numCodeScan;
     }
@@ -151,7 +155,7 @@ public class LogScanCreatePack extends RealmObject {
         model.setNumberScan(model.getNumberScan() + present.getNumInput());
         model.setNumberRest(model.getNumber() - model.getNumberScan());
         present.setNumRest(model.getNumberRest());
-
+        present.setNumCodeScan(model.getNumCompleteScan());
         items.add(present);
 
     }
@@ -171,7 +175,6 @@ public class LogScanCreatePack extends RealmObject {
             item.deleteFromRealm();
         }
     }
-
 
 
 }

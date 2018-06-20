@@ -25,7 +25,7 @@ import com.demo.scanacr.R;
 import com.demo.scanacr.adapter.CreateCodePackListViewAdapter;
 import com.demo.scanacr.app.base.BaseFragment;
 import com.demo.scanacr.constants.Constants;
-import com.demo.scanacr.screen.capture.CaptureActivity;
+import com.demo.scanacr.screen.capture.ScanActivity;
 import com.demo.scanacr.screen.print_stemp.PrintStempActivity;
 import com.demo.scanacr.util.Precondition;
 import com.demo.scanacr.widgets.spinner.SearchableSpinner;
@@ -98,22 +98,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                }
-                mFusedLocationClient.getLastLocation()
-                        .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                            @Override
-                            public void onSuccess(Location location) {
-                                // Got last known location. In some rare situations this can be null.
-                                if (location != null) {
-                                    // Logic to handle location object
-                                    mLocation = location;
-                                }
-                            }
-                        });
+                checkPermissionLocation();
                 mPresenter.checkBarcode(barcode, orderId, mLocation.getLatitude(), mLocation.getLongitude());
             }
         }
@@ -132,14 +117,14 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     private void initView() {
         ssProduce.setTitle(getString(R.string.text_choose_request_produce));
         checkPermissionLocation();
-
+        ssProduce.setPrompt(getString(R.string.text_choose_request_produce));
         ssProduce.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public void onClick() {
                 ssProduce.setCountListScan(mPresenter.countListScan(orderId));
             }
         });
-
+        mPresenter.getRequestProduction();
     }
 
 
@@ -198,6 +183,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     @Override
     public void showRequestProduction(List<OrderModel> list) {
         ArrayAdapter<OrderModel> adapter = new ArrayAdapter<OrderModel>(getContext(), android.R.layout.simple_spinner_item, list);
+
         ssProduce.setAdapter(adapter);
         ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -256,23 +242,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
             showNotification(getString(R.string.text_list_had_enough), SweetAlertDialog.WARNING_TYPE);
             return;
         }
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-        }
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            // Logic to handle location object
-                            mLocation = location;
-                        }
-                    }
-                });
-
+        checkPermissionLocation();
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                 .setTitleText(getString(R.string.dialog_default_title))
                 .setContentText(getString(R.string.text_save_barcode))
@@ -311,7 +281,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
                         public void onSuccess(Location location) {
                             // Got last known location. In some rare situations this can be null.
                             if (location != null) {
-                                // Logic to handle location object
+                                mLocation = location;  // Logic to handle location object
                             }
                         }
                     });
@@ -373,7 +343,8 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
 
     @OnClick(R.id.btn_scan)
     public void scan() {
-        integrator.setCaptureActivity(CaptureActivity.class);
+        integrator = new IntentIntegrator(getActivity());
+        integrator.setCaptureActivity(ScanActivity.class);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
         integrator.setPrompt("Đặt mã cần quét vào khung");
         integrator.setCameraId(CAMERA_FACING_BACK);  // Use a specific camera of the device

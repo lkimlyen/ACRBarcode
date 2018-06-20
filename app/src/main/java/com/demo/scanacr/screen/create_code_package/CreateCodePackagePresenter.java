@@ -85,7 +85,7 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                         int userId = UserManager.getInstance().getUser().getUserId();
                         for (OrderACREntity entity : successResponse.getEntity()) {
                             OrderModel model = new OrderModel(entity.getId(), entity.getCustomerID(), entity.getCode(), entity.getCodeSX(), entity.getCustomerName(), userId,
-                                    ConvertUtils.getDateTimeCurrent(),Constants.WAITING_UPLOAD);
+                                    ConvertUtils.getDateTimeCurrent(), Constants.WAITING_UPLOAD);
                             localRepository.addItemAsyns(model).subscribe(new Action1<OrderModel>() {
                                 @Override
                                 public void call(OrderModel model) {
@@ -110,7 +110,12 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
 
     @Override
     public void getRequestProduction() {
-
+        localRepository.findAllOrder().subscribe(new Action1<List<OrderModel>>() {
+            @Override
+            public void call(List<OrderModel> orderModels) {
+                view.showRequestProduction(orderModels);
+            }
+        });
 
     }
 
@@ -264,8 +269,9 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
         localRepository.findAllLog(orderId).subscribe(new Action1<LogScanCreatePackList>() {
             @Override
             public void call(LogScanCreatePackList logScanCreatePackList) {
-                count = logScanCreatePackList.getItemList().size();
-
+                if (logScanCreatePackList != null) {
+                    count = logScanCreatePackList.getItemList().size();
+                }
             }
         });
 

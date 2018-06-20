@@ -155,4 +155,52 @@ public class LogCompleteCreatePack extends RealmObject {
     public void setStatus(int status) {
         this.status = status;
     }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
+    public void setDeviceTime(String deviceTime) {
+        this.deviceTime = deviceTime;
+    }
+
+    public void setServerTime(String serverTime) {
+        this.serverTime = serverTime;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setCreateByPhone(String createByPhone) {
+        this.createByPhone = createByPhone;
+    }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+
+    public void setProductModel(ProductModel productModel) {
+        this.productModel = productModel;
+    }
+
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
+    }
+
+    public void setSerial(int serial) {
+        this.serial = serial;
+    }
+
+    public void setNumTotal(int numTotal) {
+        this.numTotal = numTotal;
+    }
+
+    public void setCreateBy(int createBy) {
+        this.createBy = createBy;
+    }
 }

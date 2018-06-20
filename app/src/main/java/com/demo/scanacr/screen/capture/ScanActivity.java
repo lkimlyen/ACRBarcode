@@ -11,7 +11,7 @@ import com.demo.scanacr.app.base.BaseActivity;
 import com.journeyapps.barcodescanner.CaptureManager;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
-public class CaptureActivity extends BaseActivity {
+public class ScanActivity extends BaseActivity {
     private CaptureManager capture;
     private DecoratedBarcodeView barcodeScannerView;
     private Switch Stus;
@@ -20,7 +20,6 @@ public class CaptureActivity extends BaseActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_capture);
         barcodeScannerView = initializeContent();
         Stus = (Switch) findViewById(R.id.btnSwitch);
         Stus.setChecked(flash);

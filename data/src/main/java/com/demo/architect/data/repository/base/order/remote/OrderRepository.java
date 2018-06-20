@@ -28,8 +28,8 @@ public interface OrderRepository {
                                            String dateCreate, int userId);
 
     Observable<BaseResponse> addLogScanInStoreACR(String phone, int orderId, int packageId,
-                                                  String codeScan, int number, float latitude,
-                                                  float longitude, String dateCreate, int userId);
+                                                  String codeScan, int number, double latitude,
+                                                  double longitude, String dateCreate, int userId);
 
     Observable<BaseResponse> addLogScanACR(String phone, int orderId, int packageId,
                                            String codeScan, int number, float latitude,

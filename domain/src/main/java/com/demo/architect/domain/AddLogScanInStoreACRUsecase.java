@@ -24,8 +24,8 @@ public class AddLogScanInStoreACRUsecase extends BaseUseCase {
         int packageId = ((RequestValue) requestValues).packageId;
         String codeScan = ((RequestValue) requestValues).codeScan;
         int number = ((RequestValue) requestValues).number;
-        float latitude = ((RequestValue) requestValues).latitude;
-        float longitude = ((RequestValue) requestValues).longitude;
+        double latitude = ((RequestValue) requestValues).latitude;
+        double longitude = ((RequestValue) requestValues).longitude;
         String dateCreate = ((RequestValue) requestValues).dateCreate;
         int userId = ((RequestValue) requestValues).userId;
 
@@ -70,13 +70,13 @@ public class AddLogScanInStoreACRUsecase extends BaseUseCase {
         private final int packageId;
         private final String codeScan;
         private final int number;
-        private final float latitude;
-        private final float longitude;
+        private final double latitude;
+        private final double longitude;
         private final String dateCreate;
         private final int userId;
 
         public RequestValue(String phone, int orderId, int packageId, String codeScan,
-                            int number, float latitude, float longitude, String dateCreate, int userId) {
+                            int number, double latitude, double longitude, String dateCreate, int userId) {
             this.phone = phone;
             this.orderId = orderId;
             this.packageId = packageId;

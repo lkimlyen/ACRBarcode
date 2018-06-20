@@ -86,7 +86,7 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
                 //ssProduce.setCountListScan(mPresenter.countListScan(orderId));
             }
         });
-
+        mPresenter.getRequestProduce();
     }
 
 

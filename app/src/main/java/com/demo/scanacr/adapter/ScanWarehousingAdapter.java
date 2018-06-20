@@ -12,8 +12,8 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.demo.architect.data.model.offline.LogCompleteCreatePackList;
 import com.demo.architect.data.model.offline.LogScanCreatePack;
+import com.demo.architect.data.model.offline.ScanWarehousingModel;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.util.ConvertUtils;
@@ -21,9 +21,10 @@ import com.demo.scanacr.util.ConvertUtils;
 import io.realm.OrderedRealmCollection;
 import io.realm.RealmBaseAdapter;
 
-public class HistoryCreatePackAdapter extends RealmBaseAdapter<LogCompleteCreatePackList> implements ListAdapter {
+public class ScanWarehousingAdapter extends RealmBaseAdapter<ScanWarehousingModel> implements ListAdapter {
 
-    public HistoryCreatePackAdapter(OrderedRealmCollection<LogCompleteCreatePackList> realmResults) {
+
+    public ScanWarehousingAdapter(OrderedRealmCollection<ScanWarehousingModel> realmResults) {
         super(realmResults);
     }
 
@@ -33,7 +34,7 @@ public class HistoryCreatePackAdapter extends RealmBaseAdapter<LogCompleteCreate
         HistoryHolder viewHolder;
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_scan_print_pack_his, parent, false);
+                    .inflate(R.layout.item_scan_warehousing, parent, false);
             viewHolder = new HistoryHolder(convertView);
             convertView.setTag(viewHolder);
         } else {
@@ -41,32 +42,30 @@ public class HistoryCreatePackAdapter extends RealmBaseAdapter<LogCompleteCreate
         }
 
         if (adapterData != null) {
-            final LogCompleteCreatePackList item = adapterData.get(position);
+            final ScanWarehousingModel item = adapterData.get(position);
             setDataToViews(viewHolder, item);
 
         }
         return convertView;
     }
 
-    private void setDataToViews( HistoryHolder holder, LogCompleteCreatePackList item) {
-        holder.txtOrder.setText(item.getCodeRequest());
-        holder.txtSerial.setText(String.valueOf(item.getSerial()));
-
+    private void setDataToViews( HistoryHolder holder, ScanWarehousingModel item) {
+        holder.txtBarcode.setText(String.format(CoreApplication.getInstance().getString(R.string.text_code_request), item.getBarcode()));
+        holder.txtDate.setText(String.format(CoreApplication.getInstance().getString(R.string.text_date_scan), ConvertUtils.ConvertStringToShortDate(item.getDeviceTime())));
 
     }
 
     public class HistoryHolder extends RecyclerView.ViewHolder {
 
-        TextView txtSerial;
-        TextView txtOrder;
+        TextView txtBarcode;
+        TextView txtDate;
 
         private HistoryHolder(View v) {
             super(v);
-            txtSerial = (TextView) v.findViewById(R.id.txt_serial);
-            txtOrder = (TextView) v.findViewById(R.id.txt_order);
+            txtBarcode = (TextView) v.findViewById(R.id.txt_barcode);
+            txtDate = (TextView) v.findViewById(R.id.txt_date);
         }
 
     }
-
 
 }

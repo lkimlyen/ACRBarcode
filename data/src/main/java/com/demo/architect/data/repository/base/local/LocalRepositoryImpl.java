@@ -11,6 +11,8 @@ import com.demo.architect.data.model.offline.LogScanCreatePack;
 import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.data.model.offline.ProductModel;
+import com.demo.architect.data.model.offline.ScanWarehousingList;
+import com.demo.architect.data.model.offline.ScanWarehousingModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -436,6 +438,22 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
+    public Observable<String> deleteLogCompleteAll() {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    databaseRealm.deleteLogCompleteAll();
+                    subscriber.onNext("");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
     public Observable<Integer> getSumLogPack(final int orderId) {
         return Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
@@ -553,13 +571,13 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<Boolean> checkExistCode(final String barcode) {
+    public Observable<Boolean> checkExistCode(final int logId, final String barcode) {
         return Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {
                 try {
 
-                    Boolean aBoolean = databaseRealm.checkExistBarcode(barcode);
+                    Boolean aBoolean = databaseRealm.checkExistBarcode(logId,barcode);
                     subscriber.onNext(aBoolean);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -578,6 +596,74 @@ public class LocalRepositoryImpl implements LocalRepository {
 
                     Integer count = databaseRealm.countCodeNotUpdate(logId);
                     subscriber.onNext(count);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<Boolean> checkExistBarcode(final String barcode, final int idList) {
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                try {
+
+                    Boolean aBoolean = databaseRealm.checkExistScanWarehousing(barcode,idList);
+                    subscriber.onNext(aBoolean);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> addScanWareHousing(final ScanWarehousingModel scanWarehousingModel, final int idList) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+
+                   databaseRealm.addScanWarehousingAsync(scanWarehousingModel,idList);
+                    subscriber.onNext("");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<Integer> getIdScanWarehousingList() {
+        return Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                try {
+
+                    Integer id = databaseRealm.getIdScanWarehousingList();
+                    subscriber.onNext(id);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<ScanWarehousingList> findScanWarehousingList(final int idList) {
+        return Observable.create(new Observable.OnSubscribe<ScanWarehousingList>() {
+            @Override
+            public void call(Subscriber<? super ScanWarehousingList> subscriber) {
+                try {
+
+                    ScanWarehousingList list = databaseRealm.findScanWarehousingList(idList);
+                    subscriber.onNext(list);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

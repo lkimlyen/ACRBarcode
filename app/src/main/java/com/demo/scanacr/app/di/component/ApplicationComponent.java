@@ -23,6 +23,8 @@ import com.demo.scanacr.screen.login.LoginComponent;
 import com.demo.scanacr.screen.login.LoginModule;
 import com.demo.scanacr.screen.print_stemp.PrintStempComponent;
 import com.demo.scanacr.screen.print_stemp.PrintStempModule;
+import com.demo.scanacr.screen.scan_warehousing.ScanWarehousingComponent;
+import com.demo.scanacr.screen.scan_warehousing.ScanWarehousingModule;
 import com.demo.scanacr.screen.setting.SettingComponent;
 import com.demo.scanacr.screen.setting.SettingModule;
 import javax.inject.Singleton;
@@ -61,5 +63,7 @@ public interface ApplicationComponent {
     HistoryPackageComponent plus(HistoryPackageModule module);
 
     DetailPackageComponent plus(DetailPackageModule module);
+
+    ScanWarehousingComponent plus(ScanWarehousingModule module);
 
 }

@@ -22,7 +22,7 @@ public interface DetailPackageContract {
         void showListCreatePack(LogCompleteCreatePackList list);
         void showDetailPack(LogCompleteCreatePackList pack);
         void deletePackSuccess();
-        void showDialogNumber(ProductModel productModel, String barcode);
+        void showDialogNumber( final ProductModel productModel, String barcode);
     }
 
     interface Presenter extends BasePresenter {
@@ -35,8 +35,8 @@ public interface DetailPackageContract {
         void deletePack(int logId, int orderId);
         void printStemp(int orderId, int serial, int serverId, int logId);
         void updateData(int logId, int orderId, int serial, boolean print);
-        void checkBarcode(String barcode, int orderId);
+        void checkBarcode(String barcode, int orderId, int logId);
         int countListScan(int logId);
-        void saveBarcode(double latitude, double longitude, String barcode, ProductModel product, int logId, int numberInput);
+        void saveBarcode(double latitude, double longitude, String barcode, int logId, int numberInput);
     }
 }

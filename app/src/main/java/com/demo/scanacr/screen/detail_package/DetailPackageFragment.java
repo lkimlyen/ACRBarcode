@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
@@ -29,7 +30,7 @@ import com.demo.scanacr.adapter.DetailPackAdapter;
 import com.demo.scanacr.app.base.BaseFragment;
 import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.dialogs.CreateBarcodeDialog;
-import com.demo.scanacr.screen.capture.CaptureActivity;
+import com.demo.scanacr.screen.capture.ScanActivity;
 import com.demo.scanacr.util.ConvertUtils;
 import com.demo.scanacr.util.Precondition;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -81,6 +82,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
 
     @Bind(R.id.txt_customer_name)
     TextView txtCustomerName;
+    private final int MY_LOCATION_REQUEST_CODE = 167;
 
     public DetailPackageFragment() {
         // Required empty public constructor
@@ -105,8 +107,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
-
-                mPresenter.checkBarcode(barcode, orderId);
+                mPresenter.checkBarcode(barcode, orderId, logId);
             }
         }
     }
@@ -116,7 +117,9 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_detail_pack, container, false);
+        setHasOptionsMenu(true);
         ButterKnife.bind(this, view);
+        checkPermissionLocation();
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         orderId = getActivity().getIntent().getIntExtra(Constants.KEY_ORDER_ID, 0);
         logId = getActivity().getIntent().getIntExtra(Constants.KEY_ID, 0);
@@ -128,6 +131,30 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
 
     }
 
+    public void checkPermissionLocation() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission to access the location is missing.
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    MY_LOCATION_REQUEST_CODE);
+        } else {
+            // Access to the location has been granted to the app.
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                mLocation = location;
+                                // Logic to handle location object
+                            }
+                        }
+                    });
+
+        }
+
+    }
 
     @Override
     public void setPresenter(DetailPackageContract.Presenter presenter) {
@@ -205,6 +232,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
                                 mPresenter.deleteCode(list.getItemList().get(position).getId(), list.getItemList().get(position).getProductId(), logId);
                             }
                         })
@@ -237,31 +265,16 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     }
 
     @Override
-    public void showDialogNumber(ProductModel productModel, String barcode) {
+    public void showDialogNumber(final ProductModel productModel, String barcode) {
         CreateBarcodeDialog dialog = new CreateBarcodeDialog();
         dialog.show(getActivity().getFragmentManager(), TAG);
         dialog.setModel(productModel, barcode);
         dialog.setListener(new CreateBarcodeDialog.OnItemSaveListener() {
             @Override
             public void onSave(int numberInput) {
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                }
-                mFusedLocationClient.getLastLocation()
-                        .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                            @Override
-                            public void onSuccess(Location location) {
-                                // Got last known location. In some rare situations this can be null.
-                                if (location != null) {
-                                    // Logic to handle location object
-                                    mLocation = location;
-                                }
-                            }
-                        });
+                checkPermissionLocation();
                 mPresenter.saveBarcode(mLocation.getLatitude(), mLocation.getLongitude(), barcode,
-                        productModel, logId, numberInput);
+                        logId, numberInput);
             }
         });
     }
@@ -278,7 +291,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     @OnClick(R.id.img_back)
     public void back() {
         if (mPresenter.countListScan(logId) > 0) {
-        showNotification(getString(R.string.text_not_complete), SweetAlertDialog.WARNING_TYPE);
+            showNotification(getString(R.string.text_not_complete), SweetAlertDialog.WARNING_TYPE);
         } else {
             getActivity().finish();
         }
@@ -287,8 +300,8 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_detail, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -302,6 +315,8 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+
                                 mPresenter.deletePack(logId, orderId);
                             }
                         })
@@ -345,7 +360,8 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                mPresenter.printStemp(orderId, Integer.parseInt(txtSerial.getText().toString()), 0,
+                                sweetAlertDialog.dismiss();
+                                mPresenter.printStemp(orderId, 0, Integer.parseInt(txtSerial.getText().toString()),
                                         logId);
                             }
                         })
@@ -365,7 +381,8 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
 
     @OnClick(R.id.btn_scan)
     public void scan() {
-        integrator.setCaptureActivity(CaptureActivity.class);
+        integrator = new IntentIntegrator(getActivity());
+        integrator.setCaptureActivity(ScanActivity.class);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
         integrator.setPrompt("Đặt mã cần quét vào khung");
         integrator.setCameraId(CAMERA_FACING_BACK);  // Use a specific camera of the device
@@ -373,5 +390,18 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
         integrator.setBarcodeImageEnabled(true);
         integrator.setOrientationLocked(false);
         integrator.initiateScan();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == MY_LOCATION_REQUEST_CODE) {
+            if (permissions.length == 1 &&
+                    permissions[0] == Manifest.permission.ACCESS_FINE_LOCATION &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                checkPermissionLocation();
+            } else {
+                // Permission was denied. Display an error message.
+            }
+        }
     }
 }

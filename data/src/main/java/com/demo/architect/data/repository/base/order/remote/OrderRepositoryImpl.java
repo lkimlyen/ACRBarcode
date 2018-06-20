@@ -165,7 +165,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Observable<BaseResponse> addLogScanInStoreACR(final String phone, final int orderId, final int packageId, final String codeScan,
-                                                         final int number, final float latitude, final float longitude, final String dateCreate,
+                                                         final int number, final double latitude, final double longitude, final String dateCreate,
                                                          final int userId) {
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override

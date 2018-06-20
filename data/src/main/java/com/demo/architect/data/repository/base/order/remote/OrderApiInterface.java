@@ -54,8 +54,8 @@ public interface OrderApiInterface {
                                             @Field("pPackageID") int packageId,
                                             @Field("pCodeScan") String codeScan,
                                             @Field("pNumber") int number,
-                                            @Field("pLatGPS") float latitude,
-                                            @Field("pLongGPS") float longitude,
+                                            @Field("pLatGPS") double latitude,
+                                            @Field("pLongGPS") double longitude,
                                             @Field("pDeviceDateTime") String dateCreate,
                                             @Field("pUserID") int userId);
 

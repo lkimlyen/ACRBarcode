@@ -24,8 +24,8 @@ public class AddLogScanACRUsecase extends BaseUseCase {
         int packageId = ((RequestValue) requestValues).packageId;
         String codeScan = ((RequestValue) requestValues).codeScan;
         int number = ((RequestValue) requestValues).number;
-        float latitude = ((RequestValue) requestValues).latitude;
-        float longitude = ((RequestValue) requestValues).longitude;
+        double latitude = ((RequestValue) requestValues).latitude;
+        double longitude = ((RequestValue) requestValues).longitude;
         String activity = ((RequestValue) requestValues).activity;
         int times = ((RequestValue) requestValues).times;
         String dateCreate = ((RequestValue) requestValues).dateCreate;
@@ -58,7 +58,7 @@ public class AddLogScanACRUsecase extends BaseUseCase {
                 if (useCaseCallback != null) {
                     int result = data.getID();
                     if (data.getStatus() == 1) {
-                        useCaseCallback.onSuccess(new ResponseValue(result));
+                        useCaseCallback.onSuccess(new ResponseValue(result, data.getCodeScan()));
                     } else {
                         useCaseCallback.onError(new ErrorValue(data.getDescription()));
                     }
@@ -73,8 +73,8 @@ public class AddLogScanACRUsecase extends BaseUseCase {
         private final int packageId;
         private final String codeScan;
         private final int number;
-        private final float latitude;
-        private final float longitude;
+        private final double latitude;
+        private final double longitude;
         private final String activity;
         private final int times;
         private final String dateCreate;
@@ -82,7 +82,7 @@ public class AddLogScanACRUsecase extends BaseUseCase {
         private final int requestId;
 
         public RequestValue(String phone, int orderId, int packageId, String codeScan,
-                            int number, float latitude, float longitude, String activity, int times, String dateCreate, int userId, int requestId) {
+                            int number, double latitude, double longitude, String activity, int times, String dateCreate, int userId, int requestId) {
             this.phone = phone;
             this.orderId = orderId;
             this.packageId = packageId;
@@ -100,15 +100,20 @@ public class AddLogScanACRUsecase extends BaseUseCase {
 
     public static final class ResponseValue implements ResponseValues {
         private int id;
+        private String barcode;
 
-        public ResponseValue(int id) {
+        public ResponseValue(int id, String barcode) {
             this.id = id;
+            this.barcode = barcode;
         }
 
         public int getId() {
             return id;
         }
 
+        public String getBarcode() {
+            return barcode;
+        }
     }
 
     public static final class ErrorValue implements ErrorValues {

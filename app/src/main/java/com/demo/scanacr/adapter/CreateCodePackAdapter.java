@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,43 +18,42 @@ import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.util.ConvertUtils;
 
 import io.realm.OrderedRealmCollection;
-import io.realm.RealmRecyclerViewAdapter;
+import io.realm.RealmBaseAdapter;
 
-public class CreateCodePackAdapter extends RealmRecyclerViewAdapter<LogScanCreatePack, CreateCodePackAdapter.HistoryHolder> {
+public class CreateCodePackAdapter extends RealmBaseAdapter<LogScanCreatePack> implements ListAdapter {
 
-    private boolean inDeletionMode = false;
     private OnItemClearListener listener;
     private OnEditTextChangeListener onEditTextChangeListener;
 
-    public CreateCodePackAdapter(OrderedRealmCollection<LogScanCreatePack> data, OnItemClearListener listener,
+    public CreateCodePackAdapter(OrderedRealmCollection<LogScanCreatePack> realmResults, OnItemClearListener listener,
                                  OnEditTextChangeListener onEditTextChangeListener) {
-        super(data, true);
-        setHasStableIds(true);
-        this.onEditTextChangeListener = onEditTextChangeListener;
+        super(realmResults);
         this.listener = listener;
+        this.onEditTextChangeListener = onEditTextChangeListener;
     }
 
-    public void enableDeletionMode(boolean enabled) {
-        inDeletionMode = enabled;
-        notifyDataSetChanged();
-    }
 
     @Override
-    public HistoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_scan_create_pack, parent, false);
-        HistoryHolder holder = new HistoryHolder(view);
-        return holder;
+    public View getView(int position, View convertView, ViewGroup parent) {
+        HistoryHolder viewHolder;
+        if (convertView == null) {
+            convertView = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_scan_create_pack, parent, false);
+            viewHolder = new HistoryHolder(convertView);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (HistoryHolder) convertView.getTag();
+        }
+
+        if (adapterData != null) {
+            final LogScanCreatePack item = adapterData.get(position);
+            setDataToViews(viewHolder, item);
+
+        }
+        return convertView;
     }
 
-    @Override
-    public void onBindViewHolder(HistoryHolder holder, int position) {
-        final LogScanCreatePack obj = getItem(position);
-        setDataToViews(holder, obj);
-        holder.bind(obj, listener, onEditTextChangeListener);
-    }
-
-    private void setDataToViews(HistoryHolder holder, LogScanCreatePack item) {
+    private void setDataToViews( HistoryHolder holder, LogScanCreatePack item) {
         holder.txtRequestCode.setText(String.format(CoreApplication.getInstance().getString(R.string.text_code_request), item.getBarcode()));
         holder.txtDate.setText(String.format(CoreApplication.getInstance().getString(R.string.text_date_scan), ConvertUtils.ConvertStringToShortDate(item.getDeviceTime())));
         holder.txtQuantityProduct.setText(item.getNumTotal() + "");
@@ -103,9 +103,13 @@ public class CreateCodePackAdapter extends RealmRecyclerViewAdapter<LogScanCreat
 
         holder.edtNumberScan.removeTextChangedListener(textWatcher);
         holder.edtNumberScan.addTextChangedListener(textWatcher);
-
+        holder.imgDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(item);
+            }
+        });
     }
-
 
     public class HistoryHolder extends RecyclerView.ViewHolder {
 
@@ -128,16 +132,6 @@ public class CreateCodePackAdapter extends RealmRecyclerViewAdapter<LogScanCreat
             edtNumberScan = (EditText) v.findViewById(R.id.edt_number);
         }
 
-        private void bind(final LogScanCreatePack item, final OnItemClearListener listener, final OnEditTextChangeListener onEditTextChangeListener) {
-            imgDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onItemClick(item);
-                }
-            });
-
-
-        }
     }
 
     public interface OnItemClearListener {

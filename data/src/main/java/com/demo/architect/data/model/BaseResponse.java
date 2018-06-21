@@ -13,6 +13,8 @@ public class BaseResponse {
     @Expose
     private int Number;
     @Expose
+    private String CodeScan;
+    @Expose
     private int Status;
     @Expose
     private String Description;
@@ -32,5 +34,9 @@ public class BaseResponse {
 
     public int getID() {
         return ID;
+    }
+
+    public String getCodeScan() {
+        return CodeScan;
     }
 }

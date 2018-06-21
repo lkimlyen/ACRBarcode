@@ -1,6 +1,6 @@
 package com.demo.scanacr.screen.scan_warehousing;
 
-import com.demo.architect.data.model.offline.ScanWarehousingList;
+import com.demo.architect.data.model.offline.ScanWarehousingModel;
 import com.demo.scanacr.app.base.BasePresenter;
 import com.demo.scanacr.app.base.BaseView;
 
@@ -14,7 +14,7 @@ public interface ScanWarehousingContract {
 
         void showSuccess(String message);
 
-        void showListScanWarehousing(ScanWarehousingList list);
+        void showListScanWarehousing(ScanWarehousingModel item);
     }
 
     interface Presenter extends BasePresenter {

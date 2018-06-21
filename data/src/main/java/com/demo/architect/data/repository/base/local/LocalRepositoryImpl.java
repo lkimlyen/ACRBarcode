@@ -11,7 +11,8 @@ import com.demo.architect.data.model.offline.LogScanCreatePack;
 import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.data.model.offline.ProductModel;
-import com.demo.architect.data.model.offline.ScanWarehousingList;
+import com.demo.architect.data.model.offline.ScanDeliveryList;
+import com.demo.architect.data.model.offline.ScanDeliveryModel;
 import com.demo.architect.data.model.offline.ScanWarehousingModel;
 
 import java.text.SimpleDateFormat;
@@ -214,7 +215,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    // databaseRealm.updateNumberRestProduct(item.getNumInput(), orderId, item.getProductId(), item.getSerial());
+                    // databaseRealm.updateNumberRestProduct(item.getNumInput(), orderId, item.getProductId(), item.getTimes());
                     LogScanCreatePack model = databaseRealm.findLogByBarcode(barcode);
 
                     if (model != null) {
@@ -241,7 +242,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    // databaseRealm.updateNumberRestProduct(item.getNumInput(), orderId, item.getProductId(), item.getSerial());
+                    // databaseRealm.updateNumberRestProduct(item.getNumInput(), orderId, item.getProductId(), item.getTimes());
 
                     databaseRealm.addLogCompleteCreatePackAsync(id, serverId, serial, numTotal, dateCreate);
                     subscriber.onNext("");
@@ -259,7 +260,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    // databaseRealm.updateNumberRestProduct(item.getNumInput(), orderId, item.getProductId(), item.getSerial());
+                    // databaseRealm.updateNumberRestProduct(item.getNumInput(), orderId, item.getProductId(), item.getTimes());
 
                    databaseRealm.addLogCompleteCreatePackAsync(model, serverId);
                     subscriber.onNext("");
@@ -593,7 +594,6 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
                 try {
-
                     Integer count = databaseRealm.countCodeNotUpdate(logId);
                     subscriber.onNext(count);
                     subscriber.onCompleted();
@@ -605,13 +605,12 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<Boolean> checkExistBarcode(final String barcode, final int idList) {
+    public Observable<Boolean> checkExistBarcodeInWarehousing(final String barcode) {
         return Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override
             public void call(Subscriber<? super Boolean> subscriber) {
                 try {
-
-                    Boolean aBoolean = databaseRealm.checkExistScanWarehousing(barcode,idList);
+                    Boolean aBoolean = databaseRealm.checkExistScanWarehousing(barcode);
                     subscriber.onNext(aBoolean);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -622,13 +621,63 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> addScanWareHousing(final ScanWarehousingModel scanWarehousingModel, final int idList) {
+    public Observable<Boolean> checkExistImportWorks(final String barcode) {
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                try {
+                    Boolean aBoolean = databaseRealm.checkExistImportWorks(barcode);
+                    subscriber.onNext(aBoolean);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<Boolean> checkExistBarcodeInDelivery(final String barcode) {
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                try {
+
+                    Boolean aBoolean = databaseRealm.checkExistScanDelivery(barcode);
+                    subscriber.onNext(aBoolean);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<ScanWarehousingModel> addScanWareHousing(final ScanWarehousingModel scanWarehousingModel) {
+        return Observable.create(new Observable.OnSubscribe<ScanWarehousingModel>() {
+            @Override
+            public void call(Subscriber<? super ScanWarehousingModel> subscriber) {
+                try {
+
+                    ScanWarehousingModel model = databaseRealm.addScanWarehousingAsync(scanWarehousingModel);
+                    subscriber.onNext(model);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<String> addScanDelivery(final ScanDeliveryModel model, final int times, final String codeRequest) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
 
-                   databaseRealm.addScanWarehousingAsync(scanWarehousingModel,idList);
+                    databaseRealm.addScanDelivery(model, times, codeRequest);
                     subscriber.onNext("");
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -638,15 +687,16 @@ public class LocalRepositoryImpl implements LocalRepository {
         });
     }
 
+
     @Override
-    public Observable<Integer> getIdScanWarehousingList() {
-        return Observable.create(new Observable.OnSubscribe<Integer>() {
+    public Observable<ScanDeliveryList> findScanDeliveryNotComplete(final String requestCode) {
+        return Observable.create(new Observable.OnSubscribe<ScanDeliveryList>() {
             @Override
-            public void call(Subscriber<? super Integer> subscriber) {
+            public void call(Subscriber<? super ScanDeliveryList> subscriber) {
                 try {
 
-                    Integer id = databaseRealm.getIdScanWarehousingList();
-                    subscriber.onNext(id);
+                    ScanDeliveryList model = databaseRealm.finScanDeliveryNotComplete(requestCode);
+                    subscriber.onNext(model);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);
@@ -656,14 +706,14 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<ScanWarehousingList> findScanWarehousingList(final int idList) {
-        return Observable.create(new Observable.OnSubscribe<ScanWarehousingList>() {
+    public Observable<String> updateStatusScanDelivery(final int id, final HashMap<String, Integer> map) {
+        return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
-            public void call(Subscriber<? super ScanWarehousingList> subscriber) {
+            public void call(Subscriber<? super String> subscriber) {
                 try {
 
-                    ScanWarehousingList list = databaseRealm.findScanWarehousingList(idList);
-                    subscriber.onNext(list);
+                    databaseRealm.updateStatusScanDelivery(id, map);
+                    subscriber.onNext("");
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

@@ -1,4 +1,4 @@
-package com.demo.scanacr.screen.scan_warehousing;
+package com.demo.scanacr.screen.scan_delivery;
 
 import android.Manifest;
 import android.content.Intent;
@@ -11,23 +11,30 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.demo.architect.data.model.offline.ScanWarehousingModel;
+import com.demo.architect.data.model.OrderRequestEntity;
+import com.demo.architect.data.model.offline.ScanDeliveryList;
 import com.demo.scanacr.R;
-import com.demo.scanacr.adapter.ScanWarehousingAdapter;
+import com.demo.scanacr.adapter.DeliveryAdapter;
 import com.demo.scanacr.app.base.BaseFragment;
+import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.screen.capture.ScanActivity;
 import com.demo.scanacr.util.Precondition;
+import com.demo.scanacr.widgets.spinner.SearchableSpinner;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -40,14 +47,15 @@ import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
  * Created by MSI on 26/11/2017.
  */
 
-public class ScanWarehousingFragment extends BaseFragment implements ScanWarehousingContract.View {
-    private final String TAG = ScanWarehousingFragment.class.getName();
-    private ScanWarehousingContract.Presenter mPresenter;
+public class ScanDeliveryFragment extends BaseFragment implements ScanDeliveryContract.View {
+    private final String TAG = ScanDeliveryFragment.class.getName();
+    private ScanDeliveryContract.Presenter mPresenter;
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
     private FusedLocationProviderClient mFusedLocationClient;
     private Location mLocation;
-    private ScanWarehousingAdapter adapter;
+    private DeliveryAdapter adapter;
     private final int MY_LOCATION_REQUEST_CODE = 167;
+    private int requestId;
 
     @Bind(R.id.edt_barcode)
     EditText edtBarcode;
@@ -58,13 +66,18 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
     @Bind(R.id.lv_code)
     ListView lvCode;
 
+    @Bind(R.id.layout_code)
+    LinearLayout llRequestCode;
 
-    public ScanWarehousingFragment() {
+    @Bind(R.id.ss_produce)
+    SearchableSpinner ssProduce;
+
+    public ScanDeliveryFragment() {
         // Required empty public constructor
     }
 
-    public static ScanWarehousingFragment newInstance() {
-        ScanWarehousingFragment fragment = new ScanWarehousingFragment();
+    public static ScanDeliveryFragment newInstance() {
+        ScanDeliveryFragment fragment = new ScanDeliveryFragment();
         return fragment;
     }
 
@@ -77,7 +90,15 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() != null) {
+                String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
+                String barcode = contents.replace("DEMO", "");
+                checkPermissionLocation();
+                mPresenter.checkBarcode(requestId, barcode, mLocation.getLatitude(), mLocation.getLongitude());
+            }
+        }
     }
 
     @Override
@@ -87,15 +108,20 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
         View view = inflater.inflate(R.layout.fragment_scan, container, false);
         setHasOptionsMenu(true);
         ButterKnife.bind(this, view);
-        checkPermissionLocation();
         initView();
         return view;
     }
 
     private void initView() {
-        txtTitle.setText(getString(R.string.text_scan_warehouse));
-        adapter = new ScanWarehousingAdapter(getContext(), new ArrayList<ScanWarehousingModel>());
-        lvCode.setAdapter(adapter);
+        txtTitle.setText(getString(R.string.text_scan_delivery));
+        llRequestCode.setVisibility(View.VISIBLE);
+        ssProduce.setTitle(getString(R.string.text_choose_request_produce));
+        checkPermissionLocation();
+        ssProduce.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public void onClick() {
+            }
+        });
     }
 
     public void checkPermissionLocation() {
@@ -124,7 +150,7 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
     }
 
     @Override
-    public void setPresenter(ScanWarehousingContract.Presenter presenter) {
+    public void setPresenter(ScanDeliveryContract.Presenter presenter) {
         this.mPresenter = Precondition.checkNotNull(presenter);
     }
 
@@ -175,9 +201,32 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
         showToast(message);
     }
 
+
     @Override
-    public void showListScanWarehousing(ScanWarehousingModel item) {
-        adapter.addItem(item);
+    public void showListRequest(List<OrderRequestEntity> list) {
+        ArrayAdapter<OrderRequestEntity> adapter = new ArrayAdapter<OrderRequestEntity>(getContext(), android.R.layout.simple_spinner_item, list);
+
+        ssProduce.setAdapter(adapter);
+        ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                requestId = list.get(position).getId();
+                mPresenter.getPackageForRequest(requestId);
+                mPresenter.getMaxTimes(requestId);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    @Override
+    public void showListPackage(ScanDeliveryList list) {
+        adapter = new DeliveryAdapter(list.getItemList());
+        lvCode.setAdapter(adapter);
     }
 
     public void showToast(String message) {
@@ -208,7 +257,7 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
 
     @OnClick(R.id.img_refresh)
     public void refresh() {
-        mPresenter.getPackage();
+        mPresenter.getRequest();
     }
 
     @OnClick(R.id.btn_scan)
@@ -238,7 +287,8 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
-                        mPresenter.checkBarcode(edtBarcode.getText().toString().trim(), mLocation.getLatitude(), mLocation.getLongitude());
+
+                        mPresenter.checkBarcode(requestId, edtBarcode.getText().toString().trim(), mLocation.getLatitude(), mLocation.getLongitude());
                     }
                 })
                 .setCancelText(getString(R.string.text_no))

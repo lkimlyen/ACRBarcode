@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.demo.architect.data.model.PackageEntity;
-import com.demo.architect.data.model.offline.ScanWarehousingList;
 import com.demo.architect.data.model.offline.ScanWarehousingModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.AddLogScanInStoreACRUsecase;
@@ -33,8 +32,6 @@ public class ScanWarehousingPresenter implements ScanWarehousingContract.Present
     private final GetAllPackageUsecase getAllPackageUsecase;
     private final AddLogScanInStoreACRUsecase addLogScanInStoreACRUsecase;
     private final GetDateServerUsecase getDateServerUsecase;
-    private int idList = 0;
-    private boolean getList = false;
     @Inject
     LocalRepository localRepository;
 
@@ -55,7 +52,7 @@ public class ScanWarehousingPresenter implements ScanWarehousingContract.Present
     @Override
     public void start() {
         Log.d(TAG, TAG + ".start() called");
-
+        getPackage();
     }
 
     @Override
@@ -81,18 +78,10 @@ public class ScanWarehousingPresenter implements ScanWarehousingContract.Present
 
         PackageEntity packageEntity = ListPackageManager.getInstance().getPackageByBarcode(requestCode, serial);
         if (packageEntity != null) {
-            localRepository.checkExistBarcode(barcode, idList).subscribe(new Action1<Boolean>() {
+            localRepository.checkExistBarcodeInWarehousing(barcode).subscribe(new Action1<Boolean>() {
                 @Override
                 public void call(Boolean aBoolean) {
                     if (!aBoolean) {
-                        if (idList == 0) {
-                            localRepository.getIdScanWarehousingList().subscribe(new Action1<Integer>() {
-                                @Override
-                                public void call(Integer integer) {
-                                    idList += integer;
-                                }
-                            });
-                        }
                         uploadData(packageEntity, barcode, latitude, longitude);
                     } else {
                         view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_saved));
@@ -146,15 +135,11 @@ public class ScanWarehousingPresenter implements ScanWarehousingContract.Present
                                     public void onSuccess(AddLogScanInStoreACRUsecase.ResponseValue successResponse) {
                                         ScanWarehousingModel model = new ScanWarehousingModel(successResponse.getId(),
                                                 barcode, deviceTime, timeServer, latitude, longitude, phone,
-                                                packageEntity.getId(), packageEntity.getOrderID(), packageEntity.getSTT(), 1, userId);
-                                        localRepository.addScanWareHousing(model, idList).subscribe(new Action1<String>() {
+                                                packageEntity.getId(), packageEntity.getOrderID(), packageEntity.getSTT(),  userId);
+                                        localRepository.addScanWareHousing(model).subscribe(new Action1<ScanWarehousingModel>() {
                                             @Override
-                                            public void call(String s) {
-                                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_into_warehousing_success));
-                                                if (!getList) {
-                                                    getListScanWarehousing(idList);
-                                                    getList = true;
-                                                }
+                                            public void call(ScanWarehousingModel scanWarehousingModel) {
+                                                view.showListScanWarehousing(scanWarehousingModel);
                                             }
                                         });
                                     }
@@ -176,13 +161,5 @@ public class ScanWarehousingPresenter implements ScanWarehousingContract.Present
 
     }
 
-    public void getListScanWarehousing(int idList) {
-        localRepository.findScanWarehousingList(idList).subscribe(new Action1<ScanWarehousingList>() {
-            @Override
-            public void call(ScanWarehousingList list) {
-                view.showListScanWarehousing(list);
-            }
-        });
-    }
 
 }

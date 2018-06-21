@@ -22,7 +22,7 @@ import com.demo.architect.data.model.offline.LogScanCreatePack;
 import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.scanacr.R;
-import com.demo.scanacr.adapter.CreateCodePackListViewAdapter;
+import com.demo.scanacr.adapter.CreateCodePackAdapter;
 import com.demo.scanacr.app.base.BaseFragment;
 import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.screen.capture.ScanActivity;
@@ -53,7 +53,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     private final String TAG = CreateCodePackageFragment.class.getName();
     private CreateCodePackageContract.Presenter mPresenter;
     private FusedLocationProviderClient mFusedLocationClient;
-    private CreateCodePackListViewAdapter adapter;
+    private CreateCodePackAdapter adapter;
     @Bind(R.id.ss_produce)
     SearchableSpinner ssProduce;
 
@@ -206,12 +206,12 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     public void showLogScanCreatePack(LogScanCreatePackList list) {
 
 
-        adapter = new CreateCodePackListViewAdapter(list.getItemList(), new CreateCodePackListViewAdapter.OnItemClearListener() {
+        adapter = new CreateCodePackAdapter(list.getItemList(), new CreateCodePackAdapter.OnItemClearListener() {
             @Override
             public void onItemClick(LogScanCreatePack item) {
                 mPresenter.deleteItemLog(item);
             }
-        }, new CreateCodePackListViewAdapter.OnEditTextChangeListener() {
+        }, new CreateCodePackAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanCreatePack item, int number) {
                 mPresenter.updateNumberInput(item.getId(), number);

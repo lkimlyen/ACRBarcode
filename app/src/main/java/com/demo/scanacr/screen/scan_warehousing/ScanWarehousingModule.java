@@ -11,16 +11,16 @@ import dagger.Provides;
 
 @Module
 public class ScanWarehousingModule {
-    private final ScanWarehousingContract.View CreateCodePackageView;
+    private final ScanWarehousingContract.View ScanWarehousingView;
 
-    public ScanWarehousingModule(ScanWarehousingContract.View CreateCodePackageView) {
-        this.CreateCodePackageView = CreateCodePackageView;
+    public ScanWarehousingModule(ScanWarehousingContract.View ScanWarehousingView) {
+        this.ScanWarehousingView = ScanWarehousingView;
     }
 
     @Provides
     @NonNull
     ScanWarehousingContract.View provideScanWarehousingView() {
-        return this.CreateCodePackageView;
+        return this.ScanWarehousingView;
     }
 }
 

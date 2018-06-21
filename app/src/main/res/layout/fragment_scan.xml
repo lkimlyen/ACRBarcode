@@ -65,12 +65,38 @@
         android:padding="@dimen/distance_8dp"
         android:background="@android:color/white"
         android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:weightSum="5"
+            android:visibility="gone"
+            android:id="@+id/layout_code"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/text_request_produce"
+                android:textColor="@android:color/black"
+                android:layout_weight="1"
+                android:textSize="@dimen/text_16sp"
+                android:textStyle="bold" />
+
+            <com.demo.scanacr.widgets.spinner.SearchableSpinner
+                android:id="@+id/ss_produce"
+                android:layout_weight="4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
+            android:id="@+id/layout_add"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -99,7 +125,17 @@
                 android:text="@string/text_add"
                 android:textStyle="bold" />
         </LinearLayout>
-
+        <Button
+            android:id="@+id/btn_check"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_40dp"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            android:background="@drawable/bg_button_blue_small"
+            android:text="@string/text_check"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <ListView

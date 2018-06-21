@@ -1,4 +1,4 @@
-package com.demo.scanacr.screen.history_pack;
+package com.demo.scanacr.screen.confirm_delivery;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,16 +8,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.demo.architect.data.model.offline.LogCompleteMainList;
-import com.demo.architect.data.model.offline.OrderModel;
+import com.demo.architect.data.model.OrderRequestEntity;
+import com.demo.architect.data.model.offline.ScanDeliveryList;
 import com.demo.scanacr.R;
-import com.demo.scanacr.adapter.HistoryCreatePackAdapter;
+import com.demo.scanacr.adapter.DeliveryAdapter;
 import com.demo.scanacr.app.base.BaseFragment;
-import com.demo.scanacr.screen.detail_package.DetailPackageActivity;
 import com.demo.scanacr.util.Precondition;
 import com.demo.scanacr.widgets.spinner.SearchableSpinner;
 
@@ -32,27 +34,42 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
  * Created by MSI on 26/11/2017.
  */
 
-public class HistoryPackageFragment extends BaseFragment implements HistoryPackageContract.View {
-    private final String TAG = HistoryPackageFragment.class.getName();
-    private HistoryPackageContract.Presenter mPresenter;
-    private HistoryCreatePackAdapter adapter;
-    private int orderId = 0;
-    @Bind(R.id.ss_produce)
-    SearchableSpinner ssProduce;
+public class ConfirmDeliveryFragment extends BaseFragment implements ConfirmDeliveryContract.View {
+    private final String TAG = ConfirmDeliveryFragment.class.getName();
+    private ConfirmDeliveryContract.Presenter mPresenter;
+    private DeliveryAdapter adapter;
+    private String requestCode = "";
 
-    @Bind(R.id.txt_code_so)
-    TextView txtCodeSO;
+    @Bind(R.id.btn_scan)
+    Button btnScan;
+
+    @Bind(R.id.txt_title)
+    TextView txtTitle;
 
     @Bind(R.id.lv_code)
     ListView lvCode;
 
-    public HistoryPackageFragment() {
+    @Bind(R.id.img_refresh)
+    ImageView imgRefresh;
+
+    @Bind(R.id.layout_code)
+    LinearLayout llRequestCode;
+
+    @Bind(R.id.layout_add)
+    LinearLayout llAdd;
+
+    @Bind(R.id.ss_produce)
+    SearchableSpinner ssProduce;
+
+    @Bind(R.id.btn_check)
+    Button btnCheck;
+
+    public ConfirmDeliveryFragment() {
         // Required empty public constructor
     }
 
-
-    public static HistoryPackageFragment newInstance() {
-        HistoryPackageFragment fragment = new HistoryPackageFragment();
+    public static ConfirmDeliveryFragment newInstance() {
+        ConfirmDeliveryFragment fragment = new ConfirmDeliveryFragment();
         return fragment;
     }
 
@@ -71,27 +88,34 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_history_pack, container, false);
+        View view = inflater.inflate(R.layout.fragment_scan, container, false);
+        setHasOptionsMenu(true);
         ButterKnife.bind(this, view);
         initView();
         return view;
     }
 
     private void initView() {
+        txtTitle.setText(getString(R.string.text_check_code_scan));
+        imgRefresh.setVisibility(View.GONE);
+        llRequestCode.setVisibility(View.VISIBLE);
+        llAdd.setVisibility(View.GONE);
         ssProduce.setTitle(getString(R.string.text_choose_request_produce));
+        btnCheck.setVisibility(View.VISIBLE);
+        btnScan.setText(getString(R.string.text_end));
+        btnScan.setVisibility(View.GONE);
 
         ssProduce.setListener(new SearchableSpinner.OnClickListener() {
             @Override
             public void onClick() {
-                //ssProduce.setCountListScan(mPresenter.countListScan(orderId));
+
             }
         });
-        mPresenter.getRequestProduce();
     }
 
 
     @Override
-    public void setPresenter(HistoryPackageContract.Presenter presenter) {
+    public void setPresenter(ConfirmDeliveryContract.Presenter presenter) {
         this.mPresenter = Precondition.checkNotNull(presenter);
     }
 
@@ -139,19 +163,18 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
 
     @Override
     public void showSuccess(String message) {
-        showToast(message);
+        showNotification(message, SweetAlertDialog.SUCCESS_TYPE);
     }
 
     @Override
-    public void showRequestProduction(List<OrderModel> list) {
-        ArrayAdapter<OrderModel> adapter = new ArrayAdapter<OrderModel>(getContext(), android.R.layout.simple_spinner_item, list);
+    public void showListRequest(List<OrderRequestEntity> list) {
+        ArrayAdapter<OrderRequestEntity> adapter = new ArrayAdapter<OrderRequestEntity>(getContext(), android.R.layout.simple_spinner_item, list);
+
         ssProduce.setAdapter(adapter);
         ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                txtCodeSO.setText(list.get(position).getCodeSO());
-                orderId = list.get(position).getId();
-                //  mPresenter.getCodeScan(list.get(position).getId());
+                requestCode = list.get(position).getCodeRequest();
             }
 
             @Override
@@ -162,39 +185,52 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
     }
 
     @Override
-    public void showListHistory(LogCompleteMainList list) {
-        adapter = new HistoryCreatePackAdapter(list.getItemList());
+    public void showListPackage(ScanDeliveryList list) {
+        if (list == null) {
+            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText(getString(R.string.text_title_noti))
+                    .setContentText(getString(R.string.text_no_data))
+                    .setConfirmText(getString(R.string.text_ok))
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                        }
+                    })
+                    .show();
+            btnScan.setVisibility(View.GONE);
+            return;
+        }
+        adapter = new DeliveryAdapter(list.getItemList());
         lvCode.setAdapter(adapter);
-        lvCode.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DetailPackageActivity.start(getActivity(), list.getOrderId(), list.getItemList().get(position).getId());
-            }
-        });
+        btnScan.setVisibility(View.VISIBLE);
     }
-
 
     public void showToast(String message) {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
+
     }
 
 
     @OnClick(R.id.img_back)
     public void back() {
         getActivity().finish();
-
     }
 
-    @OnClick(R.id.btn_search)
-    public void search() {
-        if (orderId == 0) {
-            showError(getString(R.string.text_order_id_null));
+
+    @OnClick(R.id.btn_scan)
+    public void end() {
+        mPresenter.uploadData();
+    }
+
+    @OnClick(R.id.btn_check)
+    public void check() {
+        if (requestCode.equals("")) {
             return;
         }
-        mPresenter.search(orderId);
+        mPresenter.checkRequest(requestCode);
     }
-
 
 }

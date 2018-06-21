@@ -1,4 +1,4 @@
-package com.demo.scanacr.screen.scan_warehousing;
+package com.demo.scanacr.screen.scan_delivery;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,7 +13,6 @@ import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.app.base.BaseActivity;
 import com.demo.scanacr.app.di.Precondition;
 import com.demo.scanacr.constants.Constants;
-import com.demo.scanacr.screen.print_stemp.PrintStempActivity;
 
 import javax.inject.Inject;
 
@@ -21,15 +20,15 @@ import javax.inject.Inject;
  * Created by MSI on 26/11/2017.
  */
 
-public class ScanWarehousingActivity extends BaseActivity {
+public class ScanDeliveryActivity extends BaseActivity {
     public static final int REQUEST_CODE = 123;
     @Inject
-    ScanWarehousingPresenter ScanWarehousingPresenter;
+    ScanDeliveryPresenter ScanDeliveryPresenter;
 
-    ScanWarehousingFragment fragment;
+    ScanDeliveryFragment fragment;
 
     public static void start(Activity activity) {
-        Intent intent = new Intent(activity, ScanWarehousingActivity.class);
+        Intent intent = new Intent(activity, ScanDeliveryActivity.class);
         activity.startActivityForResult(intent, REQUEST_CODE);
     }
 
@@ -42,7 +41,7 @@ public class ScanWarehousingActivity extends BaseActivity {
 
         // Create the presenter
         CoreApplication.getInstance().getApplicationComponent()
-                .plus(new ScanWarehousingModule(fragment))
+                .plus(new ScanDeliveryModule(fragment))
                 .inject(this);
 
         Window w = getWindow(); // in Activity's onCreate() for instance
@@ -53,14 +52,14 @@ public class ScanWarehousingActivity extends BaseActivity {
     }
 
     private void initFragment() {
-        fragment = (ScanWarehousingFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        fragment = (ScanDeliveryFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (fragment == null) {
-            fragment = ScanWarehousingFragment.newInstance();
+            fragment = ScanDeliveryFragment.newInstance();
             addFragmentToBackStack(fragment, R.id.fragmentContainer);
         }
     }
 
-    private void addFragmentToBackStack(ScanWarehousingFragment fragment, int frameId) {
+    private void addFragmentToBackStack(ScanDeliveryFragment fragment, int frameId) {
         Precondition.checkNotNull(fragment);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(frameId, fragment);

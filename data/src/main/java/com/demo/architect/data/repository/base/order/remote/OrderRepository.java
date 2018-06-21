@@ -2,9 +2,11 @@ package com.demo.architect.data.repository.base.order.remote;
 
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
+import com.demo.architect.data.model.ListCodeOutEntityResponse;
 import com.demo.architect.data.model.OrderACRResponse;
 import com.demo.architect.data.model.OrderRequestEntity;
 import com.demo.architect.data.model.PackageEntity;
+import com.demo.architect.data.model.ProductEntity;
 
 import rx.Observable;
 
@@ -21,6 +23,8 @@ public interface OrderRepository {
 
     Observable<BaseListResponse<PackageEntity>> getAllPackageForRequest(int requestId);
 
+    Observable<ListCodeOutEntityResponse> getAllScanTurnOutACR(int requestId);
+
     Observable<BaseResponse> getMaxPackageForSO(int orderId);
 
     Observable<BaseResponse> addPackageACR(int orderId,int stt, int productId, String codeScan,
@@ -32,8 +36,8 @@ public interface OrderRepository {
                                                   double longitude, String dateCreate, int userId);
 
     Observable<BaseResponse> addLogScanACR(String phone, int orderId, int packageId,
-                                           String codeScan, int number, float latitude,
-                                           float longitude, String activity, int times,
+                                           String codeScan, int number, double latitude,
+                                           double longitude, String activity, int times,
                                            String dateCreate, int userId, int requestId);
 
     Observable<BaseResponse> getMaxTimesACR(int requestId);

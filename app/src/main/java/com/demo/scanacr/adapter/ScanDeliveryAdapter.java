@@ -7,23 +7,23 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.demo.architect.data.model.offline.ScanWarehousingModel;
+import com.demo.architect.data.model.offline.ScanDeliveryModel;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.util.ConvertUtils;
 
 import java.util.List;
 
-public class ScanWarehousingAdapter extends BaseAdapter {
+public class ScanDeliveryAdapter extends BaseAdapter {
     public Context context;
-    private List<ScanWarehousingModel> list;
+    private List<ScanDeliveryModel> list;
 
-    public ScanWarehousingAdapter(Context context, List<ScanWarehousingModel> list) {
+    public ScanDeliveryAdapter(Context context, List<ScanDeliveryModel> list) {
         this.context = context;
         this.list = list;
     }
 
-    public void addItem(ScanWarehousingModel item){
+    public void addItem(ScanDeliveryModel item){
         list.add(item);
         notifyDataSetChanged();
     }
@@ -34,7 +34,7 @@ public class ScanWarehousingAdapter extends BaseAdapter {
     }
 
     @Override
-    public ScanWarehousingModel getItem(int position) {
+    public ScanDeliveryModel getItem(int position) {
         return list.get(position);
     }
 
@@ -55,19 +55,19 @@ public class ScanWarehousingAdapter extends BaseAdapter {
             viewHolder = (HistoryHolder) convertView.getTag();
         }
 
-            final ScanWarehousingModel item = getItem(position);
+            final ScanDeliveryModel item = getItem(position);
             setDataToViews(viewHolder, item);
 
         return convertView;
     }
 
-    private void setDataToViews( HistoryHolder holder, ScanWarehousingModel item) {
+    private void setDataToViews( HistoryHolder holder, ScanDeliveryModel item) {
         holder.txtBarcode.setText(String.format(CoreApplication.getInstance().getString(R.string.text_code_request), item.getBarcode()));
         holder.txtDate.setText(String.format(CoreApplication.getInstance().getString(R.string.text_date_scan), ConvertUtils.ConvertStringToShortDate(item.getDeviceTime())));
 
     }
 
-    public class HistoryHolder {
+    public class HistoryHolder{
 
         TextView txtBarcode;
         TextView txtDate;

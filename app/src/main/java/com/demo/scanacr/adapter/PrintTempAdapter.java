@@ -66,7 +66,7 @@ public class PrintTempAdapter extends BaseAdapter {
         holder.txtSerial.setText(String.valueOf(item.getSerial()));
     }
 
-    public class HistoryHolder extends RecyclerView.ViewHolder {
+    public class HistoryHolder{
 
         TextView txtSerial;
         TextView txtWidth;
@@ -76,7 +76,6 @@ public class PrintTempAdapter extends BaseAdapter {
         TextView txtNumber;
 
         private HistoryHolder(View v) {
-            super(v);
             txtSerial = (TextView) v.findViewById(R.id.txt_serial);
             txtWidth = (TextView) v.findViewById(R.id.txt_width);
             txtHeight = (TextView) v.findViewById(R.id.txt_height);

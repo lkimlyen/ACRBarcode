@@ -10,7 +10,8 @@ import com.demo.architect.data.model.offline.LogScanCreatePack;
 import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.data.model.offline.ProductModel;
-import com.demo.architect.data.model.offline.ScanWarehousingList;
+import com.demo.architect.data.model.offline.ScanDeliveryList;
+import com.demo.architect.data.model.offline.ScanDeliveryModel;
 import com.demo.architect.data.model.offline.ScanWarehousingModel;
 
 import java.util.HashMap;
@@ -84,13 +85,18 @@ public interface LocalRepository {
 
     Observable<Integer> countCodeNotUp(int logId);
 
-    Observable<Boolean> checkExistBarcode(String barcode, int idList);
+    Observable<Boolean> checkExistBarcodeInWarehousing(String barcode);
 
-    Observable<String> addScanWareHousing(ScanWarehousingModel scanWarehousingModel, int idList);
+    Observable<Boolean> checkExistImportWorks(String barcode);
 
-    Observable<Integer> getIdScanWarehousingList();
+    Observable<Boolean> checkExistBarcodeInDelivery(String barcode);
 
-    Observable<ScanWarehousingList> findScanWarehousingList(int idList);
+    Observable<ScanWarehousingModel> addScanWareHousing(ScanWarehousingModel scanWarehousingModel);
+
+    Observable<String> addScanDelivery(final ScanDeliveryModel model, final int times, final String codeRequest);
 
 
+    Observable<ScanDeliveryList> findScanDeliveryNotComplete(String requestCode);
+
+    Observable<String> updateStatusScanDelivery(final int id, final HashMap<String, Integer> map);
 }

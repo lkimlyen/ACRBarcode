@@ -1,6 +1,7 @@
 package com.demo.architect.data.repository.base.local;
 
 import com.demo.architect.data.helper.Constants;
+import com.demo.architect.data.model.offline.ImportWorksModel;
 import com.demo.architect.data.model.offline.LogCompleteCreatePack;
 import com.demo.architect.data.model.offline.LogCompleteCreatePackList;
 import com.demo.architect.data.model.offline.LogCompleteMainList;
@@ -9,12 +10,14 @@ import com.demo.architect.data.model.offline.LogScanCreatePack;
 import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.data.model.offline.ProductModel;
-import com.demo.architect.data.model.offline.ScanWarehousingList;
+import com.demo.architect.data.model.offline.ScanDeliveryList;
+import com.demo.architect.data.model.offline.ScanDeliveryModel;
 import com.demo.architect.data.model.offline.ScanWarehousingModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import io.realm.Realm;
@@ -135,6 +138,21 @@ public class DatabaseRealm {
                 final LogCompleteCreatePack result = realm.where(LogCompleteCreatePack.class).equalTo("id", id).findFirst();
                 result.setStatus(Constants.COMPLETE);
                 result.getProductModel().setNumCompleteScan(result.getProductModel().getNumCompleteScan() + result.getNumInput());
+            }
+        });
+    }
+
+    public void updateStatusScanDelivery(final int id, final HashMap<String, Integer> map) {
+        Realm realm = getRealmInstance();
+
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                ScanDeliveryList parent = realm.where(ScanDeliveryList.class).equalTo("id", id).findFirst();
+                parent.setStatus(Constants.COMPLETE);
+                for (ScanDeliveryModel model : parent.getItemList()) {
+                    model.setServerId(map.get(model.getBarcode()));
+                }
             }
         });
     }
@@ -296,18 +314,24 @@ public class DatabaseRealm {
         });
     }
 
-    public Boolean checkExistScanWarehousing(String barcode, int idList) {
+    public Boolean checkExistScanWarehousing(String barcode) {
         Realm realm = getRealmInstance();
-        ScanWarehousingList list = realm.where(ScanWarehousingList.class).equalTo("id", idList).findFirst();
-        int count = 0;
-        if (list != null) {
-            for (ScanWarehousingModel model : list.getItemList()) {
-                if (model.getBarcode().equals(barcode)) {
-                    count++;
-                }
-            }
-        }
-        return count > 0 ? true : false;
+        RealmResults<ScanWarehousingModel> results = realm.where(ScanWarehousingModel.class).equalTo("barcode", barcode).findAll();
+        return results.size() > 0 ? true : false;
+
+    }
+
+    public Boolean checkExistScanDelivery(String barcode) {
+        Realm realm = getRealmInstance();
+        RealmResults<ScanDeliveryModel> results = realm.where(ScanDeliveryModel.class).equalTo("barcode", barcode).findAll();
+        return results.size() > 0 ? true : false;
+
+    }
+
+    public Boolean checkExistImportWorks(String barcode) {
+        Realm realm = getRealmInstance();
+        RealmResults<ImportWorksModel> results = realm.where(ImportWorksModel.class).equalTo("barcode", barcode).findAll();
+        return results.size() > 0 ? true : false;
 
     }
 
@@ -451,29 +475,38 @@ public class DatabaseRealm {
         return count;
     }
 
-    public void addScanWarehousingAsync(final ScanWarehousingModel model, final int idList) {
+    public ScanWarehousingModel addScanWarehousingAsync(final ScanWarehousingModel model) {
+        Realm realm = getRealmInstance();
+        realm.beginTransaction();
+        ScanWarehousingModel present = realm.copyToRealmOrUpdate(model);
+        realm.commitTransaction();
+        return present;
+    }
+
+
+    public ScanDeliveryList finScanDeliveryNotComplete(String requestCode) {
+        Realm realm = getRealmInstance();
+        return realm.where(ScanDeliveryList.class).equalTo("codeRequest", requestCode).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
+    }
+
+    public void addScanDelivery(final ScanDeliveryModel model, final int times, final String codeRequest) {
         Realm realm = getRealmInstance();
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                ScanWarehousingList parent = realm.where(ScanWarehousingList.class).equalTo("id", idList).findFirst();
+                model.setId(ScanDeliveryModel.id(realm) + 1);
+                ScanDeliveryList parent = realm.where(ScanDeliveryList.class)
+                        .equalTo("codeRequest", codeRequest)
+                        .equalTo("status", Constants.WAITING_UPLOAD).findFirst();
                 if (parent == null) {
-                    parent = new ScanWarehousingList(idList);
+                    parent = new ScanDeliveryList(ScanDeliveryList.id(realm) + 1, times + 1, codeRequest);
                     parent = realm.copyToRealm(parent);
                 }
-                RealmList<ScanWarehousingModel> items = parent.getItemList();
-                ScanWarehousingModel present = realm.copyToRealmOrUpdate(model);
-                items.add(present);
+                RealmList<ScanDeliveryModel> list = parent.getItemList();
+                ScanDeliveryModel item = realm.copyToRealm(model);
+                list.add(item);
             }
         });
-    }
 
-    public int getIdScanWarehousingList() {
-        Realm realm = getRealmInstance();
-        return ScanWarehousingList.id(realm);
-    }
-    public ScanWarehousingList findScanWarehousingList(int idList) {
-        Realm realm = getRealmInstance();
-        return realm.where(ScanWarehousingList.class).equalTo("id", idList).findFirst();
     }
 }

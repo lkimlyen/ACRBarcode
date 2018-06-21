@@ -90,4 +90,7 @@
     <string name="text_package_no_create">Mã gói này chưa được tạo! Hãy thử mã khác!</string>
     <string name="text_barcode_saved">Mã gói này đã được quét! Hãy thử mã khác!</string>
     <string name="text_into_warehousing_success">Nhập vào kho thành công</string>
+    <string name="text_check">Kiểm tra</string>
+    <string name="text_end">Kết thúc</string>
+    <string name="text_upload_success">Tải dữ liệu lên server thành công.</string>
 </resources>

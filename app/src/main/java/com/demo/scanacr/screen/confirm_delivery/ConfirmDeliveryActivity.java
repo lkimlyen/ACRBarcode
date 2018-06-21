@@ -1,4 +1,4 @@
-package com.demo.scanacr.screen.scan_warehousing;
+package com.demo.scanacr.screen.confirm_delivery;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,8 +12,6 @@ import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.app.base.BaseActivity;
 import com.demo.scanacr.app.di.Precondition;
-import com.demo.scanacr.constants.Constants;
-import com.demo.scanacr.screen.print_stemp.PrintStempActivity;
 
 import javax.inject.Inject;
 
@@ -21,15 +19,15 @@ import javax.inject.Inject;
  * Created by MSI on 26/11/2017.
  */
 
-public class ScanWarehousingActivity extends BaseActivity {
+public class ConfirmDeliveryActivity extends BaseActivity {
     public static final int REQUEST_CODE = 123;
     @Inject
-    ScanWarehousingPresenter ScanWarehousingPresenter;
+    ConfirmDeliveryPresenter ConfirmDeliveryPresenter;
 
-    ScanWarehousingFragment fragment;
+    ConfirmDeliveryFragment fragment;
 
     public static void start(Activity activity) {
-        Intent intent = new Intent(activity, ScanWarehousingActivity.class);
+        Intent intent = new Intent(activity, ConfirmDeliveryActivity.class);
         activity.startActivityForResult(intent, REQUEST_CODE);
     }
 
@@ -42,7 +40,7 @@ public class ScanWarehousingActivity extends BaseActivity {
 
         // Create the presenter
         CoreApplication.getInstance().getApplicationComponent()
-                .plus(new ScanWarehousingModule(fragment))
+                .plus(new ConfirmDeliveryModule(fragment))
                 .inject(this);
 
         Window w = getWindow(); // in Activity's onCreate() for instance
@@ -53,14 +51,14 @@ public class ScanWarehousingActivity extends BaseActivity {
     }
 
     private void initFragment() {
-        fragment = (ScanWarehousingFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
+        fragment = (ConfirmDeliveryFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (fragment == null) {
-            fragment = ScanWarehousingFragment.newInstance();
+            fragment = ConfirmDeliveryFragment.newInstance();
             addFragmentToBackStack(fragment, R.id.fragmentContainer);
         }
     }
 
-    private void addFragmentToBackStack(ScanWarehousingFragment fragment, int frameId) {
+    private void addFragmentToBackStack(ConfirmDeliveryFragment fragment, int frameId) {
         Precondition.checkNotNull(fragment);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(frameId, fragment);
@@ -68,17 +66,5 @@ public class ScanWarehousingActivity extends BaseActivity {
         transaction.commit();
     }
 
-    @Override
-    public void onBackPressed() {
-        fragment.back();
-        // super.onBackPressed();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        fragment.onActivityResult(requestCode,resultCode, data);
-
-    }
 
 }

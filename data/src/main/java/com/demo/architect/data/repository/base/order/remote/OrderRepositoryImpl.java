@@ -2,9 +2,11 @@ package com.demo.architect.data.repository.base.order.remote;
 
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
+import com.demo.architect.data.model.ListCodeOutEntityResponse;
 import com.demo.architect.data.model.OrderACRResponse;
 import com.demo.architect.data.model.OrderRequestEntity;
 import com.demo.architect.data.model.PackageEntity;
+import com.demo.architect.data.model.ProductEntity;
 
 import retrofit2.Call;
 import rx.Observable;
@@ -64,6 +66,25 @@ public class OrderRepositoryImpl implements OrderRepository {
     private void handlePackageResponse(Call<BaseListResponse<PackageEntity>> call, Subscriber subscriber) {
         try {
             BaseListResponse<PackageEntity> response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
+
+    private void handleCodeOutResponse(Call<ListCodeOutEntityResponse> call, Subscriber subscriber) {
+        try {
+            ListCodeOutEntityResponse response = call.execute().body();
             if (!subscriber.isUnsubscribed()) {
                 if (response != null) {
                     subscriber.onNext(response);
@@ -141,6 +162,17 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public Observable<ListCodeOutEntityResponse> getAllScanTurnOutACR(final int requestId) {
+        return Observable.create(new Observable.OnSubscribe<ListCodeOutEntityResponse>() {
+            @Override
+            public void call(Subscriber<? super ListCodeOutEntityResponse> subscriber) {
+                handleCodeOutResponse(mRemoteApiInterface.getAllScanTurnOutACR(requestId), subscriber);
+            }
+        });
+    }
+
+
+    @Override
     public Observable<BaseResponse> getMaxPackageForSO(final int orderId) {
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
@@ -178,8 +210,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Observable<BaseResponse> addLogScanACR(final String phone, final int orderId, final int packageId,
-                                                  final String codeScan, final int number, final float latitude,
-                                                  final float longitude, final String activity, final int times,
+                                                  final String codeScan, final int number, final double latitude,
+                                                  final double longitude, final String activity, final int times,
                                                   final String dateCreate, final int userId, final int requestId) {
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override

@@ -3,9 +3,12 @@ package com.demo.architect.data.repository.base.order.remote;
 
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
+import com.demo.architect.data.model.CodeOutEntity;
+import com.demo.architect.data.model.ListCodeOutEntityResponse;
 import com.demo.architect.data.model.OrderACRResponse;
 import com.demo.architect.data.model.OrderRequestEntity;
 import com.demo.architect.data.model.PackageEntity;
+import com.demo.architect.data.model.ProductEntity;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -26,11 +29,15 @@ public interface OrderApiInterface {
     @GET("http://acctest.imark.com.vn/WS/api/GetAllPackage")
     Call<BaseListResponse<PackageEntity>> getAllPackage();
 
-    @GET("http://acctest.imark.com.vn//WS/api/GetAllRequestACR")
+    @GET("http://acctest.imark.com.vn/WS/api/GetAllRequestACR")
     Call<BaseListResponse<OrderRequestEntity>> getAllRequestACR();
 
-    @GET("http://acctest.imark.com.vn//WS/api/GetAllPackageForRequest?pRequestacrID={id}")
-    Call<BaseListResponse<PackageEntity>> getAllPackageForRequest(@Path("id") int requestId);
+    @GET("http://acctest.imark.com.vn/WS/api/GetAllPackageForRequest")
+    Call<BaseListResponse<PackageEntity>> getAllPackageForRequest(@Query("pRequestacrID") int requestId);
+
+
+    @GET("http://acctest.imark.com.vn/WS/api/GetAllScanTurnOutACR")
+    Call<ListCodeOutEntityResponse> getAllScanTurnOutACR(@Query("_pRequestID") int requestId);
 
     @GET("http://acctest.imark.com.vn/WS/api/GetMaxPackageForSO")
     Call<BaseResponse> getMaxPackageForSO(@Query("pOrde_ACR_ID") int orderId);
@@ -66,16 +73,16 @@ public interface OrderApiInterface {
                                      @Field("pPackageID") int packageId,
                                      @Field("pCodeScan") String codeScan,
                                      @Field("pNumber") int number,
-                                     @Field("pLatGPS") float latitude,
-                                     @Field("pLongGPS") float longitude,
+                                     @Field("pLatGPS") double latitude,
+                                     @Field("pLongGPS") double longitude,
                                      @Field("Activity") String activity,
                                      @Field("Times") int times,
                                      @Field("pDeviceDateTime") String dateCreate,
                                      @Field("pUserID") int userId,
                                      @Field("pRequestACRID") int requestId);
 
-    @GET("http://acctest.imark.com.vn/WS/api/GetMaxTimesACR?pRequestID={requestId}")
-    Call<BaseResponse> getMaxTimesACR(@Path("requestId") int requestId);
+    @GET("http://acctest.imark.com.vn/WS/api/GetMaxTimesACR")
+    Call<BaseResponse> getMaxTimesACR(@Query("pRequestID") int requestId);
 
     @GET("http://acctest.imark.com.vn//WS/api/GetAllRequestINACR")
     Call<BaseListResponse<OrderRequestEntity>> getAllRequestINACR();

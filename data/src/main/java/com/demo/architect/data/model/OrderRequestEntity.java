@@ -35,4 +35,9 @@ public class OrderRequestEntity {
     public String getCodeSX() {
         return codeSX;
     }
+
+    @Override
+    public String toString() {
+        return codeSX;
+    }
 }

@@ -74,7 +74,7 @@ public class ScanWarehousingAdapter extends BaseAdapter {
 
         private HistoryHolder(View v) {
             txtBarcode = (TextView) v.findViewById(R.id.txt_barcode);
-            txtDate = (TextView) v.findViewById(R.id.txt_date);
+            txtDate = (TextView) v.findViewById(R.id.txt_date_create);
         }
 
     }

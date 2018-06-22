@@ -17,6 +17,8 @@ public interface ScanDeliveryContract {
 
         void showSuccess(String message);
 
+        void showWarning(String message);
+
         void showListRequest(List<OrderRequestEntity> list);
 
         void showListPackage(ScanDeliveryList list);
@@ -29,8 +31,7 @@ public interface ScanDeliveryContract {
 
         void getPackageForRequest(int requestId);
 
-        void getMaxTimes(int requestId);
+        void getMaxTimes(int requestId, String requestCode);
 
-        void getListScanDelivery(String codeRequest);
     }
 }

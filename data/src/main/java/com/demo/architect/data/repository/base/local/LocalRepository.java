@@ -3,6 +3,7 @@ package com.demo.architect.data.repository.base.local;
 import com.demo.architect.data.model.MessageModel;
 import com.demo.architect.data.model.offline.CustomerModel;
 import com.demo.architect.data.model.offline.IPAddress;
+import com.demo.architect.data.model.offline.ImportWorksModel;
 import com.demo.architect.data.model.offline.LogCompleteCreatePack;
 import com.demo.architect.data.model.offline.LogCompleteCreatePackList;
 import com.demo.architect.data.model.offline.LogCompleteMainList;
@@ -96,7 +97,11 @@ public interface LocalRepository {
     Observable<String> addScanDelivery(final ScanDeliveryModel model, final int times, final String codeRequest);
 
 
+    Observable<ScanDeliveryList> findScanDelivery(int times, String requestCode);
+
     Observable<ScanDeliveryList> findScanDeliveryNotComplete(String requestCode);
 
     Observable<String> updateStatusScanDelivery(final int id, final HashMap<String, Integer> map);
+
+    Observable<ImportWorksModel> addImportWorks(ImportWorksModel model);
 }

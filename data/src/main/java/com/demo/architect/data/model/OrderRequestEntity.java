@@ -20,6 +20,10 @@ public class OrderRequestEntity {
     @Expose
     private String codeSX;
 
+    public OrderRequestEntity(String codeSX) {
+        this.codeSX = codeSX;
+    }
+
     public int getId() {
         return id;
     }

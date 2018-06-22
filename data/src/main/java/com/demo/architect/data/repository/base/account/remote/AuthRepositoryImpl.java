@@ -79,25 +79,6 @@ public class AuthRepositoryImpl implements AuthRepository {
         }
     }
 
-    private void handleResponse(Call<ResponseBody> call, Subscriber subscriber) {
-        try {
-            ResponseBody response = call.execute().body();
-            if (!subscriber.isUnsubscribed()) {
-                if (response != null) {
-                    subscriber.onNext(response);
-                } else {
-                    subscriber.onError(new Exception("Network Error!"));
-                }
-                subscriber.onCompleted();
-            }
-        } catch (Exception e) {
-            if (!subscriber.isUnsubscribed()) {
-                subscriber.onError(e);
-                subscriber.onCompleted();
-            }
-        }
-    }
-
     private void handleStringResponse(Call<String> call, Subscriber subscriber) {
         try {
             String response = call.execute().body();
@@ -143,16 +124,6 @@ public class AuthRepositoryImpl implements AuthRepository {
             @Override
             public void call(Subscriber<? super UpdateAppResponse> subscriber) {
                 handleUpdateResponse(mRemoteApiInterface.getUpdateVersionACR(), subscriber);
-            }
-        });
-    }
-
-    @Override
-    public Observable<ResponseBody> downloadFile(final String url) {
-        return Observable.create(new Observable.OnSubscribe<ResponseBody>() {
-            @Override
-            public void call(Subscriber<? super ResponseBody> subscriber) {
-                handleResponse(mRemoteApiInterface.downloadFile(url), subscriber);
             }
         });
     }

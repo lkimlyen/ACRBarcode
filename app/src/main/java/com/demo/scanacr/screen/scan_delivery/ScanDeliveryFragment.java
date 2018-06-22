@@ -23,6 +23,7 @@ import com.demo.architect.data.model.OrderRequestEntity;
 import com.demo.architect.data.model.offline.ScanDeliveryList;
 import com.demo.scanacr.R;
 import com.demo.scanacr.adapter.DeliveryAdapter;
+import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.app.base.BaseFragment;
 import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.screen.capture.ScanActivity;
@@ -34,6 +35,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -122,6 +124,11 @@ public class ScanDeliveryFragment extends BaseFragment implements ScanDeliveryCo
             public void onClick() {
             }
         });
+
+        List<String> list = new ArrayList<>();
+        list.add(CoreApplication.getInstance().getString(R.string.text_choose_request_produce));
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
+        ssProduce.setAdapter(adapter);
     }
 
     public void checkPermissionLocation() {
@@ -201,6 +208,11 @@ public class ScanDeliveryFragment extends BaseFragment implements ScanDeliveryCo
         showToast(message);
     }
 
+    @Override
+    public void showWarning(String message) {
+        showNotification(message, SweetAlertDialog.WARNING_TYPE);
+    }
+
 
     @Override
     public void showListRequest(List<OrderRequestEntity> list) {
@@ -210,10 +222,12 @@ public class ScanDeliveryFragment extends BaseFragment implements ScanDeliveryCo
         ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                if (position == 0) {
+                    return;
+                }
                 requestId = list.get(position).getId();
                 mPresenter.getPackageForRequest(requestId);
-                mPresenter.getMaxTimes(requestId);
+                mPresenter.getMaxTimes(requestId, list.get(position).getCodeSX());
             }
 
             @Override

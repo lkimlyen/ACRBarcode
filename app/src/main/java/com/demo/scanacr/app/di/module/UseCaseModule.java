@@ -2,30 +2,28 @@ package com.demo.scanacr.app.di.module;
 
 
 
-import android.util.Log;
-
 import com.demo.architect.data.repository.base.account.remote.AuthRepository;
 import com.demo.architect.data.repository.base.order.remote.OrderRepository;
 import com.demo.architect.data.repository.base.product.remote.ProductRepository;
-import com.demo.architect.data.repository.base.product.remote.ProductRepositoryImpl;
 import com.demo.architect.domain.AddLogScanACRUsecase;
 import com.demo.architect.domain.AddLogScanInStoreACRUsecase;
 import com.demo.architect.domain.AddPackageACRUsecase;
 import com.demo.architect.domain.ChangePasswordUsecase;
 import com.demo.architect.domain.DeletePackageDetailUsecase;
 import com.demo.architect.domain.DeletePackageUsecase;
-import com.demo.architect.domain.DownloadFileUsecase;
 import com.demo.architect.domain.GetAllDetailForSOACRUsecase;
 import com.demo.architect.domain.GetAllPackageForRequestUsecase;
 import com.demo.architect.domain.GetAllPackageUsecase;
 import com.demo.architect.domain.GetAllRequestACRInUsecase;
 import com.demo.architect.domain.GetAllRequestACRUsecase;
 import com.demo.architect.domain.GetAllSOACRUsecase;
+import com.demo.architect.domain.GetAllScanTurnOutUsecase;
 import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.architect.domain.GetMaxPackageForSOUsecase;
 import com.demo.architect.domain.GetMaxTimesACRUsecase;
 import com.demo.architect.domain.LoginUsecase;
 import com.demo.architect.domain.UpdateVersionUsecase;
+import com.demo.scanacr.app.CoreApplication;
 
 import dagger.Module;
 import dagger.Provides;
@@ -109,11 +107,6 @@ public class UseCaseModule {
     }
 
     @Provides
-    DownloadFileUsecase provideDownloadFileUsecase(AuthRepository remoteRepository) {
-        return new DownloadFileUsecase(remoteRepository);
-    }
-
-    @Provides
     GetDateServerUsecase provideGetDateServerUsecase(AuthRepository authRepository){
         return new GetDateServerUsecase(authRepository);
     }
@@ -125,6 +118,11 @@ public class UseCaseModule {
     @Provides
     DeletePackageUsecase provideDeletePackageUsecase(OrderRepository authRepository){
         return new DeletePackageUsecase(authRepository);
+    }
+
+    @Provides
+    GetAllScanTurnOutUsecase provideAllScanTurnOutUsecase(OrderRepository orderRepository){
+        return new GetAllScanTurnOutUsecase(orderRepository);
     }
 }
 

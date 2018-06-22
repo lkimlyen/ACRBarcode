@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:layout_height="match_parent">
+    android:orientation="vertical">
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:paddingTop="@dimen/distance_16dp"
         android:paddingBottom="@dimen/distance_16dp"
         android:paddingLeft="@dimen/distance_18dp"
-        android:paddingRight="@dimen/distance_18dp">
+        android:paddingRight="@dimen/distance_18dp"
+        android:paddingTop="@dimen/distance_16dp">
 
 
         <LinearLayout
-            android:gravity="center"
             android:id="@+id/email_login_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
@@ -31,69 +33,80 @@
                 android:text="@string/app_name" />
 
             <LinearLayout
-                android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:orientation="vertical"
                 android:paddingTop="5dp">
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
 
                     <EditText
                         android:id="@+id/edt_username"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/size_40dp"
+                        android:background="@drawable/bg_edittext_stroke_white"
                         android:hint="Tên đăng nhập"
-                        android:textColor="@android:color/black"
                         android:inputType="text"
                         android:maxLines="1"
-                        android:singleLine="true" />
-                </android.support.design.widget.TextInputLayout>
+                        android:padding="@dimen/distance_10dp"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black"
+                        android:textColorHint="@android:color/darker_gray"
+                        android:textSize="@dimen/text_16sp" />
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
 
                     <EditText
                         android:id="@+id/edt_password"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/size_40dp"
+                        android:background="@drawable/bg_edittext_stroke_white"
                         android:hint="Mật khẩu"
+                        android:layout_marginTop="@dimen/distance_10dp"
                         android:imeOptions="actionUnspecified"
                         android:inputType="textPassword"
-                        android:textColor="@android:color/black"
                         android:maxLines="1"
-                        android:singleLine="true" />
-                </android.support.design.widget.TextInputLayout>
+                        android:padding="@dimen/distance_10dp"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black"
+                        android:textColorHint="@android:color/darker_gray"
+                        android:textSize="@dimen/text_16sp" />
 
 
             </LinearLayout>
+
             <LinearLayout
-                android:layout_marginTop="5dp"
-                android:gravity="right"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center_vertical"
                 android:orientation="horizontal">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_choose_server"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_14sp" />
+
                 <Spinner
-                    android:id="@+id/spLink"
+                    android:id="@+id/sp_server"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="10dp"
-                    android:ellipsize="none">
+                    android:layout_marginStart="@dimen/distance_10dp"
+                    android:ellipsize="none"
+                    android:prompt="@string/text_choose_server" />
 
-                </Spinner>
-
-                <Button
-                    android:id="@+id/btn_login"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/text_login" />
             </LinearLayout>
 
+            <Button
+                android:id="@+id/btn_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/distance_10dp"
+                android:background="@drawable/bg_button_blue_small"
+                android:text="@string/text_login"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/text_14sp" />
         </LinearLayout>
 
     </ScrollView>

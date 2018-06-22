@@ -24,7 +24,7 @@ public class GetAllScanTurnOutUsecase extends BaseUseCase {
     @Override
     protected Observable buildUseCaseObservable() {
         int requestId = ((RequestValue) requestValues).requestId;
-        return remoteRepository.getAllPackageForRequest(requestId);
+        return remoteRepository.getAllScanTurnOutACR(requestId);
     }
 
     @Override

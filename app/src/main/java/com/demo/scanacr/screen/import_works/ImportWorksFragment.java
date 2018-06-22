@@ -20,9 +20,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.OrderRequestEntity;
-import com.demo.architect.data.model.offline.ScanDeliveryList;
+import com.demo.architect.data.model.offline.ImportWorksModel;
 import com.demo.scanacr.R;
-import com.demo.scanacr.adapter.DeliveryAdapter;
+import com.demo.scanacr.adapter.WorksAdapter;
+import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.app.base.BaseFragment;
 import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.screen.capture.ScanActivity;
@@ -34,6 +35,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -53,7 +55,7 @@ public class ImportWorksFragment extends BaseFragment implements ImportWorksCont
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
     private FusedLocationProviderClient mFusedLocationClient;
     private Location mLocation;
-    private DeliveryAdapter adapter;
+    private WorksAdapter adapter;
     private final int MY_LOCATION_REQUEST_CODE = 167;
     private int requestId;
 
@@ -122,6 +124,12 @@ public class ImportWorksFragment extends BaseFragment implements ImportWorksCont
             public void onClick() {
             }
         });
+        adapter = new WorksAdapter(getContext(), new ArrayList<ImportWorksModel>());
+        lvCode.setAdapter(adapter);
+        List<String> list = new ArrayList<>();
+        list.add(CoreApplication.getInstance().getString(R.string.text_choose_request_produce));
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
+        ssProduce.setAdapter(adapter);
     }
 
     public void checkPermissionLocation() {
@@ -205,14 +213,17 @@ public class ImportWorksFragment extends BaseFragment implements ImportWorksCont
     @Override
     public void showListRequest(List<OrderRequestEntity> list) {
         ArrayAdapter<OrderRequestEntity> adapter = new ArrayAdapter<OrderRequestEntity>(getContext(), android.R.layout.simple_spinner_item, list);
-
         ssProduce.setAdapter(adapter);
         ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                if (position == 0){
+                    return;
+                }
                 requestId = list.get(position).getId();
-                mPresenter.getPackageForRequest(requestId);
+                mPresenter.getCodeScan(requestId);
+                edtBarcode.setText("");
+                ImportWorksFragment.this.adapter.clearItem();
             }
 
             @Override
@@ -223,10 +234,10 @@ public class ImportWorksFragment extends BaseFragment implements ImportWorksCont
     }
 
     @Override
-    public void showListPackage(ScanDeliveryList list) {
-        adapter = new DeliveryAdapter(list.getItemList());
-        lvCode.setAdapter(adapter);
+    public void showListPackage(ImportWorksModel model) {
+        adapter.addItem(model);
     }
+
 
     public void showToast(String message) {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);

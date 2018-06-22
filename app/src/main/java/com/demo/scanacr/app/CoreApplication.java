@@ -11,14 +11,15 @@ import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.demo.scanacr.R;
 import com.demo.scanacr.app.bus.MainThreadBus;
 import com.demo.scanacr.app.di.component.ApplicationComponent;
 import com.demo.scanacr.app.di.component.DaggerApplicationComponent;
 import com.demo.scanacr.app.di.module.ApplicationModule;
 import com.demo.scanacr.app.di.module.NetModule;
 import com.demo.scanacr.app.di.module.UseCaseModule;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
+import com.demo.scanacr.constants.Constants;
+import com.demo.scanacr.manager.ServerManager;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.otto.Bus;
@@ -105,16 +106,17 @@ public class CoreApplication extends MultiDexApplication implements Application.
         Realm.init(this);
 
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder()
+                .name(getString(R.string.text_name_database))
                 .deleteRealmIfMigrationNeeded()
                 //.modules(Realm.getDefaultModule(), new AllModel())
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);
     }
 
-    private void initializeDagger() {
+    public void initializeDagger() {
         this.applicationComponent = DaggerApplicationComponent.builder()
                 .applicationModule(new ApplicationModule(this))
-                .netModule(new NetModule("http://google.com/"))
+                .netModule(new NetModule(Constants.SERVER_TEST))
                 .useCaseModule(new UseCaseModule())
                 .build();
 
@@ -122,11 +124,12 @@ public class CoreApplication extends MultiDexApplication implements Application.
     }
 
     private void initializeCalligraphy() {
-       
+
     }
 
     /**
      * Gets the default {@link Tracker} for this {@link Application}.
+     *
      * @return tracker
      */
 

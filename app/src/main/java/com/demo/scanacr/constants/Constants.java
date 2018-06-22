@@ -26,5 +26,10 @@ public class Constants {
 
     public static final String CREATE_PACK = "CREATE_PACK";
 
+    public static final String SERVER_MAIN = "http://acc.imark.com.vn";
+
+    public static final String SERVER_TEST = "http://acctest.imark.com.vn";
+
+    public static final String KEY_SERVER = "SERVER";
 
 }

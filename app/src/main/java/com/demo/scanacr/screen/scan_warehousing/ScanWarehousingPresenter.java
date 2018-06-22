@@ -133,6 +133,7 @@ public class ScanWarehousingPresenter implements ScanWarehousingContract.Present
                                         AddLogScanInStoreACRUsecase.ErrorValue>() {
                                     @Override
                                     public void onSuccess(AddLogScanInStoreACRUsecase.ResponseValue successResponse) {
+                                        view.hideProgressBar();
                                         ScanWarehousingModel model = new ScanWarehousingModel(successResponse.getId(),
                                                 barcode, deviceTime, timeServer, latitude, longitude, phone,
                                                 packageEntity.getId(), packageEntity.getOrderID(), packageEntity.getSTT(),  userId);

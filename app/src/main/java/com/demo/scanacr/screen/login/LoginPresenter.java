@@ -2,11 +2,12 @@ package com.demo.scanacr.screen.login;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
+
+import com.demo.architect.data.Def;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.LoginUsecase;
-import com.demo.scanacr.app.CoreApplication;
+import com.demo.scanacr.manager.ServerManager;
 import com.demo.scanacr.manager.UserManager;
 import com.google.gson.Gson;
 
@@ -72,6 +73,11 @@ public class LoginPresenter implements LoginContract.Presenter {
                 view.loginError(errorResponse.getDescription());
             }
         });
+    }
+
+    @Override
+    public void saveServer(String server) {
+        ServerManager.getInstance().setServer(server);
     }
 
 

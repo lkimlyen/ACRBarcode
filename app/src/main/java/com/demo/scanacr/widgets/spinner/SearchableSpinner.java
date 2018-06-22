@@ -113,7 +113,7 @@ public class SearchableSpinner extends android.support.v7.widget.AppCompatSpinne
                 // Description: The items were only set initially, not reloading the data in the
                 // spinner every time it is loaded with items in the adapter.
                 _items.clear();
-                for (int i = 0; i < _arrayAdapter.getCount(); i++) {
+                for (int i = 1; i < _arrayAdapter.getCount(); i++) {
                     _items.add(_arrayAdapter.getItem(i));
                 }
                 // Change end.

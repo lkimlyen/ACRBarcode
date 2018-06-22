@@ -1,8 +1,16 @@
 package com.demo.scanacr.util;
 
+import android.os.Environment;
+
+import com.demo.scanacr.R;
+import com.demo.scanacr.app.CoreApplication;
+
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import io.realm.Realm;
 
 /**
  * Created by PC on 13-Apr-2018.
@@ -13,6 +21,7 @@ public class ConvertUtils {
     public static final String DATE_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
 
     public static final String APP_DATETIME_FORMAT = "MM/dd/yyyy HH:mm:ss";
+
     public static int ConvertStringMoneyToInt(String s) {
         if (s.toString().trim().equals("")) {
             return 0;
@@ -48,5 +57,24 @@ public class ConvertUtils {
         return newFormat;
     }
 
+    public static String exportRealmFile() {
+        final Realm realm = Realm.getDefaultInstance();
+        String filePath = "";
+        try {
+            final File file = new File(Environment.getExternalStorageDirectory().getPath().concat(
+                    CoreApplication.getInstance().getString(R.string.text_path_file) + CoreApplication.getInstance()
+                            .getString(R.string.text_name_database)));
+            if (file.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                file.delete();
+            }
 
+            realm.writeCopyTo(file);
+            filePath = file.getParent();
+        } catch (Exception e) {
+            realm.close();
+            e.printStackTrace();
+        }
+        return filePath;
+    }
 }

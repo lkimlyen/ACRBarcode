@@ -3,18 +3,23 @@ package com.demo.scanacr.screen.confirm_delivery;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.demo.architect.data.model.OrderRequestEntity;
+import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.data.model.offline.ScanDeliveryList;
 import com.demo.architect.data.model.offline.ScanDeliveryModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.AddLogScanACRUsecase;
 import com.demo.architect.domain.BaseUseCase;
+import com.demo.architect.domain.GetAllRequestACRUsecase;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.manager.ListRequestManager;
 import com.demo.scanacr.manager.ScanDeliveryManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -29,13 +34,15 @@ public class ConfirmDeliveryPresenter implements ConfirmDeliveryContract.Present
     private final String TAG = ConfirmDeliveryPresenter.class.getName();
     private final ConfirmDeliveryContract.View view;
     private final AddLogScanACRUsecase addLogScanACRUsecase;
+    private final GetAllRequestACRUsecase allRequestACRUsecase;
     @Inject
     LocalRepository localRepository;
 
     @Inject
-    ConfirmDeliveryPresenter(@NonNull ConfirmDeliveryContract.View view, AddLogScanACRUsecase addLogScanACRUsecase) {
+    ConfirmDeliveryPresenter(@NonNull ConfirmDeliveryContract.View view, AddLogScanACRUsecase addLogScanACRUsecase, GetAllRequestACRUsecase allRequestACRUsecase) {
         this.view = view;
         this.addLogScanACRUsecase = addLogScanACRUsecase;
+        this.allRequestACRUsecase = allRequestACRUsecase;
     }
 
     @Inject
@@ -57,7 +64,26 @@ public class ConfirmDeliveryPresenter implements ConfirmDeliveryContract.Present
 
     @Override
     public void getRequest() {
-        view.showListRequest(ListRequestManager.getInstance().getListRequest());
+        view.showProgressBar();
+        allRequestACRUsecase.executeIO(new GetAllRequestACRUsecase.RequestValue(),
+                new BaseUseCase.UseCaseCallback<GetAllRequestACRUsecase.ResponseValue,
+                        GetAllRequestACRUsecase.ErrorValue>() {
+                    @Override
+                    public void onSuccess(GetAllRequestACRUsecase.ResponseValue successResponse) {
+                        view.hideProgressBar();
+                        ListRequestManager.getInstance().setListRequest(successResponse.getEntity());
+                        List<OrderRequestEntity> list = new ArrayList<>();
+                        list.add(new OrderRequestEntity(CoreApplication.getInstance().getString(R.string.text_choose_request_produce)));
+                        list.addAll(successResponse.getEntity());
+                        view.showListRequest(list);
+                    }
+
+                    @Override
+                    public void onError(GetAllRequestACRUsecase.ErrorValue errorResponse) {
+                        view.hideProgressBar();
+                        view.showError(errorResponse.getDescription());
+                    }
+                });
     }
 
     @Override
@@ -71,7 +97,6 @@ public class ConfirmDeliveryPresenter implements ConfirmDeliveryContract.Present
         });
 
     }
-
     private int count = 0;
 
     @Override

@@ -113,7 +113,10 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
         localRepository.findAllOrder().subscribe(new Action1<List<OrderModel>>() {
             @Override
             public void call(List<OrderModel> orderModels) {
-                view.showRequestProduction(orderModels);
+                List<OrderModel> list = new ArrayList<>();
+                list.add(new OrderModel(CoreApplication.getInstance().getString(R.string.text_choose_request_produce)));
+                list.addAll(orderModels);
+                view.showRequestProduction(list);
             }
         });
 

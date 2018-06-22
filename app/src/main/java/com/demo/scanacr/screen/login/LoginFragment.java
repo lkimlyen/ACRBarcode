@@ -5,10 +5,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.base.BaseFragment;
+import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.screen.dashboard.DashboardActivity;
 import com.demo.scanacr.util.Precondition;
 
@@ -28,6 +32,9 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
 
     @Bind(R.id.edt_password)
     EditText edtPassword;
+
+    @Bind(R.id.sp_server)
+    Spinner spServer;
 
     private LoginContract.Presenter mPresenter;
 
@@ -57,8 +64,34 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_login, container, false);
         ButterKnife.bind(this, view);
-
+        initView();
         return view;
+    }
+
+    private void initView() {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.server, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spServer.setAdapter(adapter);
+
+        spServer.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position) {
+                    case 1:
+                        mPresenter.saveServer(Constants.SERVER_MAIN);
+                        break;
+                    case 2:
+                        mPresenter.saveServer(Constants.SERVER_TEST);
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
 
@@ -91,12 +124,17 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
 
     @OnClick(R.id.btn_login)
     public void login() {
-        if (edtUsername.getText().toString().equals("")){
+        if (edtUsername.getText().toString().equals("")) {
             showNotification(getString(R.string.text_username_null), SweetAlertDialog.WARNING_TYPE);
             return;
         }
-        if (edtPassword.getText().toString().equals("")){
-            showNotification(getString(R.string.text_password_null),SweetAlertDialog.WARNING_TYPE);
+        if (edtPassword.getText().toString().equals("")) {
+            showNotification(getString(R.string.text_password_null), SweetAlertDialog.WARNING_TYPE);
+            return;
+        }
+
+        if (spServer.getSelectedItem().toString().equals(getString(R.string.text_choose_server))) {
+            showNotification(getString(R.string.text_server_null), SweetAlertDialog.WARNING_TYPE);
             return;
         }
         mPresenter.login(edtUsername.getText().toString(), edtPassword.getText().toString());
@@ -127,4 +165,5 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
         DashboardActivity.start(getContext());
         getActivity().finish();
     }
+
 }

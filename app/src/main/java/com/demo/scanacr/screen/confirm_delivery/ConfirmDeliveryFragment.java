@@ -19,10 +19,12 @@ import com.demo.architect.data.model.OrderRequestEntity;
 import com.demo.architect.data.model.offline.ScanDeliveryList;
 import com.demo.scanacr.R;
 import com.demo.scanacr.adapter.DeliveryAdapter;
+import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.app.base.BaseFragment;
 import com.demo.scanacr.util.Precondition;
 import com.demo.scanacr.widgets.spinner.SearchableSpinner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -111,6 +113,10 @@ public class ConfirmDeliveryFragment extends BaseFragment implements ConfirmDeli
 
             }
         });
+        List<String> list = new ArrayList<>();
+        list.add(CoreApplication.getInstance().getString(R.string.text_choose_request_produce));
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
+        ssProduce.setAdapter(adapter);
     }
 
 
@@ -164,6 +170,7 @@ public class ConfirmDeliveryFragment extends BaseFragment implements ConfirmDeli
     @Override
     public void showSuccess(String message) {
         showNotification(message, SweetAlertDialog.SUCCESS_TYPE);
+        btnScan.setVisibility(View.GONE);
     }
 
     @Override
@@ -174,7 +181,7 @@ public class ConfirmDeliveryFragment extends BaseFragment implements ConfirmDeli
         ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                requestCode = list.get(position).getCodeRequest();
+                requestCode = list.get(position).getCodeSX();
             }
 
             @Override
@@ -212,7 +219,6 @@ public class ConfirmDeliveryFragment extends BaseFragment implements ConfirmDeli
         toast.show();
 
     }
-
 
     @OnClick(R.id.img_back)
     public void back() {

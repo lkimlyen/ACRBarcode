@@ -16,11 +16,13 @@ import com.demo.architect.data.model.offline.LogCompleteMainList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.scanacr.R;
 import com.demo.scanacr.adapter.HistoryCreatePackAdapter;
+import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.app.base.BaseFragment;
 import com.demo.scanacr.screen.detail_package.DetailPackageActivity;
 import com.demo.scanacr.util.Precondition;
 import com.demo.scanacr.widgets.spinner.SearchableSpinner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -87,6 +89,10 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
             }
         });
         mPresenter.getRequestProduce();
+        List<String> list = new ArrayList<>();
+        list.add(CoreApplication.getInstance().getString(R.string.text_choose_request_produce));
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
+        ssProduce.setAdapter(adapter);
     }
 
 
@@ -149,6 +155,9 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
         ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position == 0){
+                    return;
+                }
                 txtCodeSO.setText(list.get(position).getCodeSO());
                 orderId = list.get(position).getId();
                 //  mPresenter.getCodeScan(list.get(position).getId());

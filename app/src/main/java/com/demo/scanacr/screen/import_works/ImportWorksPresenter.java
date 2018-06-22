@@ -6,7 +6,8 @@ import android.util.Log;
 
 import com.demo.architect.data.model.CodeOutEntity;
 import com.demo.architect.data.model.OrderRequestEntity;
-import com.demo.architect.data.model.ProductEntity;
+import com.demo.architect.data.model.offline.ImportWorksModel;
+import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.AddLogScanACRUsecase;
 import com.demo.architect.domain.BaseUseCase;
@@ -21,6 +22,9 @@ import com.demo.scanacr.manager.ListCodeScanManager;
 import com.demo.scanacr.manager.ListRequestInManager;
 import com.demo.scanacr.manager.UserManager;
 import com.demo.scanacr.util.ConvertUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -104,18 +108,21 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
     @Override
     public void getRequest() {
         view.showProgressBar();
-        allRequestACRUsecase.executeIO(new GetAllRequestACRUsecase.RequestValue(),
-                new BaseUseCase.UseCaseCallback<GetAllRequestACRUsecase.ResponseValue,
-                        GetAllRequestACRUsecase.ErrorValue>() {
+        allRequestACRUsecase.executeIO(new GetAllRequestACRInUsecase.RequestValue(),
+                new BaseUseCase.UseCaseCallback<GetAllRequestACRInUsecase.ResponseValue,
+                        GetAllRequestACRInUsecase.ErrorValue>() {
                     @Override
-                    public void onSuccess(GetAllRequestACRUsecase.ResponseValue successResponse) {
+                    public void onSuccess(GetAllRequestACRInUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
                         ListRequestInManager.getInstance().setListRequest(successResponse.getEntity());
-                        view.showListRequest(successResponse.getEntity());
+                        List<OrderRequestEntity> list = new ArrayList<>();
+                        list.add(new OrderRequestEntity(CoreApplication.getInstance().getString(R.string.text_choose_request_produce)));
+                        list.addAll(successResponse.getEntity());
+                        view.showListRequest(list);
                     }
 
                     @Override
-                    public void onError(GetAllRequestACRUsecase.ErrorValue errorResponse) {
+                    public void onError(GetAllRequestACRInUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
                         view.showError(errorResponse.getDescription());
                         ListRequestInManager.getInstance().setListRequest(null);
@@ -158,14 +165,23 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
                     public void onSuccess(GetDateServerUsecase.ResponseValue successResponse) {
                         String timeServer = successResponse.getDate();
                         addLogScanACRUsecase.executeIO(new AddLogScanACRUsecase.RequestValue(phone,
-                                codeOutEntity.getOrderId(), codeOutEntity.getPackageId(), barcode, 1,latitude,
-                                longitude, Constants.IN, 0,deviceTime, userId,
+                                codeOutEntity.getOrderId(), codeOutEntity.getPackageId(), barcode, 1, latitude,
+                                longitude, Constants.IN, 0, deviceTime, userId,
                                 codeOutEntity.getRequestId()), new BaseUseCase.UseCaseCallback<AddLogScanACRUsecase.ResponseValue,
                                 AddLogScanACRUsecase.ErrorValue>() {
                             @Override
                             public void onSuccess(AddLogScanACRUsecase.ResponseValue successResponse) {
                                 view.hideProgressBar();
-
+                                ImportWorksModel model = new ImportWorksModel(successResponse.getId(), barcode,
+                                        deviceTime, timeServer, latitude, longitude, phone, codeOutEntity.getPackageId(),
+                                        codeOutEntity.getOrderId(), codeOutEntity.getRequestId(),
+                                        userId);
+                                localRepository.addImportWorks(model).subscribe(new Action1<ImportWorksModel>() {
+                                    @Override
+                                    public void call(ImportWorksModel model) {
+                                        view.showListPackage(model);
+                                    }
+                                });
                             }
 
                             @Override

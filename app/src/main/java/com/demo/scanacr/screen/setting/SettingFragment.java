@@ -29,8 +29,6 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class SettingFragment extends BaseFragment implements SettingContract.View {
     private final String TAG = SettingFragment.class.getName();
 
-    public static final String MESSAGE_PROGRESS = "message_progress";
-    private static final int PERMISSION_REQUEST_CODE = 1;
     private SettingContract.Presenter mPresenter;
     private IPAddress mModel;
     @Bind(R.id.txt_version)
@@ -95,10 +93,7 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
 
     @OnClick(R.id.btn_check_update)
     public void checkUpdate() {
-
         mPresenter.updateApp();
-
-
     }
 
     public void showNotification(String content, int type) {
@@ -137,6 +132,18 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
         mModel = model;
     }
 
+    @Override
+    public void showSuccess(String message) {
+
+        showNotification(message, SweetAlertDialog.SUCCESS_TYPE);
+
+    }
+
+    @Override
+    public void showError(String message) {
+        showNotification(message, SweetAlertDialog.ERROR_TYPE);
+    }
+
 
     @OnClick(R.id.btn_change_ip_address)
     public void changeIPAddress() {
@@ -166,5 +173,10 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
     @OnClick(R.id.img_back)
     public void back() {
         getActivity().finish();
+    }
+
+    @OnClick(R.id.btn_clone)
+    public void cloneData() {
+        mPresenter.cloneDataAndSendMail();
     }
 }

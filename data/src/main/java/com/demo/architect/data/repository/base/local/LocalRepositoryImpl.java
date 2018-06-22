@@ -3,6 +3,7 @@ package com.demo.architect.data.repository.base.local;
 import com.demo.architect.data.model.MessageModel;
 import com.demo.architect.data.model.offline.CustomerModel;
 import com.demo.architect.data.model.offline.IPAddress;
+import com.demo.architect.data.model.offline.ImportWorksModel;
 import com.demo.architect.data.model.offline.LogCompleteCreatePack;
 import com.demo.architect.data.model.offline.LogCompleteCreatePackList;
 import com.demo.architect.data.model.offline.LogCompleteMainList;
@@ -687,6 +688,22 @@ public class LocalRepositoryImpl implements LocalRepository {
         });
     }
 
+    @Override
+    public Observable<ScanDeliveryList> findScanDelivery(final int times, final String requestCode) {
+        return Observable.create(new Observable.OnSubscribe<ScanDeliveryList>() {
+            @Override
+            public void call(Subscriber<? super ScanDeliveryList> subscriber) {
+                try {
+                    ScanDeliveryList model = databaseRealm.finScanDeliveryAndAdd(times,requestCode);
+                    subscriber.onNext(model);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
 
     @Override
     public Observable<ScanDeliveryList> findScanDeliveryNotComplete(final String requestCode) {
@@ -714,6 +731,23 @@ public class LocalRepositoryImpl implements LocalRepository {
 
                     databaseRealm.updateStatusScanDelivery(id, map);
                     subscriber.onNext("");
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<ImportWorksModel> addImportWorks(final ImportWorksModel model) {
+        return Observable.create(new Observable.OnSubscribe<ImportWorksModel>() {
+            @Override
+            public void call(Subscriber<? super ImportWorksModel> subscriber) {
+                try {
+
+                    ImportWorksModel item =  databaseRealm.addImportWorks(model);
+                    subscriber.onNext(item);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

@@ -1,6 +1,7 @@
 package com.demo.scanacr.screen.confirm_delivery;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,15 +21,14 @@ import javax.inject.Inject;
  */
 
 public class ConfirmDeliveryActivity extends BaseActivity {
-    public static final int REQUEST_CODE = 123;
     @Inject
     ConfirmDeliveryPresenter ConfirmDeliveryPresenter;
 
     ConfirmDeliveryFragment fragment;
 
-    public static void start(Activity activity) {
-        Intent intent = new Intent(activity, ConfirmDeliveryActivity.class);
-        activity.startActivityForResult(intent, REQUEST_CODE);
+    public static void start(Context context) {
+        Intent intent = new Intent(context, ConfirmDeliveryActivity.class);
+        context.startActivity(intent);
     }
 
     @Override

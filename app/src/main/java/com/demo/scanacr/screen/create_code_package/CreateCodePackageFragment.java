@@ -23,6 +23,7 @@ import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.scanacr.R;
 import com.demo.scanacr.adapter.CreateCodePackAdapter;
+import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.app.base.BaseFragment;
 import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.screen.capture.ScanActivity;
@@ -35,6 +36,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -125,6 +127,10 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
             }
         });
         mPresenter.getRequestProduction();
+        List<String> list = new ArrayList<>();
+        list.add(CoreApplication.getInstance().getString(R.string.text_choose_request_produce));
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
+        ssProduce.setAdapter(adapter);
     }
 
 
@@ -182,12 +188,16 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
 
     @Override
     public void showRequestProduction(List<OrderModel> list) {
+
         ArrayAdapter<OrderModel> adapter = new ArrayAdapter<OrderModel>(getContext(), android.R.layout.simple_spinner_item, list);
 
         ssProduce.setAdapter(adapter);
         ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    return;
+                }
                 txtCodeSO.setText(list.get(position).getCodeSO());
                 txtCustomerName.setText(list.get(position).getCustomerName());
                 mPresenter.getProduct(list.get(position).getId());

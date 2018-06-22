@@ -13,12 +13,15 @@ public interface SettingContract {
         void installApp(String path);
         void showVersion(String version);
         void showIPAddress(IPAddress model);
+        void showSuccess(String message);
+        void showError(String message);
     }
 
     interface Presenter extends BasePresenter {
         void updateApp();
-        void getVersion();
+        String getVersion();
         void saveIPAddress(String ipAddress, int port);
         void getIPAddress();
+        void cloneDataAndSendMail();
     }
 }

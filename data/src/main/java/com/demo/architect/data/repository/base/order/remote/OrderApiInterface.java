@@ -23,27 +23,27 @@ import retrofit2.http.Query;
  */
 
 public interface OrderApiInterface {
-    @GET("http://acctest.imark.com.vn/WS/api/GetAllSOACR")
+    @GET("/WS/api/GetAllSOACR")
     Call<OrderACRResponse> getAllSOACR();
 
-    @GET("http://acctest.imark.com.vn/WS/api/GetAllPackage")
+    @GET("/WS/api/GetAllPackage")
     Call<BaseListResponse<PackageEntity>> getAllPackage();
 
-    @GET("http://acctest.imark.com.vn/WS/api/GetAllRequestACR")
+    @GET("/WS/api/GetAllRequestACR")
     Call<BaseListResponse<OrderRequestEntity>> getAllRequestACR();
 
-    @GET("http://acctest.imark.com.vn/WS/api/GetAllPackageForRequest")
+    @GET("/WS/api/GetAllPackageForRequest")
     Call<BaseListResponse<PackageEntity>> getAllPackageForRequest(@Query("pRequestacrID") int requestId);
 
 
-    @GET("http://acctest.imark.com.vn/WS/api/GetAllScanTurnOutACR")
+    @GET("/WS/api/GetAllScanTurnOutACR")
     Call<ListCodeOutEntityResponse> getAllScanTurnOutACR(@Query("_pRequestID") int requestId);
 
-    @GET("http://acctest.imark.com.vn/WS/api/GetMaxPackageForSO")
+    @GET("/WS/api/GetMaxPackageForSO")
     Call<BaseResponse> getMaxPackageForSO(@Query("pOrde_ACR_ID") int orderId);
 
     @FormUrlEncoded
-    @POST("http://acctest.imark.com.vn/WS/api/AddPackageACR")
+    @POST("/WS/api/AddPackageACR")
     Call<BaseResponse> addPackageACR(@Field("pOrde_ACR_ID") int orderId,
                                      @Field("pNo") int stt,
                                      @Field("pProductID") int productId,
@@ -55,7 +55,7 @@ public interface OrderApiInterface {
                                      @Field("pUserID") int userId);
 
     @FormUrlEncoded
-    @POST("http://acctest.imark.com.vn/WS/api/AddLogScanInStoreACR")
+    @POST("/WS/api/AddLogScanInStoreACR")
     Call<BaseResponse> addLogScanInStoreACR(@Field("pPhone") String phone,
                                             @Field("pOrderACRID") int orderId,
                                             @Field("pPackageID") int packageId,
@@ -67,7 +67,7 @@ public interface OrderApiInterface {
                                             @Field("pUserID") int userId);
 
     @FormUrlEncoded
-    @POST("http://acctest.imark.com.vn/WS/api/AddLogScanACR")
+    @POST("/WS/api/AddLogScanACR")
     Call<BaseResponse> addLogScanACR(@Field("pPhone") String phone,
                                      @Field("pOrderACRID") int orderId,
                                      @Field("pPackageID") int packageId,
@@ -75,26 +75,26 @@ public interface OrderApiInterface {
                                      @Field("pNumber") int number,
                                      @Field("pLatGPS") double latitude,
                                      @Field("pLongGPS") double longitude,
-                                     @Field("Activity") String activity,
-                                     @Field("Times") int times,
+                                     @Field("pActivity") String activity,
+                                     @Field("pTimes") int times,
                                      @Field("pDeviceDateTime") String dateCreate,
                                      @Field("pUserID") int userId,
                                      @Field("pRequestACRID") int requestId);
 
-    @GET("http://acctest.imark.com.vn/WS/api/GetMaxTimesACR")
+    @GET("/WS/api/GetMaxTimesACR")
     Call<BaseResponse> getMaxTimesACR(@Query("pRequestID") int requestId);
 
-    @GET("http://acctest.imark.com.vn//WS/api/GetAllRequestINACR")
+    @GET("/WS/api/GetAllRequestINACR")
     Call<BaseListResponse<OrderRequestEntity>> getAllRequestINACR();
 
     @FormUrlEncoded
-    @POST("http://acctest.imark.com.vn/WS/api/DeletePackageDetailACR")
+    @POST("/WS/api/DeletePackageDetailACR")
     Call<BaseResponse> deletePackageDetailACR(@Field("pPackageID") int packageId,
                                      @Field("pProductID") int productId,
                                      @Field("pUserID") int userId);
 
     @FormUrlEncoded
-    @POST("http://acctest.imark.com.vn/WS/api/DeletePackageACR")
+    @POST("/WS/api/DeletePackageACR")
     Call<BaseResponse> deletePackageACR(@Field("pPackageID") int packageId,
                                               @Field("pUserID") int userId);
 

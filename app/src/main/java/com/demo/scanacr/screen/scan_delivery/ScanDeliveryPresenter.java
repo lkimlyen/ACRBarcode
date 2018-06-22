@@ -4,6 +4,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.demo.architect.data.model.OrderRequestEntity;
 import com.demo.architect.data.model.PackageEntity;
 import com.demo.architect.data.model.offline.ScanDeliveryList;
 import com.demo.architect.data.model.offline.ScanDeliveryModel;
@@ -19,6 +20,9 @@ import com.demo.scanacr.manager.ListPackageManager;
 import com.demo.scanacr.manager.ListRequestManager;
 import com.demo.scanacr.manager.UserManager;
 import com.demo.scanacr.util.ConvertUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -37,7 +41,6 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
     private final GetAllPackageForRequestUsecase getAllPackageForRequestUsecase;
     private final GetMaxTimesACRUsecase getMaxTimesACRUsecase;
     private int times;
-    private boolean getList = false;
     @Inject
     LocalRepository localRepository;
 
@@ -114,7 +117,10 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                     public void onSuccess(GetAllRequestACRUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
                         ListRequestManager.getInstance().setListRequest(successResponse.getEntity());
-                        view.showListRequest(successResponse.getEntity());
+                        List<OrderRequestEntity> list = new ArrayList<>();
+                        list.add(new OrderRequestEntity(CoreApplication.getInstance().getString(R.string.text_choose_request_produce)));
+                        list.addAll(successResponse.getEntity());
+                        view.showListRequest(list);
                     }
 
                     @Override
@@ -135,6 +141,11 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                     public void onSuccess(GetAllPackageForRequestUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
                         ListPackageManager.getInstance().setListPackage(successResponse.getEntity());
+                        if (successResponse.getEntity().size() == 0){
+                            view.showWarning(CoreApplication.getInstance().getString(R.string.text_code_null));
+                        }else {
+                            view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_package_success));
+                        }
                     }
 
                     @Override
@@ -148,7 +159,7 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
     }
 
     @Override
-    public void getMaxTimes(int requestId) {
+    public void getMaxTimes(int requestId, String requestCode) {
         view.showProgressBar();
         getMaxTimesACRUsecase.executeIO(new GetMaxTimesACRUsecase.RequestValue(requestId),
                 new BaseUseCase.UseCaseCallback<GetMaxTimesACRUsecase.ResponseValue,
@@ -157,6 +168,12 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                     public void onSuccess(GetMaxTimesACRUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
                         times = successResponse.getNumber();
+                        localRepository.findScanDelivery(successResponse.getNumber(), requestCode).subscribe(new Action1<ScanDeliveryList>() {
+                            @Override
+                            public void call(ScanDeliveryList list) {
+                                view.showListPackage(list);
+                            }
+                        });
                     }
 
                     @Override
@@ -168,18 +185,6 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                 });
     }
 
-    @Override
-    public void getListScanDelivery(String codeRequest) {
-        localRepository.findScanDeliveryNotComplete(codeRequest).subscribe(new Action1<ScanDeliveryList>() {
-            @Override
-            public void call(ScanDeliveryList scanDeliveryList) {
-                if (scanDeliveryList != null) {
-                    view.showListPackage(scanDeliveryList);
-                    getList = true;
-                }
-            }
-        });
-    }
 
     public void saveBarcode(String barcode, double latitude, double longitude, int requestId, PackageEntity packageEntity) {
         view.showProgressBar();
@@ -192,15 +197,13 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                         GetDateServerUsecase.ErrorValue>() {
                     @Override
                     public void onSuccess(GetDateServerUsecase.ResponseValue successResponse) {
-
+                        view.hideProgressBar();
                         ScanDeliveryModel model = new ScanDeliveryModel(barcode, deviceTime, successResponse.getDate(), latitude, longitude, phone,
                                 packageEntity.getId(), packageEntity.getOrderID(), requestId, packageEntity.getSTT(), userId);
                         localRepository.addScanDelivery(model, times, packageEntity.getCodeSX()).subscribe(new Action1<String>() {
                             @Override
                             public void call(String s) {
-                                if (!getList){
-                                    getListScanDelivery(packageEntity.getCodeSX());
-                                }
+                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                             }
                         });
 

@@ -1,12 +1,13 @@
 package com.demo.architect.data.repository.base.order.remote;
 
+import android.content.Context;
+
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.ListCodeOutEntityResponse;
 import com.demo.architect.data.model.OrderACRResponse;
 import com.demo.architect.data.model.OrderRequestEntity;
 import com.demo.architect.data.model.PackageEntity;
-import com.demo.architect.data.model.ProductEntity;
 
 import rx.Observable;
 
@@ -27,7 +28,7 @@ public interface OrderRepository {
 
     Observable<BaseResponse> getMaxPackageForSO(int orderId);
 
-    Observable<BaseResponse> addPackageACR(int orderId,int stt, int productId, String codeScan,
+    Observable<BaseResponse> addPackageACR(int orderId, int stt, int productId, String codeScan,
                                            int number, double latitude, double longitude,
                                            String dateCreate, int userId);
 
@@ -43,8 +44,9 @@ public interface OrderRepository {
     Observable<BaseResponse> getMaxTimesACR(int requestId);
 
     Observable<BaseListResponse<OrderRequestEntity>> getAllRequestINACR();
-    Observable<BaseResponse> deletePackageDetailACR(int packageID,int productId, int userId);
 
-    Observable<BaseResponse> deletePackage(int packageID,int userId);
+    Observable<BaseResponse> deletePackageDetailACR(int packageID, int productId, int userId);
+
+    Observable<BaseResponse> deletePackage(int packageID, int userId);
 
 }

@@ -15,6 +15,5 @@ public interface AuthRepository {
     Observable<UserResponse> login(String username, String password, String type);
     Observable<BaseResponse> changePassword(String userId, String oldPass, String newPass);
     Observable<UpdateAppResponse> getUpdateVersionACR();
-    Observable<ResponseBody> downloadFile(String url);
     Observable<String> getDateServer();
 }

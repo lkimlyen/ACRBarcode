@@ -12,10 +12,13 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.demo.architect.data.model.UserResponse;
 import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.UpdateVersionUsecase;
+import com.demo.architect.utils.view.SendMailUtil;
+import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.manager.UserManager;
 import com.demo.scanacr.util.ConvertUtils;
@@ -96,23 +99,25 @@ public class SettingPresenter implements SettingContract.Presenter {
     }
 
     @Override
-    public void getVersion() {
+    public String getVersion() {
         PackageManager manager = CoreApplication.getInstance().getPackageManager();
         PackageInfo info;
+        String version = "";
         try {
             info = manager.getPackageInfo(
                     CoreApplication.getInstance().getPackageName(), 0);
             view.showVersion(info.versionName);
+            version = info.versionName;
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-
+        return version;
     }
 
     @Override
     public void saveIPAddress(String ipAddress, int port) {
         int userId = UserManager.getInstance().getUser().getUserId();
-        IPAddress model = new IPAddress(1, ipAddress, port,userId, ConvertUtils.getDateTimeCurrent());
+        IPAddress model = new IPAddress(1, ipAddress, port, userId, ConvertUtils.getDateTimeCurrent());
         localRepository.insertOrUpdateIpAddress(model).subscribe(new Action1<IPAddress>() {
             @Override
             public void call(IPAddress address) {
@@ -129,6 +134,20 @@ public class SettingPresenter implements SettingContract.Presenter {
                 view.showIPAddress(address);
             }
         });
+    }
+
+    @Override
+    public void cloneDataAndSendMail() {
+        UserResponse user = UserManager.getInstance().getUser();
+        String dataPath = ConvertUtils.exportRealmFile();
+        if (!dataPath.equals("")) {
+            SendMailUtil.sendMail(user.getUserId(), user.getUserName(), user.getPhone(), dataPath, getVersion(),
+                    CoreApplication.getInstance().getString(R.string.text_name_database));
+            view.showSuccess(CoreApplication.getInstance().getString(R.string.text_backup_success));
+        }else {
+
+            view.showSuccess(CoreApplication.getInstance().getString(R.string.text_backup_fail));
+        }
     }
 
 

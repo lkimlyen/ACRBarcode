@@ -170,7 +170,13 @@ public class DatabaseRealm {
             }
         });
     }
-
+    public ImportWorksModel addImportWorks(final ImportWorksModel item) {
+        Realm realm = getRealmInstance();
+        realm.beginTransaction();
+        ImportWorksModel importWorksModel = realm.copyToRealm(item);
+        realm.commitTransaction();
+        return importWorksModel;
+    }
     public void addLogCompleteCreatePackAsync(final int id, final int serverId, final int serial, final int numTotal, final String dateCreate) {
         Realm realm = getRealmInstance();
         realm.executeTransactionAsync(new Realm.Transaction() {
@@ -489,19 +495,33 @@ public class DatabaseRealm {
         return realm.where(ScanDeliveryList.class).equalTo("codeRequest", requestCode).equalTo("status", Constants.WAITING_UPLOAD).findFirst();
     }
 
+    public ScanDeliveryList finScanDeliveryAndAdd(int times, String requestCode) {
+        Realm realm = getRealmInstance();
+        ScanDeliveryList parent = realm.where(ScanDeliveryList.class)
+                .equalTo("codeRequest", requestCode)
+                .equalTo("status", Constants.WAITING_UPLOAD)
+                .equalTo("times", times+1).findFirst();
+        if (parent == null){
+            parent = new ScanDeliveryList(ScanDeliveryList.id(realm) + 1, times + 1, requestCode);
+            realm.beginTransaction();
+            parent = realm.copyToRealm(parent);
+            realm.commitTransaction();
+        }
+        return parent;
+    }
+
     public void addScanDelivery(final ScanDeliveryModel model, final int times, final String codeRequest) {
         Realm realm = getRealmInstance();
+
+
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 model.setId(ScanDeliveryModel.id(realm) + 1);
                 ScanDeliveryList parent = realm.where(ScanDeliveryList.class)
                         .equalTo("codeRequest", codeRequest)
-                        .equalTo("status", Constants.WAITING_UPLOAD).findFirst();
-                if (parent == null) {
-                    parent = new ScanDeliveryList(ScanDeliveryList.id(realm) + 1, times + 1, codeRequest);
-                    parent = realm.copyToRealm(parent);
-                }
+                        .equalTo("status", Constants.WAITING_UPLOAD)
+                        .equalTo("times", times+1).findFirst();
                 RealmList<ScanDeliveryModel> list = parent.getItemList();
                 ScanDeliveryModel item = realm.copyToRealm(model);
                 list.add(item);

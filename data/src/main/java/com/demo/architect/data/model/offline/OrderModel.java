@@ -18,6 +18,10 @@ public class OrderModel extends RealmObject {
     public OrderModel() {
     }
 
+    public OrderModel(String codeProduction) {
+        this.codeProduction = codeProduction;
+    }
+
     public OrderModel(int id, int customerId, String codeSO, String codeProduction, String customerName, int createBy, String createDate, int status) {
         this.id = id;
         this.customerId = customerId;

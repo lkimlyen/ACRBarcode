@@ -23,6 +23,7 @@ public class ScanDeliveryList extends RealmObject {
 
     public ScanDeliveryList(int id, int times, String codeRequest) {
         this.id = id;
+        this.times = times;
         this.codeRequest = codeRequest;
     }
 

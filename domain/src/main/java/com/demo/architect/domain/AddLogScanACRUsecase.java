@@ -1,5 +1,6 @@
 package com.demo.architect.domain;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.demo.architect.data.model.BaseResponse;

@@ -1,6 +1,7 @@
 package com.demo.scanacr.screen.scan_delivery;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,15 +22,14 @@ import javax.inject.Inject;
  */
 
 public class ScanDeliveryActivity extends BaseActivity {
-    public static final int REQUEST_CODE = 123;
     @Inject
     ScanDeliveryPresenter ScanDeliveryPresenter;
 
     ScanDeliveryFragment fragment;
 
-    public static void start(Activity activity) {
-        Intent intent = new Intent(activity, ScanDeliveryActivity.class);
-        activity.startActivityForResult(intent, REQUEST_CODE);
+    public static void start(Context context) {
+        Intent intent = new Intent(context, ScanDeliveryActivity.class);
+        context.startActivity(intent);
     }
 
     @Override
@@ -67,11 +67,6 @@ public class ScanDeliveryActivity extends BaseActivity {
         transaction.commit();
     }
 
-    @Override
-    public void onBackPressed() {
-        fragment.back();
-        // super.onBackPressed();
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -1,6 +1,8 @@
 package com.demo.scanacr.app.di.module;
 
 
+import android.content.Context;
+
 import com.demo.architect.data.repository.base.account.remote.AuthRepository;
 import com.demo.architect.data.repository.base.account.remote.AuthRepositoryImpl;
 import com.demo.architect.data.repository.base.local.DatabaseRealm;

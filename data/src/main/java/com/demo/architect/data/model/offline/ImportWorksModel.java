@@ -16,14 +16,12 @@ public class ImportWorksModel extends RealmObject {
     private int packageId;
     private int orderId;
     private int requestId;
-    private int serial;
     private int createBy;
-    private int serverId;
 
     public ImportWorksModel() {
     }
 
-    public ImportWorksModel(int id, String barcode, String deviceTime, String serverTime, double latitude, double longitude, String createByPhone, int packageId, int orderId, int requestId, int serial, int createBy) {
+    public ImportWorksModel(int id, String barcode, String deviceTime, String serverTime, double latitude, double longitude, String createByPhone, int packageId, int orderId, int requestId, int createBy) {
         this.id = id;
         this.barcode = barcode;
         this.deviceTime = deviceTime;
@@ -34,7 +32,6 @@ public class ImportWorksModel extends RealmObject {
         this.packageId = packageId;
         this.orderId = orderId;
         this.requestId = requestId;
-        this.serial = serial;
         this.createBy = createBy;
     }
 
@@ -81,10 +78,6 @@ public class ImportWorksModel extends RealmObject {
 
     public int getRequestId() {
         return requestId;
-    }
-
-    public void setServerId(int serverId) {
-        this.serverId = serverId;
     }
 
     public void setId(int id) {

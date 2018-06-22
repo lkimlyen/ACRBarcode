@@ -1,6 +1,7 @@
 package com.demo.scanacr.screen.scan_warehousing;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,15 +23,14 @@ import javax.inject.Inject;
  */
 
 public class ScanWarehousingActivity extends BaseActivity {
-    public static final int REQUEST_CODE = 123;
     @Inject
     ScanWarehousingPresenter ScanWarehousingPresenter;
 
     ScanWarehousingFragment fragment;
 
-    public static void start(Activity activity) {
-        Intent intent = new Intent(activity, ScanWarehousingActivity.class);
-        activity.startActivityForResult(intent, REQUEST_CODE);
+    public static void start(Context context) {
+        Intent intent = new Intent(context, ScanWarehousingActivity.class);
+        context.startActivity(intent);
     }
 
     @Override
@@ -66,12 +66,6 @@ public class ScanWarehousingActivity extends BaseActivity {
         transaction.replace(frameId, fragment);
         transaction.addToBackStack(null);
         transaction.commit();
-    }
-
-    @Override
-    public void onBackPressed() {
-        fragment.back();
-        // super.onBackPressed();
     }
 
     @Override

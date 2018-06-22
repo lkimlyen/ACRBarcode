@@ -13,7 +13,7 @@ import retrofit2.http.Query;
  */
 
 public interface ProductApiInterface {
-    @GET("http://acctest.imark.com.vn//WS/api/GetAllDetailForSOACR")
+    @GET("/WS/api/GetAllDetailForSOACR")
     Call<BaseListResponse<ProductEntity>> getAllDetailForSOACR(@Query("pLenhSXID") int requestId);
 
 

@@ -6,7 +6,10 @@ import android.util.Log;
 import com.demo.architect.data.model.offline.LogCompleteMainList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
+import com.demo.scanacr.R;
+import com.demo.scanacr.app.CoreApplication;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -33,6 +36,7 @@ public class HistoryPackagePresenter implements HistoryPackageContract.Presenter
     @Inject
     public void setupPresenter() {
         view.setPresenter(this);
+
     }
 
 
@@ -53,7 +57,10 @@ public class HistoryPackagePresenter implements HistoryPackageContract.Presenter
         localRepository.findOrderByLogComplete().subscribe(new Action1<List<OrderModel>>() {
             @Override
             public void call(List<OrderModel> orderModels) {
-                view.showRequestProduction(orderModels);
+                List<OrderModel> list = new ArrayList<>();
+                list.add(new OrderModel(CoreApplication.getInstance().getString(R.string.text_choose_request_produce)));
+                list.addAll(orderModels);
+                view.showRequestProduction(list);
             }
         });
     }

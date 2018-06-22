@@ -1,18 +1,25 @@
 package com.demo.scanacr.screen.dashboard;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.demo.architect.data.model.UserResponse;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.base.BaseFragment;
+import com.demo.scanacr.manager.ServerManager;
+import com.demo.scanacr.screen.confirm_delivery.ConfirmDeliveryActivity;
 import com.demo.scanacr.screen.create_code_package.CreateCodePackageActivity;
 import com.demo.scanacr.screen.history_pack.HistoryPackageActivity;
+import com.demo.scanacr.screen.import_works.ImportWorksActivity;
 import com.demo.scanacr.screen.login.LoginActivity;
+import com.demo.scanacr.screen.scan_delivery.ScanDeliveryActivity;
+import com.demo.scanacr.screen.scan_warehousing.ScanWarehousingActivity;
 import com.demo.scanacr.screen.setting.SettingActivity;
 import com.demo.scanacr.util.Precondition;
 import com.thefinestartist.finestwebview.FinestWebView;
@@ -34,6 +41,9 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
 
     @Bind(R.id.txt_position)
     TextView txtPosition;
+
+    @Bind(R.id.btn_link)
+    Button btnLink;
 
     private DashboardContract.Presenter mPresenter;
 
@@ -63,8 +73,12 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
         ButterKnife.bind(this, view);
-
+        initView();
         return view;
+    }
+
+    private void initView() {
+        btnLink.setText(String.format(getString(R.string.text_web_report), ServerManager.getInstance().getServer()));
     }
 
 
@@ -166,17 +180,43 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     }
 
     @OnClick(R.id.btn_report_detail)
-    public void reportDetailCreatePack(){
-        new FinestWebView.Builder(getActivity()).show(getString(R.string.text_url_report));
+    public void reportDetailCreatePack() {
+        new FinestWebView.Builder(getActivity()).show(String.format(getString(R.string.text_url_report), ServerManager.getInstance().getServer()));
     }
 
     @OnClick(R.id.btn_create_package)
-    public void createPackage(){
+    public void createPackage() {
         CreateCodePackageActivity.start(getContext());
     }
 
     @OnClick(R.id.btn_history_pack)
-    public void historyPack(){
+    public void historyPack() {
         HistoryPackageActivity.start(getContext());
+    }
+
+    @OnClick(R.id.btn_link)
+    public void link(){
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(btnLink.getText().toString()));
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.btn_warehousing)
+    public void scanWarehousing(){
+        ScanWarehousingActivity.start(getActivity());
+    }
+
+    @OnClick(R.id.btn_delivery)
+    public void delivery(){
+        ScanDeliveryActivity.start(getContext());
+    }
+
+    @OnClick(R.id.btn_confirm_delivery)
+    public void confirmDelivery(){
+        ConfirmDeliveryActivity.start(getContext());
+    }
+
+    @OnClick(R.id.btn_import_works)
+    public void importWorks(){
+        ImportWorksActivity.start(getContext());
     }
 }

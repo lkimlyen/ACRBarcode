@@ -59,6 +59,11 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".screen.history_pack.HistoryPackageActivity"/>
         <activity android:name=".screen.detail_package.DetailPackageActivity"/>
+        <activity android:name=".screen.import_works.ImportWorksActivity"/>
+        <activity android:name=".screen.confirm_delivery.ConfirmDeliveryActivity"/>
+        <activity android:name=".screen.scan_delivery.ScanDeliveryActivity"/>
+        <activity android:name=".screen.scan_warehousing.ScanWarehousingActivity"/>
+        <activity android:name=".app.permission.PermissionActivity"/>
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"

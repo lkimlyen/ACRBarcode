@@ -14,4 +14,5 @@ public class Constants {
     public static final int NOCONNECT  = 0;
     public static final int DISCONNECT = 2;
 
+    public static final String KEY_SERVER = "SERVER";
 }

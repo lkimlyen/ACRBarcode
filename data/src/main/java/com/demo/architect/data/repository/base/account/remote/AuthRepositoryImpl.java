@@ -1,10 +1,13 @@
 package com.demo.architect.data.repository.base.account.remote;
 
+import android.content.Context;
+
+import com.demo.architect.data.helper.Constants;
+import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.UpdateAppResponse;
 import com.demo.architect.data.model.UserResponse;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import rx.Observable;
 import rx.Subscriber;
@@ -15,11 +18,14 @@ import rx.Subscriber;
 
 public class AuthRepositoryImpl implements AuthRepository {
     private final static String TAG = AuthRepositoryImpl.class.getName();
-
     private AuthApiInterface mRemoteApiInterface;
+    private Context context;
+    private String server;
 
-    public AuthRepositoryImpl(AuthApiInterface mRemoteApiInterface) {
+    public AuthRepositoryImpl(AuthApiInterface mRemoteApiInterface, Context context) {
         this.mRemoteApiInterface = mRemoteApiInterface;
+        this.context = context;
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
     }
 
     private void handleLoginResponse(Call<UserResponse> call, Subscriber subscriber) {
@@ -103,7 +109,9 @@ public class AuthRepositoryImpl implements AuthRepository {
         return Observable.create(new Observable.OnSubscribe<UserResponse>() {
             @Override
             public void call(Subscriber<? super UserResponse> subscriber) {
-                handleLoginResponse(mRemoteApiInterface.login(username, password, type), subscriber);
+                handleLoginResponse(mRemoteApiInterface.login(
+                        server + "/WS/api/LoginWS"
+                        , username, password, type), subscriber);
             }
         });
     }
@@ -113,7 +121,9 @@ public class AuthRepositoryImpl implements AuthRepository {
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
-                handleBaseResponse(mRemoteApiInterface.changePassWord(userId, oldPass, newPass), subscriber);
+                handleBaseResponse(mRemoteApiInterface.changePassWord(
+                        server + "/WS/api/ChangePassWord"
+                        , userId, oldPass, newPass), subscriber);
             }
         });
     }
@@ -123,7 +133,7 @@ public class AuthRepositoryImpl implements AuthRepository {
         return Observable.create(new Observable.OnSubscribe<UpdateAppResponse>() {
             @Override
             public void call(Subscriber<? super UpdateAppResponse> subscriber) {
-                handleUpdateResponse(mRemoteApiInterface.getUpdateVersionACR(), subscriber);
+                handleUpdateResponse(mRemoteApiInterface.getUpdateVersionACR(server + "/WS/api/GetUpdateVersionACR?pAppCode=ids"), subscriber);
             }
         });
     }

@@ -122,15 +122,20 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
         ssProduce.setPrompt(getString(R.string.text_choose_request_produce));
         ssProduce.setListener(new SearchableSpinner.OnClickListener() {
             @Override
-            public void onClick() {
-                ssProduce.setCountListScan(mPresenter.countListScan(orderId));
+            public boolean onClick() {
+                if (mPresenter.countListScan(orderId) > 0) {
+                    return true;
+                }
+                return false;
             }
         });
-        mPresenter.getRequestProduction();
+
         List<String> list = new ArrayList<>();
         list.add(CoreApplication.getInstance().getString(R.string.text_choose_request_produce));
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
         ssProduce.setAdapter(adapter);
+
+        mPresenter.getRequestProduction();
     }
 
 
@@ -195,7 +200,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
         ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
+                if (ssProduce.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
                     return;
                 }
                 txtCodeSO.setText(list.get(position).getCodeSO());
@@ -342,7 +347,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
         }
     }
 
-    @OnClick(R.id.txt_print)
+    @OnClick(R.id.img_print)
     public void print() {
         if (mPresenter.countListScan(orderId) > 0) {
             PrintStempActivity.start(getActivity(), orderId);

@@ -81,17 +81,13 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                         view.hideProgressBar();
                         localRepository.deleteAllOrder().subscribe();
                         List<OrderModel> list = new ArrayList<>();
-                        //list.add(CoreApplication.getInstance().getString(R.string.text_choose_request_produce));
+                        list.add(new OrderModel(CoreApplication.getInstance().getString(R.string.text_choose_request_produce)));
                         int userId = UserManager.getInstance().getUser().getUserId();
                         for (OrderACREntity entity : successResponse.getEntity()) {
                             OrderModel model = new OrderModel(entity.getId(), entity.getCustomerID(), entity.getCode(), entity.getCodeSX(), entity.getCustomerName(), userId,
                                     ConvertUtils.getDateTimeCurrent(), Constants.WAITING_UPLOAD);
-                            localRepository.addItemAsyns(model).subscribe(new Action1<OrderModel>() {
-                                @Override
-                                public void call(OrderModel model) {
-                                    list.add(model);
-                                }
-                            });
+                            localRepository.addItemAsyns(model).subscribe();
+                            list.add(model);
                         }
                         view.showRequestProduction(list);
                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_download_list_prodution_success));

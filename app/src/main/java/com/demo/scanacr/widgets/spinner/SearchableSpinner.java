@@ -10,10 +10,9 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+
 import com.demo.scanacr.R;
-import com.demo.scanacr.app.CoreApplication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +32,7 @@ public class SearchableSpinner extends android.support.v7.widget.AppCompatSpinne
     private String _strHintText;
     private boolean _isFromInit;
     private OnClickListener listener;
+    private ArrayList<String> list = new ArrayList<>();
 
     public void setListener(OnClickListener listener) {
         this.listener = listener;
@@ -92,8 +92,7 @@ public class SearchableSpinner extends android.support.v7.widget.AppCompatSpinne
         }
 
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            listener.onClick();
-            if (countListScan > 0){
+            if (listener.onClick()){
                 new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                         .setTitleText(getContext().getString(R.string.text_title_noti))
                         .setContentText(getContext().getString(R.string.text_not_done_pack_current))
@@ -145,12 +144,12 @@ public class SearchableSpinner extends android.support.v7.widget.AppCompatSpinne
 
     @Override
     public void onSearchableItemClicked(Object item, int position) {
-        setSelection(_items.indexOf(item));
+        setSelection(position);
 
         if (!_isDirty) {
             _isDirty = true;
             setAdapter(_arrayAdapter);
-            setSelection(_items.indexOf(item));
+            setSelection(position);
         }
     }
 
@@ -204,6 +203,6 @@ public class SearchableSpinner extends android.support.v7.widget.AppCompatSpinne
     }
 
     public interface OnClickListener {
-        void onClick();
+        boolean onClick();
     }
 }

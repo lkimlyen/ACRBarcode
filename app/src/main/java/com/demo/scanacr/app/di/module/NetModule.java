@@ -10,6 +10,7 @@ import com.demo.architect.data.repository.base.product.remote.ProductApiInterfac
 import com.demo.architect.data.repository.base.product.remote.ProductRepositoryImpl;
 import com.demo.architect.data.repository.base.remote.RemoteRepositoryImpl;
 import com.demo.architect.data.repository.base.remote.RemoteApiInterface;
+import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.util.RetrofitJsonConverter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -93,7 +94,7 @@ public class NetModule {
                 .addConverterFactory(RetrofitJsonConverter.create(gson))
                 .client(okHttpClient)
                 .build();
-        return new AuthRepositoryImpl(retrofit.create(AuthApiInterface.class));
+        return new AuthRepositoryImpl(retrofit.create(AuthApiInterface.class), CoreApplication.getInstance());
     }
 
     @Provides
@@ -105,7 +106,7 @@ public class NetModule {
                 .addConverterFactory(RetrofitJsonConverter.create(gson))
                 .client(okHttpClient)
                 .build();
-        return new OrderRepositoryImpl(retrofit.create(OrderApiInterface.class));
+        return new OrderRepositoryImpl(retrofit.create(OrderApiInterface.class), CoreApplication.getInstance());
     }
 
     @Provides
@@ -117,7 +118,7 @@ public class NetModule {
                 .addConverterFactory(RetrofitJsonConverter.create(gson))
                 .client(okHttpClient)
                 .build();
-        return new ProductRepositoryImpl(retrofit.create(ProductApiInterface.class));
+        return new ProductRepositoryImpl(retrofit.create(ProductApiInterface.class), CoreApplication.getInstance());
     }
 }
 

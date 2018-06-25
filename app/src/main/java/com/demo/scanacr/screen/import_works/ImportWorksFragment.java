@@ -121,7 +121,8 @@ public class ImportWorksFragment extends BaseFragment implements ImportWorksCont
         checkPermissionLocation();
         ssProduce.setListener(new SearchableSpinner.OnClickListener() {
             @Override
-            public void onClick() {
+            public boolean onClick() {
+                return false;
             }
         });
         adapter = new WorksAdapter(getContext(), new ArrayList<ImportWorksModel>());
@@ -217,7 +218,7 @@ public class ImportWorksFragment extends BaseFragment implements ImportWorksCont
         ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0){
+                if (ssProduce.getSelectedItem().equals(getString(R.string.text_choose_request_produce))){
                     return;
                 }
                 requestId = list.get(position).getId();

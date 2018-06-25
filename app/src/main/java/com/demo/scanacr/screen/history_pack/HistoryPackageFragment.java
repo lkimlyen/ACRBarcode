@@ -84,7 +84,8 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
 
         ssProduce.setListener(new SearchableSpinner.OnClickListener() {
             @Override
-            public void onClick() {
+            public boolean onClick() {
+                return false;
                 //ssProduce.setCountListScan(mPresenter.countListScan(orderId));
             }
         });
@@ -155,12 +156,11 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
         ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(position == 0){
+                if (ssProduce.getSelectedItem().equals(getString(R.string.text_choose_request_produce))){
                     return;
                 }
                 txtCodeSO.setText(list.get(position).getCodeSO());
                 orderId = list.get(position).getId();
-                //  mPresenter.getCodeScan(list.get(position).getId());
             }
 
             @Override

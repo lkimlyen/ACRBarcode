@@ -3,99 +3,107 @@ package com.demo.architect.data.repository.base.order.remote;
 
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
-import com.demo.architect.data.model.CodeOutEntity;
 import com.demo.architect.data.model.ListCodeOutEntityResponse;
 import com.demo.architect.data.model.OrderACRResponse;
 import com.demo.architect.data.model.OrderRequestEntity;
 import com.demo.architect.data.model.PackageEntity;
-import com.demo.architect.data.model.ProductEntity;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 /**
  * Created by Skull on 04/01/2018.
  */
 
 public interface OrderApiInterface {
-    @GET("/WS/api/GetAllSOACR")
-    Call<OrderACRResponse> getAllSOACR();
+    @GET
+    Call<OrderACRResponse> getAllSOACR(@Url String url);
 
-    @GET("/WS/api/GetAllPackage")
-    Call<BaseListResponse<PackageEntity>> getAllPackage();
+    @GET
+    Call<BaseListResponse<PackageEntity>> getAllPackage(@Url String url);
 
-    @GET("/WS/api/GetAllRequestACR")
-    Call<BaseListResponse<OrderRequestEntity>> getAllRequestACR();
+    @GET
+    Call<BaseListResponse<OrderRequestEntity>> getAllRequestACR(@Url String url);
 
-    @GET("/WS/api/GetAllPackageForRequest")
-    Call<BaseListResponse<PackageEntity>> getAllPackageForRequest(@Query("pRequestacrID") int requestId);
+    @GET
+    Call<BaseListResponse<PackageEntity>> getAllPackageForRequest(@Url String url, @Query("pRequestacrID") int requestId);
 
 
-    @GET("/WS/api/GetAllScanTurnOutACR")
-    Call<ListCodeOutEntityResponse> getAllScanTurnOutACR(@Query("_pRequestID") int requestId);
+    @GET
+    Call<ListCodeOutEntityResponse> getAllScanTurnOutACR(@Url String url, @Query("_pRequestID") int requestId);
 
-    @GET("/WS/api/GetMaxPackageForSO")
-    Call<BaseResponse> getMaxPackageForSO(@Query("pOrde_ACR_ID") int orderId);
-
-    @FormUrlEncoded
-    @POST("/WS/api/AddPackageACR")
-    Call<BaseResponse> addPackageACR(@Field("pOrde_ACR_ID") int orderId,
-                                     @Field("pNo") int stt,
-                                     @Field("pProductID") int productId,
-                                     @Field("pCodeScan") String codeScan,
-                                     @Field("pNumber") int number,
-                                     @Field("pLatGPS") double latitude,
-                                     @Field("pLongGPS") double longitude,
-                                     @Field("pDateDevice") String dateCreate,
-                                     @Field("pUserID") int userId);
+    @GET
+    Call<BaseResponse> getMaxPackageForSO(@Url String url, @Query("pOrde_ACR_ID") int orderId);
 
     @FormUrlEncoded
-    @POST("/WS/api/AddLogScanInStoreACR")
-    Call<BaseResponse> addLogScanInStoreACR(@Field("pPhone") String phone,
-                                            @Field("pOrderACRID") int orderId,
-                                            @Field("pPackageID") int packageId,
-                                            @Field("pCodeScan") String codeScan,
-                                            @Field("pNumber") int number,
-                                            @Field("pLatGPS") double latitude,
-                                            @Field("pLongGPS") double longitude,
-                                            @Field("pDeviceDateTime") String dateCreate,
-                                            @Field("pUserID") int userId);
+    @POST
+    Call<BaseResponse> addPackageACR(
+            @Url String url,
+            @Field("pOrde_ACR_ID") int orderId,
+            @Field("pNo") int stt,
+            @Field("pProductID") int productId,
+            @Field("pCodeScan") String codeScan,
+            @Field("pNumber") int number,
+            @Field("pLatGPS") double latitude,
+            @Field("pLongGPS") double longitude,
+            @Field("pDateDevice") String dateCreate,
+            @Field("pUserID") int userId);
 
     @FormUrlEncoded
-    @POST("/WS/api/AddLogScanACR")
-    Call<BaseResponse> addLogScanACR(@Field("pPhone") String phone,
-                                     @Field("pOrderACRID") int orderId,
-                                     @Field("pPackageID") int packageId,
-                                     @Field("pCodeScan") String codeScan,
-                                     @Field("pNumber") int number,
-                                     @Field("pLatGPS") double latitude,
-                                     @Field("pLongGPS") double longitude,
-                                     @Field("pActivity") String activity,
-                                     @Field("pTimes") int times,
-                                     @Field("pDeviceDateTime") String dateCreate,
-                                     @Field("pUserID") int userId,
-                                     @Field("pRequestACRID") int requestId);
-
-    @GET("/WS/api/GetMaxTimesACR")
-    Call<BaseResponse> getMaxTimesACR(@Query("pRequestID") int requestId);
-
-    @GET("/WS/api/GetAllRequestINACR")
-    Call<BaseListResponse<OrderRequestEntity>> getAllRequestINACR();
+    @POST
+    Call<BaseResponse> addLogScanInStoreACR(
+            @Url String url,
+            @Field("pPhone") String phone,
+            @Field("pOrderACRID") int orderId,
+            @Field("pPackageID") int packageId,
+            @Field("pCodeScan") String codeScan,
+            @Field("pNumber") int number,
+            @Field("pLatGPS") double latitude,
+            @Field("pLongGPS") double longitude,
+            @Field("pDeviceDateTime") String dateCreate,
+            @Field("pUserID") int userId);
 
     @FormUrlEncoded
-    @POST("/WS/api/DeletePackageDetailACR")
-    Call<BaseResponse> deletePackageDetailACR(@Field("pPackageID") int packageId,
-                                     @Field("pProductID") int productId,
-                                     @Field("pUserID") int userId);
+    @POST
+    Call<BaseResponse> addLogScanACR(
+            @Url String url,
+            @Field("pPhone") String phone,
+            @Field("pOrderACRID") int orderId,
+            @Field("pPackageID") int packageId,
+            @Field("pCodeScan") String codeScan,
+            @Field("pNumber") int number,
+            @Field("pLatGPS") double latitude,
+            @Field("pLongGPS") double longitude,
+            @Field("pActivity") String activity,
+            @Field("pTimes") int times,
+            @Field("pDeviceDateTime") String dateCreate,
+            @Field("pUserID") int userId,
+            @Field("pRequestACRID") int requestId);
+
+    @GET
+    Call<BaseResponse> getMaxTimesACR(@Url String url, @Query("pRequestID") int requestId);
+
+    @GET
+    Call<BaseListResponse<OrderRequestEntity>> getAllRequestINACR(@Url String url);
 
     @FormUrlEncoded
-    @POST("/WS/api/DeletePackageACR")
-    Call<BaseResponse> deletePackageACR(@Field("pPackageID") int packageId,
-                                              @Field("pUserID") int userId);
+    @POST
+    Call<BaseResponse> deletePackageDetailACR(
+            @Url String url,
+            @Field("pPackageID") int packageId,
+            @Field("pProductID") int productId,
+            @Field("pUserID") int userId);
+
+    @FormUrlEncoded
+    @POST
+    Call<BaseResponse> deletePackageACR(
+            @Url String url,
+            @Field("pPackageID") int packageId,
+            @Field("pUserID") int userId);
 
 }

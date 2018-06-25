@@ -105,7 +105,7 @@
     <string name="text_get_package_success">Tải danh sách mã gói trong Yêu cầu thành công!</string>
     <string name="text_code_null">Không có mã nào trong yêu cầu này!!</string>
     <string-array name="server">
-        <item>@string/text_choose_server</item>
+        <item>Chọn Server</item>
         <item>@string/text_main_address</item>
         <item>@string/text_test_address</item>
     </string-array>

@@ -10,5 +10,11 @@ import com.demo.architect.data.helper.SharedPreferenceHelper;
  */
 
 public class Def {
-    public static final String HOST = "";
+    private static Context context;
+
+    public Def(Context context) {
+        this.context = context;
+    }
+
+    public static final String HOST = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER,"https://www.google.com.vn");
 }

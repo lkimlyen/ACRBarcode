@@ -1,12 +1,15 @@
 package com.demo.architect.data.repository.base.order.remote;
 
+import android.content.Context;
+
+import com.demo.architect.data.helper.Constants;
+import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.BaseResponse;
 import com.demo.architect.data.model.ListCodeOutEntityResponse;
 import com.demo.architect.data.model.OrderACRResponse;
 import com.demo.architect.data.model.OrderRequestEntity;
 import com.demo.architect.data.model.PackageEntity;
-import com.demo.architect.data.model.ProductEntity;
 
 import retrofit2.Call;
 import rx.Observable;
@@ -20,9 +23,13 @@ public class OrderRepositoryImpl implements OrderRepository {
     private final static String TAG = OrderRepositoryImpl.class.getName();
 
     private OrderApiInterface mRemoteApiInterface;
+    private Context context;
+    private String server;
 
-    public OrderRepositoryImpl(OrderApiInterface mRemoteApiInterface) {
+    public OrderRepositoryImpl(OrderApiInterface mRemoteApiInterface, Context context) {
         this.mRemoteApiInterface = mRemoteApiInterface;
+        this.context = context;
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
     }
 
     private void handleOrderResponse(Call<OrderACRResponse> call, Subscriber subscriber) {
@@ -126,7 +133,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         return Observable.create(new Observable.OnSubscribe<OrderACRResponse>() {
             @Override
             public void call(Subscriber<? super OrderACRResponse> subscriber) {
-                handleOrderResponse(mRemoteApiInterface.getAllSOACR(), subscriber);
+                handleOrderResponse(mRemoteApiInterface.getAllSOACR(server + "/WS/api/GetAllSOACR"), subscriber);
             }
         });
     }
@@ -136,7 +143,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<PackageEntity>>() {
             @Override
             public void call(Subscriber<? super BaseListResponse<PackageEntity>> subscriber) {
-                handlePackageResponse(mRemoteApiInterface.getAllPackage(), subscriber);
+                handlePackageResponse(mRemoteApiInterface.getAllPackage(server + "/WS/api/GetAllPackage"), subscriber);
             }
         });
     }
@@ -146,7 +153,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<OrderRequestEntity>>() {
             @Override
             public void call(Subscriber<? super BaseListResponse<OrderRequestEntity>> subscriber) {
-                handleOrderRequestResponse(mRemoteApiInterface.getAllRequestACR(), subscriber);
+                handleOrderRequestResponse(mRemoteApiInterface.getAllRequestACR(server + "/WS/api/GetAllRequestACR"), subscriber);
             }
         });
     }
@@ -156,7 +163,9 @@ public class OrderRepositoryImpl implements OrderRepository {
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<PackageEntity>>() {
             @Override
             public void call(Subscriber<? super BaseListResponse<PackageEntity>> subscriber) {
-                handlePackageResponse(mRemoteApiInterface.getAllPackageForRequest(requestId), subscriber);
+                handlePackageResponse(mRemoteApiInterface.getAllPackageForRequest(
+                        server + "/WS/api/GetAllPackageForRequest",
+                        requestId), subscriber);
             }
         });
     }
@@ -166,7 +175,8 @@ public class OrderRepositoryImpl implements OrderRepository {
         return Observable.create(new Observable.OnSubscribe<ListCodeOutEntityResponse>() {
             @Override
             public void call(Subscriber<? super ListCodeOutEntityResponse> subscriber) {
-                handleCodeOutResponse(mRemoteApiInterface.getAllScanTurnOutACR(requestId), subscriber);
+                handleCodeOutResponse(mRemoteApiInterface.getAllScanTurnOutACR(
+                        server + "/WS/api/GetAllScanTurnOutACR", requestId), subscriber);
             }
         });
     }
@@ -177,7 +187,8 @@ public class OrderRepositoryImpl implements OrderRepository {
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
-                handleBaseResponse(mRemoteApiInterface.getMaxPackageForSO(orderId), subscriber);
+                handleBaseResponse(mRemoteApiInterface.getMaxPackageForSO(
+                        server + "/WS/api/GetMaxPackageForSO", orderId), subscriber);
             }
         });
     }
@@ -189,7 +200,8 @@ public class OrderRepositoryImpl implements OrderRepository {
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
-                handleBaseResponse(mRemoteApiInterface.addPackageACR(orderId, stt, productId, codeScan,
+                handleBaseResponse(mRemoteApiInterface.addPackageACR(server + "/WS/api/AddPackageACR",
+                        orderId, stt, productId, codeScan,
                         number, latitude, longitude, dateCreate, userId), subscriber);
             }
         });
@@ -202,7 +214,9 @@ public class OrderRepositoryImpl implements OrderRepository {
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
-                handleBaseResponse(mRemoteApiInterface.addLogScanInStoreACR(phone, orderId, packageId, codeScan,
+                handleBaseResponse(mRemoteApiInterface.addLogScanInStoreACR(
+                        server + "/WS/api/AddLogScanInStoreACR"
+                        , phone, orderId, packageId, codeScan,
                         number, latitude, longitude, dateCreate, userId), subscriber);
             }
         });
@@ -216,7 +230,9 @@ public class OrderRepositoryImpl implements OrderRepository {
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
-                handleBaseResponse(mRemoteApiInterface.addLogScanACR(phone, orderId, packageId, codeScan,
+                handleBaseResponse(mRemoteApiInterface.addLogScanACR(
+                        server + "/WS/api/AddLogScanACR"
+                        , phone, orderId, packageId, codeScan,
                         number, latitude, longitude, activity, times, dateCreate, userId, requestId), subscriber);
             }
         });
@@ -227,7 +243,9 @@ public class OrderRepositoryImpl implements OrderRepository {
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
-                handleBaseResponse(mRemoteApiInterface.getMaxTimesACR(requestId), subscriber);
+                handleBaseResponse(mRemoteApiInterface.getMaxTimesACR(
+                        server + "/WS/api/GetMaxTimesACR",
+                        requestId), subscriber);
             }
         });
     }
@@ -237,7 +255,7 @@ public class OrderRepositoryImpl implements OrderRepository {
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<OrderRequestEntity>>() {
             @Override
             public void call(Subscriber<? super BaseListResponse<OrderRequestEntity>> subscriber) {
-                handleOrderRequestResponse(mRemoteApiInterface.getAllRequestINACR(), subscriber);
+                handleOrderRequestResponse(mRemoteApiInterface.getAllRequestINACR(server + "/WS/api/GetAllRequestINACR"), subscriber);
             }
         });
     }
@@ -247,7 +265,9 @@ public class OrderRepositoryImpl implements OrderRepository {
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
-                handleBaseResponse(mRemoteApiInterface.deletePackageDetailACR(packageId, productId, userId), subscriber);
+                handleBaseResponse(mRemoteApiInterface.deletePackageDetailACR(
+                        server + "/WS/api/DeletePackageDetailACR",
+                        packageId, productId, userId), subscriber);
             }
         });
     }
@@ -257,7 +277,9 @@ public class OrderRepositoryImpl implements OrderRepository {
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
-                handleBaseResponse(mRemoteApiInterface.deletePackageACR(packageID, userId), subscriber);
+                handleBaseResponse(mRemoteApiInterface.deletePackageACR(
+                        server + "/WS/api/DeletePackageACR",
+                        packageID, userId), subscriber);
             }
         });
     }

@@ -1,5 +1,9 @@
 package com.demo.architect.data.repository.base.product.remote;
 
+import android.content.Context;
+
+import com.demo.architect.data.helper.Constants;
+import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.BaseListResponse;
 import com.demo.architect.data.model.ProductEntity;
 
@@ -15,9 +19,13 @@ public class ProductRepositoryImpl implements ProductRepository {
     private final static String TAG = ProductRepositoryImpl.class.getName();
 
     private ProductApiInterface mRemoteApiInterface;
+    private Context context;
+    private String server;
 
-    public ProductRepositoryImpl(ProductApiInterface mRemoteApiInterface) {
+    public ProductRepositoryImpl(ProductApiInterface mRemoteApiInterface, Context context) {
         this.mRemoteApiInterface = mRemoteApiInterface;
+        this.context = context;
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
     }
 
     private void handleProductResponse(Call<BaseListResponse<ProductEntity>> call, Subscriber subscriber) {
@@ -44,7 +52,8 @@ public class ProductRepositoryImpl implements ProductRepository {
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<ProductEntity>>() {
             @Override
             public void call(Subscriber<? super BaseListResponse<ProductEntity>> subscriber) {
-                handleProductResponse(mRemoteApiInterface.getAllDetailForSOACR(requestId), subscriber);
+                handleProductResponse(mRemoteApiInterface.getAllDetailForSOACR(
+                        server+"/WS/api/GetAllDetailForSOACR",requestId), subscriber);
             }
         });
     }

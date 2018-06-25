@@ -121,7 +121,8 @@ public class ScanDeliveryFragment extends BaseFragment implements ScanDeliveryCo
         checkPermissionLocation();
         ssProduce.setListener(new SearchableSpinner.OnClickListener() {
             @Override
-            public void onClick() {
+            public boolean onClick() {
+                return false;
             }
         });
 
@@ -222,7 +223,7 @@ public class ScanDeliveryFragment extends BaseFragment implements ScanDeliveryCo
         ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == 0) {
+                if (ssProduce.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
                     return;
                 }
                 requestId = list.get(position).getId();

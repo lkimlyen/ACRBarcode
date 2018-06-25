@@ -109,8 +109,8 @@ public class ConfirmDeliveryFragment extends BaseFragment implements ConfirmDeli
 
         ssProduce.setListener(new SearchableSpinner.OnClickListener() {
             @Override
-            public void onClick() {
-
+            public boolean onClick() {
+                return false;
             }
         });
         List<String> list = new ArrayList<>();
@@ -181,6 +181,9 @@ public class ConfirmDeliveryFragment extends BaseFragment implements ConfirmDeli
         ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (ssProduce.getSelectedItem().equals(getString(R.string.text_choose_request_produce))) {
+                    return;
+                }
                 requestCode = list.get(position).getCodeSX();
             }
 

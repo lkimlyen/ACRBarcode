@@ -181,7 +181,7 @@ public class ConfirmDeliveryFragment extends BaseFragment implements ConfirmDeli
         ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (ssProduce.getSelectedItem().equals(getString(R.string.text_choose_request_produce))) {
+                if (ssProduce.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
                     return;
                 }
                 requestCode = list.get(position).getCodeSX();
@@ -231,7 +231,7 @@ public class ConfirmDeliveryFragment extends BaseFragment implements ConfirmDeli
 
     @OnClick(R.id.btn_scan)
     public void end() {
-        mPresenter.uploadData();
+        mPresenter.uploadData(requestCode);
     }
 
     @OnClick(R.id.btn_check)

@@ -116,7 +116,7 @@ public class CoreApplication extends MultiDexApplication implements Application.
     public void initializeDagger() {
         this.applicationComponent = DaggerApplicationComponent.builder()
                 .applicationModule(new ApplicationModule(this))
-                .netModule(new NetModule(Constants.SERVER_TEST))
+                .netModule(new NetModule("http://google.com"))
                 .useCaseModule(new UseCaseModule())
                 .build();
 

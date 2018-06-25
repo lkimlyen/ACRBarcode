@@ -8,16 +8,19 @@ import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.model.offline.LogScanCreatePack;
 import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
+import com.demo.architect.data.model.offline.PackageModel;
 import com.demo.architect.data.model.offline.ProductModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.data.repository.base.socket.ConnectSocket;
 import com.demo.architect.domain.AddPackageACRUsecase;
+import com.demo.architect.domain.AddPackageACRbyJsonUsecase;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.GetMaxPackageForSOUsecase;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.manager.ScanCreatePackManager;
 import com.demo.scanacr.util.ConvertUtils;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,15 +40,17 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
     private final PrintStempContract.View view;
     private final GetMaxPackageForSOUsecase getMaxPackageForSOUsecase;
     private final AddPackageACRUsecase addPackageACRUsecase;
+    private final AddPackageACRbyJsonUsecase addPackageACRbyJsonUsecase;
     @Inject
     LocalRepository localRepository;
 
     @Inject
     PrintStempPresenter(@NonNull PrintStempContract.View view, GetMaxPackageForSOUsecase getMaxPackageForSOUsecase,
-                        AddPackageACRUsecase addPackageACRUsecase) {
+                        AddPackageACRUsecase addPackageACRUsecase, AddPackageACRbyJsonUsecase addPackageACRbyJsonUsecase) {
         this.view = view;
         this.getMaxPackageForSOUsecase = getMaxPackageForSOUsecase;
         this.addPackageACRUsecase = addPackageACRUsecase;
+        this.addPackageACRbyJsonUsecase = addPackageACRbyJsonUsecase;
     }
 
     @Inject
@@ -130,24 +135,33 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
                     public void onPostExecute(SocketRespone respone) {
                         if (respone.getConnect() == 1 && respone.getResult() == 1) {
                             if (serverId == 0) {
-                                localRepository.findAllLog(orderId).subscribe(new Action1<LogScanCreatePackList>() {
+                                localRepository.logCreateToJson(orderId).subscribe(new Action1<List<LogScanCreatePack>>() {
                                     @Override
-                                    public void call(LogScanCreatePackList list) {
-                                        ScanCreatePackManager.getInstance().setPackList(list);
-                                        updateData(orderId, serial, numTotal);
+                                    public void call(List<LogScanCreatePack> list) {
+                                        List<PackageModel> packageModels = new ArrayList<>();
+                                        for (LogScanCreatePack pack : list) {
+                                            PackageModel model = new PackageModel(pack.getOrderId(),
+                                                    serial, pack.getProductId(), pack.getBarcode(), pack.getNumInput(),
+                                                    pack.getLatitude(), pack.getLongitude(), pack.getDeviceTime(), pack.getCreateBy());
+                                            packageModels.add(model);
+                                        }
+                                        Gson gson = new Gson();
+                                        String json = gson.toJson(packageModels);
+                                        Log.d("PARSEARRAYTOJSON", json);
+                                        updateData(orderId, serial, numTotal, json);
+
                                     }
                                 });
 
 
                             } else {
-                                localRepository.updateStatusAndNumberProduct(serverId).subscribe();
-                                localRepository.deleteLogCompleteAll().subscribe();
-                                view.backToCreatePack();
                                 view.hideProgressBar();
+                                view.backToCreatePack();
                             }
                         } else {
-                            view.showError(CoreApplication.getInstance().getString(R.string.text_no_connect_printer));
                             view.hideProgressBar();
+                            view.showError(CoreApplication.getInstance().getString(R.string.text_no_connect_printer));
+
                         }
                     }
                 });
@@ -159,41 +173,33 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
 
     }
 
-    private int serverId = 0;
-    private int count = 0;
 
-    public void updateData(int orderId, int serial, int numTotal) {
+    public void updateData(int orderId, int serial, int numTotal, String json) {
 
-        count = 0;
-        final List<LogScanCreatePack> packList = ScanCreatePackManager.getInstance().getCreatePackList();
-        final int countList = packList.size();
-        for (LogScanCreatePack pack : packList) {
-            addPackageACRUsecase.executeIO(new AddPackageACRUsecase.RequestValue(pack.getOrderId(),
-                            serial, pack.getProductId(), pack.getBarcode(), pack.getNumInput(),
-                            pack.getLatitude(), pack.getLongitude(), pack.getDeviceTime(), pack.getCreateBy()),
-                    new BaseUseCase.UseCaseCallback<AddPackageACRUsecase.ResponseValue,
-                            AddPackageACRUsecase.ErrorValue>() {
-                        @Override
-                        public void onSuccess(AddPackageACRUsecase.ResponseValue successResponse) {
-                            serverId = successResponse.getId();
-                            view.hideProgressBar();
-                            count++;
-                            if (count == countList) {
-                                printStemp(orderId, serial, serverId, numTotal);
-                                localRepository.addLogCompleteCreatePack(orderId, successResponse.getId(), serial, numTotal, ConvertUtils.getDateTimeCurrent())
-                                        .subscribe();
-                            }
+        addPackageACRbyJsonUsecase.executeIO(new AddPackageACRbyJsonUsecase.RequestValue(json),
+                new BaseUseCase.UseCaseCallback<AddPackageACRbyJsonUsecase.ResponseValue,
+                        AddPackageACRbyJsonUsecase.ErrorValue>() {
+                    @Override
+                    public void onSuccess(AddPackageACRbyJsonUsecase.ResponseValue successResponse) {
 
-                        }
+                        localRepository.addLogCompleteCreatePack(orderId, successResponse.getId(), serial, numTotal, ConvertUtils.getDateTimeCurrent())
+                                .subscribe(new Action1<String>() {
+                                    @Override
+                                    public void call(String s) {
+                                        localRepository.deleteLogCompleteAll().subscribe();
+                                        printStemp(orderId, serial, successResponse.getId(), numTotal);
+                                    }
+                                });
 
-                        @Override
-                        public void onError(AddPackageACRUsecase.ErrorValue errorResponse) {
-                            view.hideProgressBar();
-                            view.showError(errorResponse.getDescription());
-                        }
-                    });
+                    }
 
-        }
+                    @Override
+                    public void onError(AddPackageACRbyJsonUsecase.ErrorValue errorResponse) {
+                        view.hideProgressBar();
+                        view.showError(errorResponse.getDescription());
+                    }
+                });
+
 
     }
 }

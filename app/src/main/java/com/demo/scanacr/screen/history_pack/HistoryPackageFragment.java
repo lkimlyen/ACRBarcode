@@ -89,11 +89,13 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
                 //ssProduce.setCountListScan(mPresenter.countListScan(orderId));
             }
         });
-        mPresenter.getRequestProduce();
         List<String> list = new ArrayList<>();
         list.add(CoreApplication.getInstance().getString(R.string.text_choose_request_produce));
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
         ssProduce.setAdapter(adapter);
+
+        mPresenter.getRequestProduce();
+
     }
 
 
@@ -156,7 +158,7 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
         ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (ssProduce.getSelectedItem().equals(getString(R.string.text_choose_request_produce))){
+                if (ssProduce.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))){
                     return;
                 }
                 txtCodeSO.setText(list.get(position).getCodeSO());

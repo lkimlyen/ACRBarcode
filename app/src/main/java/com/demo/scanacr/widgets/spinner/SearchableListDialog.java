@@ -18,6 +18,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 
+import com.demo.scanacr.R;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -87,7 +89,7 @@ public class SearchableListDialog extends DialogFragment implements
         }
         // Change End
 
-        View rootView = inflater.inflate(com.demo.architect.utils.view.R.layout.searchable_list_dialog, null);
+        View rootView = inflater.inflate(R.layout.searchable_list_dialog, null);
         setData(rootView);
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
@@ -141,7 +143,7 @@ public class SearchableListDialog extends DialogFragment implements
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context
                 .SEARCH_SERVICE);
 
-        _searchView = (SearchView) rootView.findViewById(com.demo.architect.utils.view.R.id.search);
+        _searchView = (SearchView) rootView.findViewById(R.id.search);
         _searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName
                 ()));
         _searchView.setIconifiedByDefault(false);
@@ -155,7 +157,7 @@ public class SearchableListDialog extends DialogFragment implements
 
         List items = (List) getArguments().getSerializable(ITEMS);
 
-        _listViewItems = (ListView) rootView.findViewById(com.demo.architect.utils.view.R.id.listItems);
+        _listViewItems = (ListView) rootView.findViewById(R.id.listItems);
 
         //create the adapter by passing your ArrayList data
         listAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1,
@@ -168,7 +170,7 @@ public class SearchableListDialog extends DialogFragment implements
         _listViewItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                _searchableItem.onSearchableItemClicked(listAdapter.getItem(position), position+1);
+                _searchableItem.onSearchableItemClicked(listAdapter.getItem(position), position + 1);
                 getDialog().dismiss();
             }
         });
@@ -198,9 +200,9 @@ public class SearchableListDialog extends DialogFragment implements
 //                _listViewItems.clearTextFilter();
             ((ArrayAdapter) _listViewItems.getAdapter()).getFilter().filter(null);
         } else {
-            ((ArrayAdapter) _listViewItems.getAdapter()).getFilter().filter(s);
+           ((ArrayAdapter) _listViewItems.getAdapter()).getFilter().filter(s);
         }
-        if (null != _onSearchTextChanged) {
+        if (_onSearchTextChanged != null) {
             _onSearchTextChanged.onSearchTextChanged(s);
         }
         return true;

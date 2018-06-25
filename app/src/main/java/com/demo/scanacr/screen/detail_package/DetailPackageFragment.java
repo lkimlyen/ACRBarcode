@@ -338,6 +338,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
                         .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
                                 mPresenter.updateData(logId, orderId, Integer.parseInt(txtSerial.getText().toString()),
                                         false);
                             }

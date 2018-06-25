@@ -10,6 +10,7 @@ import com.demo.architect.data.model.ListCodeOutEntityResponse;
 import com.demo.architect.data.model.OrderACRResponse;
 import com.demo.architect.data.model.OrderRequestEntity;
 import com.demo.architect.data.model.PackageEntity;
+import com.demo.architect.data.model.ResultEntity;
 
 import retrofit2.Call;
 import rx.Observable;
@@ -29,7 +30,6 @@ public class OrderRepositoryImpl implements OrderRepository {
     public OrderRepositoryImpl(OrderApiInterface mRemoteApiInterface, Context context) {
         this.mRemoteApiInterface = mRemoteApiInterface;
         this.context = context;
-        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
     }
 
     private void handleOrderResponse(Call<OrderACRResponse> call, Subscriber subscriber) {
@@ -89,6 +89,25 @@ public class OrderRepositoryImpl implements OrderRepository {
         }
     }
 
+    private void handleResultResponse(Call<BaseListResponse<ResultEntity>> call, Subscriber subscriber) {
+        try {
+            BaseListResponse<ResultEntity> response = call.execute().body();
+            if (!subscriber.isUnsubscribed()) {
+                if (response != null) {
+                    subscriber.onNext(response);
+                } else {
+                    subscriber.onError(new Exception("Network Error!"));
+                }
+                subscriber.onCompleted();
+            }
+        } catch (Exception e) {
+            if (!subscriber.isUnsubscribed()) {
+                subscriber.onError(e);
+                subscriber.onCompleted();
+            }
+        }
+    }
+
     private void handleCodeOutResponse(Call<ListCodeOutEntityResponse> call, Subscriber subscriber) {
         try {
             ListCodeOutEntityResponse response = call.execute().body();
@@ -130,6 +149,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Observable<OrderACRResponse> getAllSOACR() {
+
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<OrderACRResponse>() {
             @Override
             public void call(Subscriber<? super OrderACRResponse> subscriber) {
@@ -140,6 +161,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Observable<BaseListResponse<PackageEntity>> getAllPackage() {
+
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<PackageEntity>>() {
             @Override
             public void call(Subscriber<? super BaseListResponse<PackageEntity>> subscriber) {
@@ -150,6 +173,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Observable<BaseListResponse<OrderRequestEntity>> getAllRequestACR() {
+
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<OrderRequestEntity>>() {
             @Override
             public void call(Subscriber<? super BaseListResponse<OrderRequestEntity>> subscriber) {
@@ -160,6 +185,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Observable<BaseListResponse<PackageEntity>> getAllPackageForRequest(final int requestId) {
+
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<PackageEntity>>() {
             @Override
             public void call(Subscriber<? super BaseListResponse<PackageEntity>> subscriber) {
@@ -172,6 +199,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Observable<ListCodeOutEntityResponse> getAllScanTurnOutACR(final int requestId) {
+
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<ListCodeOutEntityResponse>() {
             @Override
             public void call(Subscriber<? super ListCodeOutEntityResponse> subscriber) {
@@ -184,6 +213,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Observable<BaseResponse> getMaxPackageForSO(final int orderId) {
+
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
@@ -197,6 +228,8 @@ public class OrderRepositoryImpl implements OrderRepository {
     public Observable<BaseResponse> addPackageACR(final int orderId, final int stt, final
     int productId, final String codeScan, final int number, final double latitude, final double longitude,
                                                   final String dateCreate, final int userId) {
+
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
@@ -208,9 +241,36 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public Observable<BaseResponse> addPackageACRByJSON(final String listdetail) {
+
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
+            @Override
+            public void call(Subscriber<? super BaseResponse> subscriber) {
+                handleBaseResponse(mRemoteApiInterface.addPackageACRByJSON(server + "/WS/api/AddPackageACRByJSON",
+                        listdetail), subscriber);
+            }
+        });
+    }
+
+    @Override
+    public Observable<BaseListResponse<ResultEntity>> addLogScanACRByJSON(final String listLog) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<ResultEntity>>() {
+            @Override
+            public void call(Subscriber<? super BaseListResponse<ResultEntity>> subscriber) {
+                handleResultResponse(mRemoteApiInterface.addLogScanACRByJSON(server + "/WS/api/AddLogScanACRByJSON",
+                        listLog), subscriber);
+            }
+        });
+    }
+
+    @Override
     public Observable<BaseResponse> addLogScanInStoreACR(final String phone, final int orderId, final int packageId, final String codeScan,
                                                          final int number, final double latitude, final double longitude, final String dateCreate,
                                                          final int userId) {
+
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {

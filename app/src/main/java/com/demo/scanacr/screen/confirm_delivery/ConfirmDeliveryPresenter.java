@@ -4,18 +4,20 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.demo.architect.data.model.OrderRequestEntity;
-import com.demo.architect.data.model.offline.OrderModel;
+import com.demo.architect.data.model.ResultEntity;
+import com.demo.architect.data.model.offline.DeliveryModel;
 import com.demo.architect.data.model.offline.ScanDeliveryList;
 import com.demo.architect.data.model.offline.ScanDeliveryModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.AddLogScanACRUsecase;
+import com.demo.architect.domain.AddLogScanbyJsonUsecase;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.GetAllRequestACRUsecase;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
-import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.manager.ListRequestManager;
 import com.demo.scanacr.manager.ScanDeliveryManager;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,14 +37,16 @@ public class ConfirmDeliveryPresenter implements ConfirmDeliveryContract.Present
     private final ConfirmDeliveryContract.View view;
     private final AddLogScanACRUsecase addLogScanACRUsecase;
     private final GetAllRequestACRUsecase allRequestACRUsecase;
+    private final AddLogScanbyJsonUsecase addLogScanbyJsonUsecase;
     @Inject
     LocalRepository localRepository;
 
     @Inject
-    ConfirmDeliveryPresenter(@NonNull ConfirmDeliveryContract.View view, AddLogScanACRUsecase addLogScanACRUsecase, GetAllRequestACRUsecase allRequestACRUsecase) {
+    ConfirmDeliveryPresenter(@NonNull ConfirmDeliveryContract.View view, AddLogScanACRUsecase addLogScanACRUsecase, GetAllRequestACRUsecase allRequestACRUsecase, AddLogScanbyJsonUsecase addLogScanbyJsonUsecase) {
         this.view = view;
         this.addLogScanACRUsecase = addLogScanACRUsecase;
         this.allRequestACRUsecase = allRequestACRUsecase;
+        this.addLogScanbyJsonUsecase = addLogScanbyJsonUsecase;
     }
 
     @Inject
@@ -97,39 +101,52 @@ public class ConfirmDeliveryPresenter implements ConfirmDeliveryContract.Present
         });
 
     }
+
     private int count = 0;
 
     @Override
-    public void uploadData() {
+    public void uploadData(String codeRequest) {
         view.showProgressBar();
         ScanDeliveryList deliveryList = ScanDeliveryManager.getInstance().getDeliveryList();
-        final int countList = deliveryList.getItemList().size();
         final HashMap<String, Integer> idList = new HashMap<>();
-        count = 0;
-        for (ScanDeliveryModel model : deliveryList.getItemList()) {
-            addLogScanACRUsecase.executeIO(new AddLogScanACRUsecase.RequestValue(model.getCreateByPhone(),
-                    model.getOrderId(), model.getPackageId(), model.getBarcode(), 1, model.getLatitude(),
-                    model.getLongitude(), Constants.OUT, deliveryList.getTimes(), model.getDeviceTime(), model.getCreateBy(),
-                    model.getRequestId()), new BaseUseCase.UseCaseCallback<AddLogScanACRUsecase.ResponseValue,
-                    AddLogScanACRUsecase.ErrorValue>() {
-                @Override
-                public void onSuccess(AddLogScanACRUsecase.ResponseValue successResponse) {
-                    view.hideProgressBar();
-                    idList.put(successResponse.getBarcode(), successResponse.getId());
-                    count++;
-                    if (count == countList) {
-                        localRepository.updateStatusScanDelivery(deliveryList.getId(),idList).subscribe();
-                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
-                    }
-                }
+        localRepository.deliveryToJson(codeRequest).subscribe(new Action1<List<ScanDeliveryModel>>() {
+            @Override
+            public void call(List<ScanDeliveryModel> scanDeliveryModels) {
+                List<DeliveryModel> list = new ArrayList<>();
+                for (ScanDeliveryModel item : scanDeliveryModels) {
 
-                @Override
-                public void onError(AddLogScanACRUsecase.ErrorValue errorResponse) {
-                    view.hideProgressBar();
-                    view.showError(errorResponse.getDescription());
+                    DeliveryModel model = new DeliveryModel(item.getBarcode(), item.getDeviceTime(),
+                            item.getLatitude(), item.getLongitude(), item.getCreateByPhone(), 1,
+                            item.getOrderId(), item.getPackageId(), deliveryList.getTimes(), item.getRequestId(), item.getCreateBy()
+                    );
+
+                    list.add(model);
                 }
-            });
-        }
+                Gson gson = new Gson();
+                String json = gson.toJson(list);
+                addLogScanbyJsonUsecase.executeIO(new AddLogScanbyJsonUsecase.RequestValue(json),
+                        new BaseUseCase.UseCaseCallback<AddLogScanbyJsonUsecase.ResponseValue,
+                                AddLogScanbyJsonUsecase.ErrorValue>() {
+                            @Override
+                            public void onSuccess(AddLogScanbyJsonUsecase.ResponseValue successResponse) {
+                                view.hideProgressBar();
+                                for (ResultEntity result : successResponse.getEntityList()) {
+                                    idList.put(result.getBarcode(), result.getId());
+                                }
+                                localRepository.updateStatusScanDelivery(deliveryList.getId(), idList).subscribe();
+                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_upload_success));
+
+                            }
+
+                            @Override
+                            public void onError(AddLogScanbyJsonUsecase.ErrorValue errorResponse) {
+                                view.hideProgressBar();
+                                view.showError(errorResponse.getDescription());
+                            }
+                        });
+            }
+        });
+
 
     }
 

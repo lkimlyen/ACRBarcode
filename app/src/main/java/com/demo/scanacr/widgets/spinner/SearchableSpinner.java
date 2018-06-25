@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
 import com.demo.scanacr.R;
@@ -26,21 +27,16 @@ public class SearchableSpinner extends android.support.v7.widget.AppCompatSpinne
     private Context _context;
     private List _items;
     private SearchableListDialog _searchableListDialog;
-    private int countListScan;
     private boolean _isDirty;
     private ArrayAdapter _arrayAdapter;
     private String _strHintText;
     private boolean _isFromInit;
     private OnClickListener listener;
-    private ArrayList<String> list = new ArrayList<>();
 
     public void setListener(OnClickListener listener) {
         this.listener = listener;
     }
 
-    public void setCountListScan(int countListScan) {
-        this.countListScan = countListScan;
-    }
 
     public SearchableSpinner(Context context) {
         super(context);
@@ -51,11 +47,11 @@ public class SearchableSpinner extends android.support.v7.widget.AppCompatSpinne
     public SearchableSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
         this._context = context;
-        TypedArray a = context.obtainStyledAttributes(attrs, com.demo.architect.utils.view.R.styleable.SearchableSpinner);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SearchableSpinner);
         final int N = a.getIndexCount();
         for (int i = 0; i < N; ++i) {
             int attr = a.getIndex(i);
-            if (attr == com.demo.architect.utils.view.R.styleable.SearchableSpinner_hintText) {
+            if (attr == R.styleable.SearchableSpinner_hintText) {
                 _strHintText = a.getString(attr);
             }
         }

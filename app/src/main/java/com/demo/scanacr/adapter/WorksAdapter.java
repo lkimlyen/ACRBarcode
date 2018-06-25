@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.demo.architect.data.model.offline.ImportWorksModel;
-import com.demo.architect.data.model.offline.ScanDeliveryModel;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.util.ConvertUtils;
@@ -69,8 +68,8 @@ public class WorksAdapter extends BaseAdapter {
     }
 
     private void setDataToViews( HistoryHolder holder, ImportWorksModel item) {
-        holder.txtBarcode.setText(String.format(CoreApplication.getInstance().getString(R.string.text_code_request), item.getBarcode()));
-        holder.txtDate.setText(String.format(CoreApplication.getInstance().getString(R.string.text_date_scan), ConvertUtils.ConvertStringToShortDate(item.getDeviceTime())));
+        holder.txtBarcode.setText(item.getBarcode());
+        holder.txtDate.setText(ConvertUtils.ConvertStringToShortDate(item.getDeviceTime()));
 
     }
 

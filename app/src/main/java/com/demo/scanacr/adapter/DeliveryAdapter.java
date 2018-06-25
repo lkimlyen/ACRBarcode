@@ -40,8 +40,8 @@ public class DeliveryAdapter extends RealmBaseAdapter<ScanDeliveryModel> impleme
     }
 
     private void setDataToViews(HistoryHolder holder, ScanDeliveryModel item) {
-        holder.txtBarcode.setText(String.format(CoreApplication.getInstance().getString(R.string.text_code_request), item.getBarcode()));
-        holder.txtDate.setText(String.format(CoreApplication.getInstance().getString(R.string.text_date_scan), ConvertUtils.ConvertStringToShortDate(item.getDeviceTime())));
+        holder.txtBarcode.setText(item.getBarcode());
+        holder.txtDate.setText(ConvertUtils.ConvertStringToShortDate(item.getDeviceTime()));
 
     }
 

@@ -27,7 +27,7 @@ public interface ConfirmDeliveryContract {
 
         void checkRequest(String codeRequest);
 
-        void uploadData();
+        void uploadData(String codeRequest);
 
     }
 }

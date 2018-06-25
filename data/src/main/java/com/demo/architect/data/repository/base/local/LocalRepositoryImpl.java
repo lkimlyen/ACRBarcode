@@ -756,5 +756,39 @@ public class LocalRepositoryImpl implements LocalRepository {
         });
     }
 
+    @Override
+    public Observable<List<LogScanCreatePack>> logCreateToJson(final int id) {
+        return Observable.create(new Observable.OnSubscribe<List<LogScanCreatePack>>() {
+            @Override
+            public void call(Subscriber<? super List<LogScanCreatePack>> subscriber) {
+                try {
+
+                    List<LogScanCreatePack> list =  databaseRealm.logCreateToJson(id);
+                    subscriber.onNext(list);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<List<ScanDeliveryModel>> deliveryToJson(final String request) {
+        return Observable.create(new Observable.OnSubscribe<List<ScanDeliveryModel>>() {
+            @Override
+            public void call(Subscriber<? super List<ScanDeliveryModel>> subscriber) {
+                try {
+
+                    List<ScanDeliveryModel> list =  databaseRealm.deliveryToJson(request);
+                    subscriber.onNext(list);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
 
 }

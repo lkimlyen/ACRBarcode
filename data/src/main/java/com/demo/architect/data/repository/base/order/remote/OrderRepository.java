@@ -8,6 +8,7 @@ import com.demo.architect.data.model.ListCodeOutEntityResponse;
 import com.demo.architect.data.model.OrderACRResponse;
 import com.demo.architect.data.model.OrderRequestEntity;
 import com.demo.architect.data.model.PackageEntity;
+import com.demo.architect.data.model.ResultEntity;
 
 import rx.Observable;
 
@@ -31,6 +32,10 @@ public interface OrderRepository {
     Observable<BaseResponse> addPackageACR(int orderId, int stt, int productId, String codeScan,
                                            int number, double latitude, double longitude,
                                            String dateCreate, int userId);
+
+    Observable<BaseResponse> addPackageACRByJSON(String listdetail);
+
+    Observable<BaseListResponse<ResultEntity>> addLogScanACRByJSON(String listLog);
 
     Observable<BaseResponse> addLogScanInStoreACR(String phone, int orderId, int packageId,
                                                   String codeScan, int number, double latitude,

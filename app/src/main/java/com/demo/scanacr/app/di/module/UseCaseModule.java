@@ -1,13 +1,14 @@
 package com.demo.scanacr.app.di.module;
 
 
-
 import com.demo.architect.data.repository.base.account.remote.AuthRepository;
 import com.demo.architect.data.repository.base.order.remote.OrderRepository;
 import com.demo.architect.data.repository.base.product.remote.ProductRepository;
 import com.demo.architect.domain.AddLogScanACRUsecase;
 import com.demo.architect.domain.AddLogScanInStoreACRUsecase;
+import com.demo.architect.domain.AddLogScanbyJsonUsecase;
 import com.demo.architect.domain.AddPackageACRUsecase;
+import com.demo.architect.domain.AddPackageACRbyJsonUsecase;
 import com.demo.architect.domain.ChangePasswordUsecase;
 import com.demo.architect.domain.DeletePackageDetailUsecase;
 import com.demo.architect.domain.DeletePackageUsecase;
@@ -23,7 +24,6 @@ import com.demo.architect.domain.GetMaxPackageForSOUsecase;
 import com.demo.architect.domain.GetMaxTimesACRUsecase;
 import com.demo.architect.domain.LoginUsecase;
 import com.demo.architect.domain.UpdateVersionUsecase;
-import com.demo.scanacr.app.CoreApplication;
 
 import dagger.Module;
 import dagger.Provides;
@@ -56,6 +56,7 @@ public class UseCaseModule {
     GetAllSOACRUsecase provideGetAllSOACRUsecase(OrderRepository remoteRepository) {
         return new GetAllSOACRUsecase(remoteRepository);
     }
+
     @Provides
     GetAllRequestACRUsecase provideGetAllRequestACRUsecase(OrderRepository remoteRepository) {
         return new GetAllRequestACRUsecase(remoteRepository);
@@ -82,8 +83,18 @@ public class UseCaseModule {
     }
 
     @Provides
+    AddPackageACRbyJsonUsecase provideAddPackageACRbyJsonUsecase(OrderRepository remoteRepository) {
+        return new AddPackageACRbyJsonUsecase(remoteRepository);
+    }
+
+    @Provides
     AddLogScanACRUsecase provideAddLogScanACRUsecase(OrderRepository remoteRepository) {
         return new AddLogScanACRUsecase(remoteRepository);
+    }
+
+    @Provides
+    AddLogScanbyJsonUsecase provideAddLogScanbyJsonUsecase(OrderRepository remoteRepository) {
+        return new AddLogScanbyJsonUsecase(remoteRepository);
     }
 
     @Provides
@@ -107,21 +118,22 @@ public class UseCaseModule {
     }
 
     @Provides
-    GetDateServerUsecase provideGetDateServerUsecase(AuthRepository authRepository){
+    GetDateServerUsecase provideGetDateServerUsecase(AuthRepository authRepository) {
         return new GetDateServerUsecase(authRepository);
     }
 
     @Provides
-    DeletePackageDetailUsecase provideDeletePackageDetailUsecase(OrderRepository authRepository){
+    DeletePackageDetailUsecase provideDeletePackageDetailUsecase(OrderRepository authRepository) {
         return new DeletePackageDetailUsecase(authRepository);
     }
+
     @Provides
-    DeletePackageUsecase provideDeletePackageUsecase(OrderRepository authRepository){
+    DeletePackageUsecase provideDeletePackageUsecase(OrderRepository authRepository) {
         return new DeletePackageUsecase(authRepository);
     }
 
     @Provides
-    GetAllScanTurnOutUsecase provideAllScanTurnOutUsecase(OrderRepository orderRepository){
+    GetAllScanTurnOutUsecase provideAllScanTurnOutUsecase(OrderRepository orderRepository) {
         return new GetAllScanTurnOutUsecase(orderRepository);
     }
 }

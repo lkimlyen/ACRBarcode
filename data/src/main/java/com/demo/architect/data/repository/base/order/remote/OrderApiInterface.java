@@ -7,6 +7,7 @@ import com.demo.architect.data.model.ListCodeOutEntityResponse;
 import com.demo.architect.data.model.OrderACRResponse;
 import com.demo.architect.data.model.OrderRequestEntity;
 import com.demo.architect.data.model.PackageEntity;
+import com.demo.architect.data.model.ResultEntity;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -56,6 +57,12 @@ public interface OrderApiInterface {
 
     @FormUrlEncoded
     @POST
+    Call<BaseResponse> addPackageACRByJSON(
+            @Url String url,
+            @Field("list_detail") String listDetail);
+
+    @FormUrlEncoded
+    @POST
     Call<BaseResponse> addLogScanInStoreACR(
             @Url String url,
             @Field("pPhone") String phone,
@@ -84,6 +91,12 @@ public interface OrderApiInterface {
             @Field("pDeviceDateTime") String dateCreate,
             @Field("pUserID") int userId,
             @Field("pRequestACRID") int requestId);
+
+    @FormUrlEncoded
+    @POST
+    Call<BaseListResponse<ResultEntity>> addLogScanACRByJSON(
+            @Url String url,
+            @Field("list_log") String listLog);
 
     @GET
     Call<BaseResponse> getMaxTimesACR(@Url String url, @Query("pRequestID") int requestId);

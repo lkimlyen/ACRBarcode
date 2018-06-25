@@ -133,7 +133,7 @@ public class LoginFragment extends BaseFragment implements LoginContract.View {
             return;
         }
 
-        if (spServer.getSelectedItem().toString().equals(getString(R.string.text_choose_server))) {
+        if (spServer.getSelectedItem().toString().equals(getString(R.string.text_choose_server1))) {
             showNotification(getString(R.string.text_server_null), SweetAlertDialog.WARNING_TYPE);
             return;
         }

@@ -53,8 +53,8 @@
     <string name="text_sum_detail">Tổng chi tiết:</string>
     <string name="text_number_bigger_zero">Số lượng nhập vào phải khác 0!</string>
     <string name="text_quantity_input_bigger_quantity_rest">Số lượng nhập vào không được vượt quá số lượng cho phép.</string>
-    <string name="text_code_request" formatted="true">Mã quét: %s</string>
-    <string name="text_date_scan" formatted="true">Ngày quét mã: %s</string>
+    <string name="text_code_scan" >Mã quét:</string>
+    <string name="text_date_scan">Ngày quét mã:</string>
     <string name="text_not_done_pack_current">Chưa hoàn thành gói hiện tại!</string>
     <string name="text_back_cancel_order_not_print">Quay lại sẽ HỦY những mã chưa IN! \n Bạn có muốn hủy không?.</string>
     <string name="text_ip_address">Địa chỉ ip</string>
@@ -96,6 +96,7 @@
     <string name="text_main_address">Server Chính</string>
     <string name="text_upload_success">Tải dữ liệu lên server thành công.</string>
     <string name="text_choose_server">Chọn server: </string>
+    <string name="text_choose_server1">Chọn server</string>
     <string name="text_server_null">Bạn chưa chọn server.</string>
     <string name="text_web_report" formatted="true">%s/Report/Account/Login</string>
     <string name="text_name_database">barcode.realm</string>
@@ -105,7 +106,7 @@
     <string name="text_get_package_success">Tải danh sách mã gói trong Yêu cầu thành công!</string>
     <string name="text_code_null">Không có mã nào trong yêu cầu này!!</string>
     <string-array name="server">
-        <item>Chọn Server</item>
+        <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>
         <item>@string/text_test_address</item>
     </string-array>

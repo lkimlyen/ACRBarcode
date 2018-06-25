@@ -53,8 +53,8 @@ public class CreateBarcodeDialog extends DialogFragment {
         TextView txtQuantityRest = (TextView) dialog.findViewById(R.id.txt_quantity_rest);
         TextView txtQuantityScan = (TextView) dialog.findViewById(R.id.txt_quantity_scan);
         EditText edtNumberScan = (EditText) dialog.findViewById(R.id.edt_number);
-        txtRequestCode.setText(String.format(CoreApplication.getInstance().getString(R.string.text_code_request), barcode));
-        txtDate.setText(String.format(CoreApplication.getInstance().getString(R.string.text_date_scan), ConvertUtils.ConvertStringToShortDate(ConvertUtils.getDateTimeCurrent())));
+        txtRequestCode.setText(barcode);
+        txtDate.setText(ConvertUtils.ConvertStringToShortDate(ConvertUtils.getDateTimeCurrent()));
         txtQuantityProduct.setText(model.getNumber() + "");
         txtQuantityRest.setText((model.getNumberRest() - 1) + "");
         txtQuantityScan.setText(model.getNumCompleteScan() + "");

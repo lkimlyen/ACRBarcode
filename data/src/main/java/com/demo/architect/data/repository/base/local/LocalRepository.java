@@ -104,4 +104,8 @@ public interface LocalRepository {
     Observable<String> updateStatusScanDelivery(final int id, final HashMap<String, Integer> map);
 
     Observable<ImportWorksModel> addImportWorks(ImportWorksModel model);
+
+    Observable<List<LogScanCreatePack>> logCreateToJson(final int id);
+
+    Observable<List<ScanDeliveryModel>> deliveryToJson(final String request);
 }

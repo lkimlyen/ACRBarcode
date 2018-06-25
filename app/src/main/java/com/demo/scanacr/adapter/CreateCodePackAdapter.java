@@ -54,8 +54,8 @@ public class CreateCodePackAdapter extends RealmBaseAdapter<LogScanCreatePack> i
     }
 
     private void setDataToViews( HistoryHolder holder, LogScanCreatePack item) {
-        holder.txtRequestCode.setText(String.format(CoreApplication.getInstance().getString(R.string.text_code_request), item.getBarcode()));
-        holder.txtDate.setText(String.format(CoreApplication.getInstance().getString(R.string.text_date_scan), ConvertUtils.ConvertStringToShortDate(item.getDeviceTime())));
+        holder.txtRequestCode.setText(item.getBarcode());
+        holder.txtDate.setText(ConvertUtils.ConvertStringToShortDate(item.getDeviceTime()));
         holder.txtQuantityProduct.setText(item.getNumTotal() + "");
         holder.txtQuantityRest.setText(item.getNumRest() + "");
         holder.txtQuantityScan.setText(item.getNumCodeScan() + "");

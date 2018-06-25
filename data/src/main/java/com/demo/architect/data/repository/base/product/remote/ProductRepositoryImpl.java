@@ -49,6 +49,8 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public Observable<BaseListResponse<ProductEntity>> getAllDetailForSOACR(final int requestId) {
+
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<ProductEntity>>() {
             @Override
             public void call(Subscriber<? super BaseListResponse<ProductEntity>> subscriber) {

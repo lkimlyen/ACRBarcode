@@ -22,7 +22,6 @@ import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.constants.Constants;
-import com.demo.scanacr.manager.ProductManager;
 import com.demo.scanacr.manager.UserManager;
 import com.demo.scanacr.util.ConvertUtils;
 
@@ -101,7 +100,11 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
             }
         });
 
+        getDetailPack(logId);
 
+    }
+
+    public void getDetailPack(int logId) {
         localRepository.findLogCompletById(logId).subscribe(new Action1<LogCompleteCreatePackList>() {
             @Override
             public void call(LogCompleteCreatePackList logCompleteCreatePackList) {
@@ -124,6 +127,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                             @Override
                             public void call(String s) {
                                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));
+                                getDetailPack(logId);
                             }
                         });
                     }
@@ -332,11 +336,11 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                     public void onSuccess(GetDateServerUsecase.ResponseValue successResponse) {
                         LogCompleteCreatePack model = new LogCompleteCreatePack(barcode, deviceTime, successResponse.getDate(),
                                 latitude, longitude, phone, 0, null, orderModel.getId(), 0,
-                               0, numberInput, Constants.WAITING_UPLOAD, userId);
+                                0, numberInput, Constants.WAITING_UPLOAD, userId);
 
                         localRepository.addLogCompleteCreatePack(model, logId).subscribe();
                         view.hideProgressBar();
-
+                        getDetailPack(logId);
                     }
 
                     @Override

@@ -25,7 +25,7 @@ public class AuthRepositoryImpl implements AuthRepository {
     public AuthRepositoryImpl(AuthApiInterface mRemoteApiInterface, Context context) {
         this.mRemoteApiInterface = mRemoteApiInterface;
         this.context = context;
-        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+
     }
 
     private void handleLoginResponse(Call<UserResponse> call, Subscriber subscriber) {
@@ -106,6 +106,7 @@ public class AuthRepositoryImpl implements AuthRepository {
 
     @Override
     public Observable<UserResponse> login(final String username, final String password, final String type) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<UserResponse>() {
             @Override
             public void call(Subscriber<? super UserResponse> subscriber) {
@@ -118,6 +119,7 @@ public class AuthRepositoryImpl implements AuthRepository {
 
     @Override
     public Observable<BaseResponse> changePassword(final String userId, final String oldPass, final String newPass) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
@@ -130,6 +132,7 @@ public class AuthRepositoryImpl implements AuthRepository {
 
     @Override
     public Observable<UpdateAppResponse> getUpdateVersionACR() {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<UpdateAppResponse>() {
             @Override
             public void call(Subscriber<? super UpdateAppResponse> subscriber) {

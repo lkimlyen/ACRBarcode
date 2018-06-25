@@ -135,7 +135,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
         ssProduce.setAdapter(adapter);
 
-        mPresenter.getRequestProduction();
+        mPresenter.getData();
     }
 
 
@@ -193,7 +193,8 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
 
     @Override
     public void showRequestProduction(List<OrderModel> list) {
-
+        txtCodeSO.setText("");
+        txtCustomerName.setText("");
         ArrayAdapter<OrderModel> adapter = new ArrayAdapter<OrderModel>(getContext(), android.R.layout.simple_spinner_item, list);
 
         ssProduce.setAdapter(adapter);
@@ -220,11 +221,29 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     @Override
     public void showLogScanCreatePack(LogScanCreatePackList list) {
 
-
         adapter = new CreateCodePackAdapter(list.getItemList(), new CreateCodePackAdapter.OnItemClearListener() {
             @Override
             public void onItemClick(LogScanCreatePack item) {
-                mPresenter.deleteItemLog(item);
+                new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText(getString(R.string.text_title_noti))
+                        .setContentText(getString(R.string.text_delete_code))
+                        .setConfirmText(getString(R.string.text_yes))
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                                mPresenter.deleteItemLog(item);
+                            }
+                        })
+                        .setCancelText(getString(R.string.text_no))
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                            }
+                        })
+                        .show();
+
             }
         }, new CreateCodePackAdapter.OnEditTextChangeListener() {
             @Override
@@ -238,7 +257,32 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
 
     @OnClick(R.id.ic_refresh)
     public void refresh() {
-        mPresenter.getData();
+        if (mPresenter.countListScan(orderId) > 0) {
+            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText(getString(R.string.text_title_noti))
+                    .setContentText(getString(R.string.text_back_cancel_order_not_print))
+                    .setConfirmText(getString(R.string.text_yes))
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            mPresenter.deleteAllItemLog();
+                            sweetAlertDialog.dismiss();
+                            mPresenter.getData();
+                        }
+                    })
+                    .setCancelText(getString(R.string.text_no))
+                    .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                        }
+                    })
+                    .show();
+
+        } else {
+
+            mPresenter.getData();
+        }
     }
 
     public void showToast(String message) {

@@ -40,7 +40,6 @@ public class DetailPackAdapter extends RealmBaseAdapter<LogCompleteCreatePack> i
         if (adapterData != null) {
             final LogCompleteCreatePack item = adapterData.get(position);
             setDataToViews(viewHolder, item);
-
         }
         return convertView;
     }

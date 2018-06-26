@@ -39,17 +39,15 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
     private final String TAG = PrintStempPresenter.class.getName();
     private final PrintStempContract.View view;
     private final GetMaxPackageForSOUsecase getMaxPackageForSOUsecase;
-    private final AddPackageACRUsecase addPackageACRUsecase;
     private final AddPackageACRbyJsonUsecase addPackageACRbyJsonUsecase;
     @Inject
     LocalRepository localRepository;
 
     @Inject
     PrintStempPresenter(@NonNull PrintStempContract.View view, GetMaxPackageForSOUsecase getMaxPackageForSOUsecase,
-                        AddPackageACRUsecase addPackageACRUsecase, AddPackageACRbyJsonUsecase addPackageACRbyJsonUsecase) {
+                         AddPackageACRbyJsonUsecase addPackageACRbyJsonUsecase) {
         this.view = view;
         this.getMaxPackageForSOUsecase = getMaxPackageForSOUsecase;
-        this.addPackageACRUsecase = addPackageACRUsecase;
         this.addPackageACRbyJsonUsecase = addPackageACRbyJsonUsecase;
     }
 
@@ -155,8 +153,14 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
 
 
                             } else {
-                                view.hideProgressBar();
-                                view.backToCreatePack();
+                                localRepository.deleteLogCompleteAll().subscribe(new Action1<String>() {
+                                    @Override
+                                    public void call(String s) {
+
+                                        view.hideProgressBar();
+                                        view.backToCreatePack();
+                                    }
+                                });
                             }
                         } else {
                             view.hideProgressBar();
@@ -175,7 +179,6 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
 
 
     public void updateData(int orderId, int serial, int numTotal, String json) {
-
         addPackageACRbyJsonUsecase.executeIO(new AddPackageACRbyJsonUsecase.RequestValue(json),
                 new BaseUseCase.UseCaseCallback<AddPackageACRbyJsonUsecase.ResponseValue,
                         AddPackageACRbyJsonUsecase.ErrorValue>() {
@@ -186,7 +189,6 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
                                 .subscribe(new Action1<String>() {
                                     @Override
                                     public void call(String s) {
-                                        localRepository.deleteLogCompleteAll().subscribe();
                                         printStemp(orderId, serial, successResponse.getId(), numTotal);
                                     }
                                 });

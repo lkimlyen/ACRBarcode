@@ -148,7 +148,7 @@ public class LocalRepositoryImpl implements LocalRepository {
                     ProductModel product = databaseRealm.findProductByLog(model.getProductId(),
                             model.getOrderId(), model.getSerial());
                     if (product != null) {
-                       // databaseRealm.updateNumberProduct(model, model.getNumber());
+                        // databaseRealm.updateNumberProduct(model, model.getNumber());
                     } else {
                         databaseRealm.addItemAsync(model);
                     }
@@ -256,15 +256,15 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> addLogCompleteCreatePack(final LogCompleteCreatePack model, final int serverId) {
-        return Observable.create(new Observable.OnSubscribe<String>() {
+    public Observable<Integer> addLogCompleteCreatePack(final LogCompleteCreatePack model, final int serverId) {
+        return Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
-            public void call(Subscriber<? super String> subscriber) {
+            public void call(Subscriber<? super Integer> subscriber) {
                 try {
                     // databaseRealm.updateNumberRestProduct(item.getNumInput(), orderId, item.getProductId(), item.getTimes());
 
-                   databaseRealm.addLogCompleteCreatePackAsync(model, serverId);
-                    subscriber.onNext("");
+                   int num =  databaseRealm.addLogCompleteCreatePackAsync(model, serverId);
+                    subscriber.onNext(num);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);
@@ -355,8 +355,6 @@ public class LocalRepositoryImpl implements LocalRepository {
             }
         });
     }
-
-
 
 
     @Override
@@ -511,7 +509,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             public void call(Subscriber<? super LogCompleteCreatePackList> subscriber) {
                 try {
 
-                    LogCompleteCreatePackList model = databaseRealm.findFirstById(LogCompleteCreatePackList.class,logId);
+                    LogCompleteCreatePackList model = databaseRealm.findFirstById(LogCompleteCreatePackList.class, logId);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -528,7 +526,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             public void call(Subscriber<? super LogCompleteCreatePackList> subscriber) {
                 try {
 
-                    LogCompleteCreatePackList model = databaseRealm.findFirstById(LogCompleteCreatePackList.class,logId);
+                    LogCompleteCreatePackList model = databaseRealm.findFirstById(LogCompleteCreatePackList.class, logId);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -539,14 +537,31 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> deleteLogComplete(final int id,final int logId) {
-        return Observable.create(new Observable.OnSubscribe<String>() {
+    public Observable<Integer> deleteLogComplete(final int id, final int logId) {
+        return Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
-            public void call(Subscriber<? super String> subscriber) {
+            public void call(Subscriber<? super Integer> subscriber) {
                 try {
 
-                   databaseRealm.deleteLogCompleteAsync(id,logId);
-                    subscriber.onNext("");
+                   int num = databaseRealm.deleteLogCompleteAsync(id, logId);
+                    subscriber.onNext(num);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<Integer> getNumTotalPack(final int logId) {
+        return Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                try {
+
+                    int num = databaseRealm.getNumTotalPack(logId);
+                    subscriber.onNext(num);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);
@@ -579,7 +594,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             public void call(Subscriber<? super Boolean> subscriber) {
                 try {
 
-                    Boolean aBoolean = databaseRealm.checkExistBarcode(logId,barcode);
+                    Boolean aBoolean = databaseRealm.checkExistBarcode(logId, barcode);
                     subscriber.onNext(aBoolean);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -694,7 +709,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             @Override
             public void call(Subscriber<? super ScanDeliveryList> subscriber) {
                 try {
-                    ScanDeliveryList model = databaseRealm.finScanDeliveryAndAdd(times,requestCode);
+                    ScanDeliveryList model = databaseRealm.finScanDeliveryAndAdd(times, requestCode);
                     subscriber.onNext(model);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -746,7 +761,7 @@ public class LocalRepositoryImpl implements LocalRepository {
             public void call(Subscriber<? super ImportWorksModel> subscriber) {
                 try {
 
-                    ImportWorksModel item =  databaseRealm.addImportWorks(model);
+                    ImportWorksModel item = databaseRealm.addImportWorks(model);
                     subscriber.onNext(item);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -763,7 +778,24 @@ public class LocalRepositoryImpl implements LocalRepository {
             public void call(Subscriber<? super List<LogScanCreatePack>> subscriber) {
                 try {
 
-                    List<LogScanCreatePack> list =  databaseRealm.logCreateToJson(id);
+                    List<LogScanCreatePack> list = databaseRealm.logCreateToJson(id);
+                    subscriber.onNext(list);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<List<LogCompleteCreatePack>> logCompleteToJson(final int logId) {
+        return Observable.create(new Observable.OnSubscribe<List<LogCompleteCreatePack>>() {
+            @Override
+            public void call(Subscriber<? super List<LogCompleteCreatePack>> subscriber) {
+                try {
+
+                    List<LogCompleteCreatePack> list = databaseRealm.logCompleteToJson(logId);
                     subscriber.onNext(list);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -780,8 +812,25 @@ public class LocalRepositoryImpl implements LocalRepository {
             public void call(Subscriber<? super List<ScanDeliveryModel>> subscriber) {
                 try {
 
-                    List<ScanDeliveryModel> list =  databaseRealm.deliveryToJson(request);
+                    List<ScanDeliveryModel> list = databaseRealm.deliveryToJson(request);
                     subscriber.onNext(list);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
+    public Observable<Boolean> checkStatus(final int id) {
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                try {
+
+                    Boolean aBoolean = databaseRealm.checkStatus(id);
+                    subscriber.onNext(aBoolean);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);

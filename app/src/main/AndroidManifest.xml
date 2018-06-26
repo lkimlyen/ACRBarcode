@@ -68,6 +68,12 @@
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:screenOrientation="portrait"
             tools:replace="screenOrientation" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="2ddb95e8e59c5d08e7fdeb87d28c0a543a077d5a" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="2ddb95e8e59c5d08e7fdeb87d28c0a543a077d5a" />
     </application>
 
 </manifest>

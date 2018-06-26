@@ -46,7 +46,7 @@ public interface LocalRepository {
 
     Observable<String> addLogCompleteCreatePack(int id, final int serverId, final int serial, final int numTotal, final String dateCreate);
 
-    Observable<String> addLogCompleteCreatePack(final LogCompleteCreatePack model, final int serverId);
+    Observable<Integer> addLogCompleteCreatePack(final LogCompleteCreatePack model, final int serverId);
 
     Observable<OrderModel> findOrder(int orderId);
 
@@ -78,7 +78,9 @@ public interface LocalRepository {
 
     Observable<LogCompleteCreatePackList> findLogCompletById(int logId);
 
-    Observable<String> deleteLogComplete(int id, int logId);
+    Observable<Integer> deleteLogComplete(int id, int logId);
+
+    Observable<Integer> getNumTotalPack(int logId);
 
     Observable<String> deletePack(int logId, final int orderId);
 
@@ -107,5 +109,9 @@ public interface LocalRepository {
 
     Observable<List<LogScanCreatePack>> logCreateToJson(final int id);
 
+    Observable<List<LogCompleteCreatePack>> logCompleteToJson(final int logId);
+
     Observable<List<ScanDeliveryModel>> deliveryToJson(final String request);
+
+    Observable<Boolean> checkStatus(final int id);
 }

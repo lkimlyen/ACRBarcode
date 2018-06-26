@@ -287,6 +287,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                                                   final String codeScan, final int number, final double latitude,
                                                   final double longitude, final String activity, final int times,
                                                   final String dateCreate, final int userId, final int requestId) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
@@ -300,6 +301,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Observable<BaseResponse> getMaxTimesACR(final int requestId) {
+
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
@@ -312,6 +314,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Observable<BaseListResponse<OrderRequestEntity>> getAllRequestINACR() {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseListResponse<OrderRequestEntity>>() {
             @Override
             public void call(Subscriber<? super BaseListResponse<OrderRequestEntity>> subscriber) {
@@ -322,6 +325,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Observable<BaseResponse> deletePackageDetailACR(final int packageId, final int productId, final int userId) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {
@@ -334,6 +338,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Observable<BaseResponse> deletePackage(final int packageID, final int userId) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
             @Override
             public void call(Subscriber<? super BaseResponse> subscriber) {

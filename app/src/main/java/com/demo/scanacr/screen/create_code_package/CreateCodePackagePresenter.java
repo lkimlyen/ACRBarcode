@@ -204,6 +204,7 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
     }
 
     public void saveBarcode(double latitude, double longitude, String barcode, ProductModel product) {
+        view.showProgressBar();
         String deviceTime = ConvertUtils.getDateTimeCurrent();
         int userId = UserManager.getInstance().getUser().getUserId();
         String phone = Settings.Secure.getString(CoreApplication.getInstance().getContentResolver(),
@@ -213,6 +214,7 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                         GetDateServerUsecase.ErrorValue>() {
                     @Override
                     public void onSuccess(GetDateServerUsecase.ResponseValue successResponse) {
+                        view.hideProgressBar();
                         LogScanCreatePack model = new LogScanCreatePack(barcode, deviceTime, successResponse.getDate(),
                                 latitude, longitude, phone, product.getProductId(), orderModel.getId(), product.getSerial(),
                                 0, product.getNumber(), 0, 1, product.getNumberRest(), Constants.WAITING_UPLOAD, -1, userId);
@@ -228,7 +230,8 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
 
                     @Override
                     public void onError(GetDateServerUsecase.ErrorValue errorResponse) {
-
+                        view.hideProgressBar();
+                        view.showError(errorResponse.getDescription());
                     }
                 });
     }

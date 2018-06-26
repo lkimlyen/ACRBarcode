@@ -53,14 +53,7 @@ public class CreateCodePackAdapter extends RealmBaseAdapter<LogScanCreatePack> i
         return convertView;
     }
 
-    private void setDataToViews( HistoryHolder holder, LogScanCreatePack item) {
-        holder.txtRequestCode.setText(item.getBarcode());
-        holder.txtDate.setText(ConvertUtils.ConvertStringToShortDate(item.getDeviceTime()));
-        holder.txtQuantityProduct.setText(item.getNumTotal() + "");
-        holder.txtQuantityRest.setText(item.getNumRest() + "");
-        holder.txtQuantityScan.setText(item.getNumCodeScan() + "");
-        holder.edtNumberScan.setText(String.valueOf(item.getNumInput()));
-
+    private void setDataToViews(HistoryHolder holder, LogScanCreatePack item) {
         TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -81,34 +74,50 @@ public class CreateCodePackAdapter extends RealmBaseAdapter<LogScanCreatePack> i
                                 CoreApplication.getInstance().getText(R.string.text_number_bigger_zero)
                                 , Toast.LENGTH_SHORT).show();
                         holder.edtNumberScan.setText(item.getNumInput() + "");
-                        return;
-                    }
-                    if (numberInput - item.getNumInput() > item.getNumRest()) {
+
+                    } else if (numberInput - item.getNumInput() > item.getNumRest()) {
                         Toast.makeText(CoreApplication.getInstance(),
                                 CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest)
                                 , Toast.LENGTH_SHORT).show();
                         holder.edtNumberScan.setText(item.getNumInput() + "");
-                        return;
+
+                    } else if (numberInput == item.getNumInput()) {
+
+                    } else {
+                        onEditTextChangeListener.onEditTextChange(item, numberInput);
                     }
-                    if (numberInput == item.getNumInput()) {
-                        return;
-                    }
-                    onEditTextChangeListener.onEditTextChange(item, numberInput);
 
                 } catch (Exception e) {
 
                 }
             }
         };
+        holder.txtRequestCode.setText(item.getBarcode());
+        holder.txtDate.setText(ConvertUtils.ConvertStringToShortDate(item.getDeviceTime()));
+        holder.txtQuantityProduct.setText(item.getNumTotal() + "");
+        holder.txtQuantityRest.setText(item.getNumRest() + "");
+        holder.txtQuantityScan.setText(item.getNumCodeScan() + "");
+        holder.edtNumberScan.setText(String.valueOf(item.getNumInput()));
 
-        holder.edtNumberScan.removeTextChangedListener(textWatcher);
-        holder.edtNumberScan.addTextChangedListener(textWatcher);
+        holder.edtNumberScan.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    holder.edtNumberScan.addTextChangedListener(textWatcher);
+                }else {
+
+                    holder.edtNumberScan.removeTextChangedListener(textWatcher);
+                }
+            }
+        });
+
         holder.imgDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.onItemClick(item);
             }
         });
+
     }
 
     public class HistoryHolder extends RecyclerView.ViewHolder {

@@ -103,15 +103,13 @@ public class DatabaseRealm {
                     for (LogCompleteCreatePack item : result.getItemList()) {
                         ProductModel product = realm.where(ProductModel.class).equalTo("orderId", item.getOrderId()).equalTo("productId", item.getProductId()).
                                 equalTo("serial", item.getSerial()).findFirst();
-                        if (product.getStatus() == Constants.WAITING_UPLOAD) {
-                            product.setNumCompleteScan(item.getNumInput());
-                            if (product.getNumberRest() == 0) {
-                                product.setStatus(Constants.COMPLETE);
-                            } else {
-                                product.setStatus(Constants.DOING);
-                            }
-
+                        if (product.getNumberRest() == 0) {
+                            product.setStatus(Constants.COMPLETE);
+                        } else {
+                            product.setStatus(Constants.DOING);
                         }
+
+
                     }
 
                 }
@@ -135,9 +133,14 @@ public class DatabaseRealm {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                final LogCompleteCreatePack result = realm.where(LogCompleteCreatePack.class).equalTo("id", id).findFirst();
-                result.setStatus(Constants.COMPLETE);
-                result.getProductModel().setNumCompleteScan(result.getProductModel().getNumCompleteScan() + result.getNumInput());
+                final LogCompleteCreatePackList result = realm.where(LogCompleteCreatePackList.class).equalTo("id", id).findFirst();
+                for (LogCompleteCreatePack pack : result.getItemList()) {
+                    if (pack.getStatus() == Constants.WAITING_UPLOAD){
+                        pack.setStatus(Constants.COMPLETE);
+                        pack.getProductModel().setNumCompleteScan(pack.getProductModel().getNumCompleteScan() + pack.getNumInput());
+                    }
+                }
+
             }
         });
     }
@@ -230,9 +233,10 @@ public class DatabaseRealm {
         });
     }
 
-    public void addLogCompleteCreatePackAsync(final LogCompleteCreatePack model, final int serverId) {
+
+    public int addLogCompleteCreatePackAsync(final LogCompleteCreatePack model, final int serverId) {
         Realm realm = getRealmInstance();
-        realm.executeTransactionAsync(new Realm.Transaction() {
+        realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 ProductModel productModel = realm.where(ProductModel.class).equalTo("orderId", model.getOrderId())
@@ -241,19 +245,21 @@ public class DatabaseRealm {
                 model.setProductModel(productModel);
                 model.setSerial(productModel.getSerial());
                 model.setNumTotal(productModel.getNumber());
+
                 LogCompleteCreatePackList parent = realm.where(LogCompleteCreatePackList.class).equalTo("id", serverId).findFirst();
                 RealmList<LogCompleteCreatePack> items = parent.getItemList();
                 model.setId(LogCompleteCreatePack.id(realm) + 1);
                 LogCompleteCreatePack present = realm.copyToRealm(model);
                 items.add(present);
-                ProductModel productMode = present.getProductModel();
-                productMode.setNumCompleteScan(productMode.getNumCompleteScan() + model.getNumInput());
-                productMode.setNumberScan(productMode.getNumberScan() - model.getNumInput());
-                productMode.setNumberRest(productMode.getNumber() - productMode.getNumberScan());
+                productModel.setNumCompleteScan(productModel.getNumCompleteScan() + model.getNumInput());
+                productModel.setNumberScan(productModel.getNumberScan() + model.getNumInput());
+                productModel.setNumberRest(productModel.getNumber() - productModel.getNumberScan());
                 parent.setNumTotal(parent.getNumTotal() + present.getNumInput());
 
             }
         });
+        final LogCompleteCreatePackList parent = realm.where(LogCompleteCreatePackList.class).equalTo("id", serverId).findFirst();
+        return parent.getNumTotal();
     }
 
 
@@ -277,9 +283,9 @@ public class DatabaseRealm {
     }
 
 
-    public void deleteLogCompleteAsync(final int id, final int logId) {
+    public int deleteLogCompleteAsync(final int id, final int logId) {
         Realm realm = getRealmInstance();
-        realm.executeTransactionAsync(new Realm.Transaction() {
+        realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 LogCompleteCreatePack pack = realm.where(LogCompleteCreatePack.class).equalTo("id", id).findFirst();
@@ -287,7 +293,7 @@ public class DatabaseRealm {
                 packList.setNumTotal(packList.getNumTotal() - pack.getNumInput());
                 ProductModel productModel = realm.where(ProductModel.class).equalTo("productId", pack.getProductId())
                         .equalTo("orderId", pack.getOrderId()).equalTo("serial", pack.getSerial()).findFirst();
-                productModel.setNumberRest(productModel.getNumberRest() - pack.getNumInput());
+                productModel.setNumberRest(productModel.getNumberRest() + pack.getNumInput());
                 productModel.setNumberScan(productModel.getNumber() - productModel.getNumberRest());
                 productModel.setNumCompleteScan(productModel.getNumCompleteScan() - pack.getNumInput());
 
@@ -306,14 +312,23 @@ public class DatabaseRealm {
                 }
             }
         });
+        final LogCompleteCreatePackList packList = realm.where(LogCompleteCreatePackList.class).equalTo("id", logId).findFirst();
+        return packList.getNumTotal();
+    }
+
+    public int getNumTotalPack(final int logId) {
+        Realm realm = getRealmInstance();
+        final LogCompleteCreatePackList packList = realm.where(LogCompleteCreatePackList.class).equalTo("id", logId).findFirst();
+        return packList.getNumTotal();
     }
 
     public void deletePack(final int logId, final int orderId) {
         Realm realm = getRealmInstance();
+
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                LogCompleteCreatePackList packList = realm.where(LogCompleteCreatePackList.class).equalTo("id", logId).findFirst();
+                final LogCompleteCreatePackList packList = realm.where(LogCompleteCreatePackList.class).equalTo("id", logId).findFirst();
                 for (LogCompleteCreatePack pack : packList.getItemList()) {
                     ProductModel productModel = realm.where(ProductModel.class).equalTo("productId", pack.getProductId())
                             .equalTo("orderId", pack.getOrderId()).equalTo("serial", pack.getSerial()).findFirst();
@@ -445,6 +460,14 @@ public class DatabaseRealm {
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
+                for (LogScanCreatePack pack : results) {
+
+                    ProductModel productModel = realm.where(ProductModel.class).equalTo("productId", pack.getProductId())
+                            .equalTo("orderId", pack.getOrderId())
+                            .equalTo("serial", pack.getSerial()).findFirst();
+                    productModel.setNumberRest(productModel.getNumberRest() + pack.getNumInput());
+                    productModel.setNumberScan(productModel.getNumber() - productModel.getNumberRest());
+                }
                 results.deleteAllFromRealm();
             }
         });
@@ -527,6 +550,13 @@ public class DatabaseRealm {
         return realm.copyFromRealm(realmList);
     }
 
+
+    public boolean checkStatus(int id) {
+        Realm realm = getRealmInstance();
+        LogCompleteCreatePack result = realm.where(LogCompleteCreatePack.class).equalTo("id", id).findFirst();
+        return result.getStatus() == Constants.COMPLETE ? true : false;
+    }
+
     public ScanDeliveryList finScanDeliveryAndAdd(int times, String requestCode) {
         Realm realm = getRealmInstance();
         ScanDeliveryList parent = realm.where(ScanDeliveryList.class)
@@ -567,6 +597,22 @@ public class DatabaseRealm {
         RealmList<LogScanCreatePack> realmResults = realm.where(LogScanCreatePackList.class).equalTo("orderId", orderId)
                 .findFirst().getItemList();
         return realm.copyFromRealm(realmResults);
+
+    }
+
+
+    public List<LogCompleteCreatePack> logCompleteToJson(int logId) {
+        Realm realm = getRealmInstance();
+        List<LogCompleteCreatePack> list = new ArrayList<>();
+        RealmList<LogCompleteCreatePack> realmResults = realm.where(LogCompleteCreatePackList.class).equalTo("id", logId)
+                .findFirst().getItemList();
+
+        for (LogCompleteCreatePack pack : realm.copyFromRealm(realmResults)) {
+            if (pack.getStatus() == Constants.WAITING_UPLOAD) {
+                list.add(pack);
+            }
+        }
+        return list;
 
     }
 }

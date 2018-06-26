@@ -146,7 +146,7 @@ public class SettingPresenter implements SettingContract.Presenter {
             view.showSuccess(CoreApplication.getInstance().getString(R.string.text_backup_success));
         }else {
 
-            view.showSuccess(CoreApplication.getInstance().getString(R.string.text_backup_fail));
+            view.showError(CoreApplication.getInstance().getString(R.string.text_backup_fail));
         }
     }
 

@@ -107,7 +107,12 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
-                mPresenter.checkBarcode(barcode, orderId, logId);
+                if (adapter.getCount() == 11){
+                    showError(getString(R.string.text_list_had_enough));
+                }else {
+                    mPresenter.checkBarcode(barcode, orderId, logId);
+                }
+
             }
         }
     }
@@ -265,6 +270,11 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     }
 
     @Override
+    public void showNumTotal(int num) {
+        txtTotal.setText(String.valueOf(num));
+    }
+
+    @Override
     public void showDialogNumber(final ProductModel productModel, String barcode) {
         CreateBarcodeDialog dialog = new CreateBarcodeDialog();
         dialog.show(getActivity().getFragmentManager(), TAG);
@@ -362,7 +372,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 sweetAlertDialog.dismiss();
-                                mPresenter.printStemp(orderId, 0, Integer.parseInt(txtSerial.getText().toString()),
+                                mPresenter.printStemp(orderId, Integer.parseInt(txtSerial.getText().toString()), 0,
                                         logId);
                             }
                         })

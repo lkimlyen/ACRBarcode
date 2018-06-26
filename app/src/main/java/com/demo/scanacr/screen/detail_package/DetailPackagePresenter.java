@@ -10,10 +10,11 @@ import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.model.offline.LogCompleteCreatePack;
 import com.demo.architect.data.model.offline.LogCompleteCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
+import com.demo.architect.data.model.offline.PackageModel;
 import com.demo.architect.data.model.offline.ProductModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.data.repository.base.socket.ConnectSocket;
-import com.demo.architect.domain.AddPackageACRUsecase;
+import com.demo.architect.domain.AddPackageACRbyJsonUsecase;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.DeletePackageDetailUsecase;
 import com.demo.architect.domain.DeletePackageUsecase;
@@ -24,6 +25,7 @@ import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.manager.UserManager;
 import com.demo.scanacr.util.ConvertUtils;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,22 +44,24 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
     private final DetailPackageContract.View view;
     private final DeletePackageDetailUsecase deletePackageDetailUsecase;
     private final DeletePackageUsecase deletePackageUsecase;
-    private final AddPackageACRUsecase addPackageACRUsecase;
     private final GetDateServerUsecase getDateServerUsecase;
     private final GetAllDetailForSOACRUsecase getAllDetailForSOACRUsecase;
+    private final AddPackageACRbyJsonUsecase addPackageACRbyJsonUsecase;
     @Inject
     LocalRepository localRepository;
 
     @Inject
     DetailPackagePresenter(@NonNull DetailPackageContract.View view, DeletePackageDetailUsecase deletePackageDetailUsecase,
-                           DeletePackageUsecase deletePackageUsecase, AddPackageACRUsecase addPackageACRUsecase, GetDateServerUsecase getDateServerUsecase, GetAllDetailForSOACRUsecase getAllDetailForSOACRUsecase) {
+                           DeletePackageUsecase deletePackageUsecase,
+                           GetDateServerUsecase getDateServerUsecase,
+                           GetAllDetailForSOACRUsecase getAllDetailForSOACRUsecase,
+                           AddPackageACRbyJsonUsecase addPackageACRbyJsonUsecase) {
         this.view = view;
-
         this.deletePackageDetailUsecase = deletePackageDetailUsecase;
         this.deletePackageUsecase = deletePackageUsecase;
-        this.addPackageACRUsecase = addPackageACRUsecase;
         this.getDateServerUsecase = getDateServerUsecase;
         this.getAllDetailForSOACRUsecase = getAllDetailForSOACRUsecase;
+        this.addPackageACRbyJsonUsecase = addPackageACRbyJsonUsecase;
     }
 
     @Inject
@@ -113,31 +117,59 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
         });
     }
 
+
+    public void getNumTotal(int logId) {
+        localRepository.getNumTotalPack(logId).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                view.showNumTotal(integer);
+            }
+        });
+    }
+
     @Override
     public void deleteCode(int id, int productId, int logId) {
         view.showProgressBar();
         int userId = UserManager.getInstance().getUser().getUserId();
-        deletePackageDetailUsecase.executeIO(new DeletePackageDetailUsecase.RequestValue(logId, productId, userId),
-                new BaseUseCase.UseCaseCallback<DeletePackageDetailUsecase.ResponseValue,
-                        DeletePackageDetailUsecase.ErrorValue>() {
-                    @Override
-                    public void onSuccess(DeletePackageDetailUsecase.ResponseValue successResponse) {
-                        view.hideProgressBar();
-                        localRepository.deleteLogComplete(id, logId).subscribe(new Action1<String>() {
-                            @Override
-                            public void call(String s) {
-                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));
-                                getDetailPack(logId);
-                            }
-                        });
-                    }
 
-                    @Override
-                    public void onError(DeletePackageDetailUsecase.ErrorValue errorResponse) {
-                        view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
-                    }
-                });
+        localRepository.checkStatus(id).subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean aBoolean) {
+                if (aBoolean) {
+                    deletePackageDetailUsecase.executeIO(new DeletePackageDetailUsecase.RequestValue(logId, productId, userId),
+                            new BaseUseCase.UseCaseCallback<DeletePackageDetailUsecase.ResponseValue,
+                                    DeletePackageDetailUsecase.ErrorValue>() {
+                                @Override
+                                public void onSuccess(DeletePackageDetailUsecase.ResponseValue successResponse) {
+                                    view.hideProgressBar();
+                                    localRepository.deleteLogComplete(id, logId).subscribe(new Action1<Integer>() {
+                                        @Override
+                                        public void call(Integer num) {
+                                            view.showNumTotal(num);
+                                            view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onError(DeletePackageDetailUsecase.ErrorValue errorResponse) {
+                                    view.hideProgressBar();
+                                    view.showError(errorResponse.getDescription());
+                                }
+                            });
+                } else {
+                    localRepository.deleteLogComplete(id, logId).subscribe(new Action1<Integer>() {
+                        @Override
+                        public void call(Integer num) {
+                            view.showNumTotal(num);
+                            view.hideProgressBar();
+                            view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));
+                        }
+                    });
+                }
+            }
+        });
+
 
     }
 
@@ -168,7 +200,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
     }
 
     @Override
-    public void printStemp(int orderId, int serverId, int serial, int logId) {
+    public void printStemp(int orderId, int serial, int serverId, int logId) {
         localRepository.findIPAddress().subscribe(new Action1<IPAddress>() {
             @Override
             public void call(IPAddress address) {
@@ -185,10 +217,8 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                             if (serverId == 0) {
                                 updateData(logId, orderId, serial, true);
                             } else {
-                                if (countNumNotUp == count && countNumNotUp != 0) {
-                                    localRepository.updateStatusAndNumberProduct(serverId).subscribe();
-                                }
                                 view.hideProgressBar();
+                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_print_success));
                             }
                         } else {
                             view.showError(CoreApplication.getInstance().getString(R.string.text_no_connect_printer));
@@ -205,42 +235,68 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
     }
 
     private int count = 0;
-    private int countNumNotUp = 0;
 
     @Override
     public void updateData(int logId, int orderId, int serial, boolean print) {
-        localRepository.findLogCompletById(logId).subscribe(new Action1<LogCompleteCreatePackList>() {
+        localRepository.logCompleteToJson(logId).subscribe(new Action1<List<LogCompleteCreatePack>>() {
             @Override
-            public void call(LogCompleteCreatePackList logCompleteCreatePackList) {
-                count = 0;
-                for (LogCompleteCreatePack item : logCompleteCreatePackList.getItemList()) {
-                    if (item.getStatus() == Constants.WAITING_UPLOAD) {
-                        countNumNotUp++;
-                        addPackageACRUsecase.executeIO(new AddPackageACRUsecase.RequestValue(item.getOrderId(),
-                                        serial, item.getProductId(), item.getBarcode(), item.getNumInput(),
-                                        item.getLatitude(), item.getLongitude(), item.getDeviceTime(), item.getCreateBy()),
-                                new BaseUseCase.UseCaseCallback<AddPackageACRUsecase.ResponseValue,
-                                        AddPackageACRUsecase.ErrorValue>() {
+            public void call(List<LogCompleteCreatePack> list) {
+                if (list != null) {
+                    if (list.size() > 0) {
+                        List<PackageModel> packageModels = new ArrayList<>();
+                        for (LogCompleteCreatePack pack : list) {
+                            PackageModel model = new PackageModel(pack.getOrderId(),
+                                    serial, pack.getProductId(), pack.getBarcode(), pack.getNumInput(),
+                                    pack.getLatitude(), pack.getLongitude(), pack.getDeviceTime(), pack.getCreateBy());
+                            packageModels.add(model);
+                        }
+                        Gson gson = new Gson();
+                        String json = gson.toJson(packageModels);
+                        Log.d("PARSEARRAYTOJSON", json);
+                        addPackageACRbyJsonUsecase.executeIO(new AddPackageACRbyJsonUsecase.RequestValue(json),
+                                new BaseUseCase.UseCaseCallback<AddPackageACRbyJsonUsecase.ResponseValue,
+                                        AddPackageACRbyJsonUsecase.ErrorValue>() {
                                     @Override
-                                    public void onSuccess(AddPackageACRUsecase.ResponseValue successResponse) {
-                                        view.hideProgressBar();
-                                        count++;
-                                        localRepository.updateStatusLog(logCompleteCreatePackList.getId()).subscribe();
+                                    public void onSuccess(AddPackageACRbyJsonUsecase.ResponseValue successResponse) {
+
+                                        localRepository.updateStatusLog(logId).subscribe(new Action1<String>() {
+                                            @Override
+                                            public void call(String s) {
+                                                localRepository.updateStatusAndNumberProduct(logId).subscribe(new Action1<String>() {
+                                                    @Override
+                                                    public void call(String s) {
+                                                        if (print) {
+                                                            printStemp(orderId, serial, successResponse.getId(), logId);
+                                                        }
+                                                    }
+                                                });
+
+                                            }
+                                        });
+
                                     }
 
                                     @Override
-                                    public void onError(AddPackageACRUsecase.ErrorValue errorResponse) {
+                                    public void onError(AddPackageACRbyJsonUsecase.ErrorValue errorResponse) {
                                         view.hideProgressBar();
                                         view.showError(errorResponse.getDescription());
                                     }
                                 });
+
+                    } else {
+                        if (print) {
+                            printStemp(orderId, serial, logId, logId);
+                        }
+                    }
+                } else {
+                    if (print) {
+                        printStemp(orderId, serial, logId, logId);
                     }
                 }
-                if ((countNumNotUp == 0 || count == countNumNotUp) && print) {
-                    printStemp(orderId, logId, logCompleteCreatePackList.getId(), logId);
-                }
             }
+
         });
+
 
     }
 
@@ -338,9 +394,14 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                                 latitude, longitude, phone, 0, null, orderModel.getId(), 0,
                                 0, numberInput, Constants.WAITING_UPLOAD, userId);
 
-                        localRepository.addLogCompleteCreatePack(model, logId).subscribe();
+                        localRepository.addLogCompleteCreatePack(model, logId).subscribe(new Action1<Integer>() {
+                            @Override
+                            public void call(Integer integer) {
+                                view.showNumTotal(integer);
+                            }
+                        });
                         view.hideProgressBar();
-                        getDetailPack(logId);
+
                     }
 
                     @Override

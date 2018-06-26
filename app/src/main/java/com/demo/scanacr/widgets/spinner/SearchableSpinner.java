@@ -140,12 +140,12 @@ public class SearchableSpinner extends android.support.v7.widget.AppCompatSpinne
 
     @Override
     public void onSearchableItemClicked(Object item, int position) {
-        setSelection(position);
+        setSelection(_arrayAdapter.getPosition(item));
 
         if (!_isDirty) {
             _isDirty = true;
             setAdapter(_arrayAdapter);
-            setSelection(position);
+            setSelection(_arrayAdapter.getPosition(item));
         }
     }
 

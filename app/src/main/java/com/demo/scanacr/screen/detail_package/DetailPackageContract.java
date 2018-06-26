@@ -24,6 +24,8 @@ public interface DetailPackageContract {
 
         void deletePackSuccess();
 
+        void showNumTotal(int num);
+
         void showDialogNumber(final ProductModel productModel, String barcode);
     }
 

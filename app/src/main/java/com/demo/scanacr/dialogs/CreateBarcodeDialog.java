@@ -59,7 +59,7 @@ public class CreateBarcodeDialog extends DialogFragment {
         txtQuantityRest.setText((model.getNumberRest() - 1) + "");
         txtQuantityScan.setText(model.getNumCompleteScan() + "");
         edtNumberScan.setText("1");
-        int numberRest = Integer.parseInt(txtQuantityRest.getText().toString());
+
         final int numTotal = model.getNumber();
         TextWatcher textWatcher = new TextWatcher() {
             @Override
@@ -74,6 +74,7 @@ public class CreateBarcodeDialog extends DialogFragment {
 
             @Override
             public void afterTextChanged(Editable s) {
+                int numberRest = Integer.parseInt(txtQuantityRest.getText().toString());
                 try {
                     int numberInput = Integer.parseInt(s.toString());
                     if (numberInput <= 0) {
@@ -90,8 +91,8 @@ public class CreateBarcodeDialog extends DialogFragment {
                         edtNumberScan.setText(numberOld + numberRest + "");
                         return;
                     }
+                    txtQuantityRest.setText(String.valueOf(numberRest - (numberInput - numberOld)));
                     numberOld = numberInput;
-                    txtQuantityRest.setText(String.valueOf(numTotal - numberOld));
 
                 } catch (Exception e) {
 

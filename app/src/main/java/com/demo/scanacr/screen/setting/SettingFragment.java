@@ -3,6 +3,8 @@ package com.demo.scanacr.screen.setting;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +15,13 @@ import com.demo.scanacr.R;
 import com.demo.scanacr.app.base.BaseFragment;
 import com.demo.scanacr.dialogs.ChangeIPAddressDialog;
 import com.demo.scanacr.screen.chang_password.ChangePasswordActivity;
+import com.demo.scanacr.util.ConvertUtils;
 import com.demo.scanacr.util.Precondition;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 
@@ -31,6 +39,7 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
 
     private SettingContract.Presenter mPresenter;
     private IPAddress mModel;
+    private StorageReference storageRef;
     @Bind(R.id.txt_version)
     TextView txtVersion;
 
@@ -59,7 +68,8 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_setting, container, false);
         ButterKnife.bind(this, view);
-
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReference();
         return view;
     }
 
@@ -142,6 +152,33 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
     @Override
     public void showError(String message) {
         showNotification(message, SweetAlertDialog.ERROR_TYPE);
+    }
+
+    @Override
+    public void uploadFile(String path, int userId, String userName, String phone) {
+        UploadTask uploadTask;
+        Uri file = Uri.fromFile(new File(path));
+        StorageReference riversRef = storageRef.child(userId + "_" + userName + "_" + phone + "/" + ConvertUtils.getTimeMillis() +file.getLastPathSegment());
+        uploadTask = riversRef.putFile(file);
+
+// Register observers to listen for when the download is done or if it fails
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+                showError(getString(R.string.text_backup_fail));
+                Log.d(TAG, exception.getMessage());
+                hideProgressBar();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                // ...
+                hideProgressBar();
+                showSuccess(getString(R.string.text_backup_success));
+            }
+        });
     }
 
 

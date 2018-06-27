@@ -57,6 +57,10 @@ public class ConvertUtils {
         return newFormat;
     }
 
+    public static long getTimeMillis(){
+        return System.currentTimeMillis();
+    }
+
     public static String exportRealmFile() {
         final Realm realm = Realm.getDefaultInstance();
         String filePath = "";
@@ -70,7 +74,7 @@ public class ConvertUtils {
             }
 
             realm.writeCopyTo(file);
-            filePath = file.getParent();
+            filePath = file.getPath();
         } catch (Exception e) {
             realm.close();
             e.printStackTrace();

@@ -22,6 +22,7 @@ import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.manager.ServerManager;
 import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
 
@@ -83,8 +84,8 @@ public class CoreApplication extends MultiDexApplication implements Application.
     }
 
     private void initializeFirebase() {
-        String token = FirebaseInstanceId.getInstance().getToken();
-        Log.d(TAG, "Core FCM Token: " + token);
+      //  String token = FirebaseInstanceId.getInstance().getToken();
+       // Log.d(TAG, "Core FCM Token: " + token);
     }
 
 

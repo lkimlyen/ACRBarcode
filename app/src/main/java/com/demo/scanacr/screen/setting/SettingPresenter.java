@@ -23,6 +23,7 @@ import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.manager.UserManager;
 import com.demo.scanacr.util.ConvertUtils;
 import com.demo.scanacr.util.DownloadUtils;
+import com.google.firebase.storage.StorageReference;
 
 import javax.inject.Inject;
 
@@ -138,15 +139,17 @@ public class SettingPresenter implements SettingContract.Presenter {
 
     @Override
     public void cloneDataAndSendMail() {
+        view.showProgressBar();
         UserResponse user = UserManager.getInstance().getUser();
         String dataPath = ConvertUtils.exportRealmFile();
         if (!dataPath.equals("")) {
-            SendMailUtil.sendMail(user.getUserId(), user.getUserName(), user.getPhone(), dataPath, getVersion(),
-                    CoreApplication.getInstance().getString(R.string.text_name_database));
-            view.showSuccess(CoreApplication.getInstance().getString(R.string.text_backup_success));
+//            SendMailUtil.sendMail(user.getUserId(), user.getUserName(), user.getPhone(), dataPath, getVersion(),
+//                    CoreApplication.getInstance().getString(R.string.text_name_database));
+            view.uploadFile(dataPath,user.getUserId(), user.getUserName(), user.getPhone());
         }else {
 
             view.showError(CoreApplication.getInstance().getString(R.string.text_backup_fail));
+            view.hideProgressBar();
         }
     }
 

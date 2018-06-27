@@ -22,11 +22,11 @@ public interface DetailPackageContract {
 
         void showDetailPack(LogCompleteCreatePackList pack);
 
-        void deletePackSuccess();
-
         void showNumTotal(int num);
 
         void showDialogNumber(final ProductModel productModel, String barcode);
+
+        void backToHistory(int request);
     }
 
     interface Presenter extends BasePresenter {

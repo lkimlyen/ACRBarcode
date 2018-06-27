@@ -90,6 +90,8 @@ public interface LocalRepository {
 
     Observable<Boolean> checkExistBarcodeInWarehousing(String barcode);
 
+    Observable<Boolean> checkExistBarcodeScanCreate(String barcode);
+
     Observable<Boolean> checkExistImportWorks(String barcode);
 
     Observable<Boolean> checkExistBarcodeInDelivery(String barcode);

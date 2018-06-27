@@ -117,16 +117,6 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
         });
     }
 
-
-    public void getNumTotal(int logId) {
-        localRepository.getNumTotalPack(logId).subscribe(new Action1<Integer>() {
-            @Override
-            public void call(Integer integer) {
-                view.showNumTotal(integer);
-            }
-        });
-    }
-
     @Override
     public void deleteCode(int id, int productId, int logId) {
         view.showProgressBar();
@@ -186,7 +176,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                         localRepository.deletePack(logId, orderId).subscribe(new Action1<String>() {
                             @Override
                             public void call(String s) {
-                                view.deletePackSuccess();
+                                view.backToHistory(Constants.DELETE);
                             }
                         });
                     }
@@ -218,7 +208,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                                 updateData(logId, orderId, serial, true);
                             } else {
                                 view.hideProgressBar();
-                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_print_success));
+                                view.backToHistory(Constants.PRINT);
                             }
                         } else {
                             view.showError(CoreApplication.getInstance().getString(R.string.text_no_connect_printer));
@@ -267,6 +257,8 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                                                     public void call(String s) {
                                                         if (print) {
                                                             printStemp(orderId, serial, successResponse.getId(), logId);
+                                                        }else {
+                                                            view.backToHistory(Constants.DONE);
                                                         }
                                                     }
                                                 });

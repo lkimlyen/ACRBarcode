@@ -20,7 +20,7 @@
     <string name="text_no">Không</string>
     <string name="text_check_app_update">Kiểm tra cập nhật phần mềm</string>
     <string name="text_change_ip_address">Thay đổi địa chỉ IP</string>
-    <string name="text_change_password">Đổi mật khảu</string>
+    <string name="text_change_password">Đổi mật khẩu</string>
     <string name="text_reset_all_data">Xóa tất cả dữ liệu</string>
     <string name="text_old_password">Mật khẩu cũ</string>
     <string name="text_enter_old_password">Nhập mật khẩu cũ</string>
@@ -56,6 +56,7 @@
     <string name="text_code_scan" >Mã quét:</string>
     <string name="text_date_scan">Ngày quét mã:</string>
     <string name="text_not_done_pack_current">Chưa hoàn thành gói hiện tại!</string>
+    <string name="text_not_done_pack_current_refresh">Chưa hoàn thành gói hiện tại!Bạn có muốn hủy không?</string>
     <string name="text_back_cancel_order_not_print">Quay lại sẽ HỦY những mã chưa IN! \n Bạn có muốn hủy không?.</string>
     <string name="text_ip_address">Địa chỉ ip</string>
     <string name="text_port">Port</string>
@@ -105,6 +106,9 @@
     <string name="text_backup_fail">Sao lưu thất bại</string>
     <string name="text_get_package_success">Tải danh sách mã gói trong Yêu cầu thành công!</string>
     <string name="text_code_null">Không có mã nào trong yêu cầu này!!</string>
+    <string name="text_confirm">Xác nhận</string>
+    <string name="text_done_pack_success">Đã hoàn tất gói</string>
+    <string name="text_title_close">Bạn có muốn đóng ứng dụng không?</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

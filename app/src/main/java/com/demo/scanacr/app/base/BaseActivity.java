@@ -3,11 +3,16 @@ package com.demo.scanacr.app.base;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,8 +26,11 @@ import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.app.di.component.ApplicationComponent;
 import com.demo.scanacr.app.permission.PermissionHelper;
 import com.demo.scanacr.app.permission.PermissionListener;
+import com.demo.scanacr.util.LocationHelper;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.security.ProviderInstaller;
 
 import java.util.ArrayList;
@@ -34,9 +42,11 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
  */
 
 public class BaseActivity extends AppCompatActivity
-        implements iBaseView {
+        implements iBaseView,GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
     MaterialDialog pDialog;
-
+    private LocationHelper locationHelper;
+    private Location mLastLocation;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +61,8 @@ public class BaseActivity extends AppCompatActivity
             setWindowFlag(this, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false);
             getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
         }
-
+        locationHelper = new LocationHelper(this);
+        locationHelper.checkpermission();
         Window window = this.getWindow();
 
 // clear FLAG_TRANSLUCENT_STATUS flag:
@@ -74,6 +85,11 @@ public class BaseActivity extends AppCompatActivity
             e.printStackTrace();
         }
         checkPermission();
+        if (locationHelper.checkPlayServices()) {
+
+            // Building the GoogleApi client
+            locationHelper.buildGoogleApiClient();
+        }
     }
 
     public int getStatusBarHeight() {
@@ -163,6 +179,7 @@ public class BaseActivity extends AppCompatActivity
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
         }
+        locationHelper.checkPlayServices();
         //  this.findViewById(android.R.id.content).findViewById(R.id.fragmentContainer).setPadding(0, getStatusBarHeight(), 0, 0);
 
 //        Window w = getWindow(); // in Activity's onCreate() for instance
@@ -218,5 +235,41 @@ public class BaseActivity extends AppCompatActivity
     public void onBackPressed() {
         super.onBackPressed();
         finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        locationHelper.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /**
+     * Google api callback methods
+     */
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        Log.i("Connection failed:", " ConnectionResult.getErrorCode() = "
+                + result.getErrorCode());
+    }
+
+    @Override
+    public void onConnected(Bundle arg0) {
+
+        // Once connected with google api, get the location
+        mLastLocation = locationHelper.getLocation();
+    }
+
+    @Override
+    public void onConnectionSuspended(int arg0) {
+        locationHelper.connectApiClient();
+    }
+
+
+    // Permission check functions
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        // redirects to utils
+        locationHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
     }
 }

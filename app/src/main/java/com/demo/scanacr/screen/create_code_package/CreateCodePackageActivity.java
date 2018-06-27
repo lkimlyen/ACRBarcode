@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Window;
 import android.view.WindowManager;
@@ -44,11 +45,11 @@ public class CreateCodePackageActivity extends BaseActivity {
                 .plus(new CreateCodePackageModule(fragment))
                 .inject(this);
 
-        Window w = getWindow(); // in Activity's onCreate() for instance
-        w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
-        }
+//        Window w = getWindow(); // in Activity's onCreate() for instance
+//        w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
+//        }
     }
 
     private void initFragment() {
@@ -84,4 +85,9 @@ public class CreateCodePackageActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        fragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 }

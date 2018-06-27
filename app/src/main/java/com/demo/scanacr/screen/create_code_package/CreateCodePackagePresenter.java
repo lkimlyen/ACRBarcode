@@ -188,8 +188,25 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
             if (barcode.equals(barcodeMain)) {
                 checkBarcode++;
                 if (model.getNumberRest() > 0) {
-                    saveBarcode(latitude,
-                            longitude, barcode, model);
+                    if (countListScan(orderId) < 11) {
+                        saveBarcode(latitude,
+                                longitude, barcode, model);
+                    } else {
+                        localRepository.checkExistBarcodeScanCreate(barcode)
+                                .subscribe(new Action1<Boolean>() {
+                                    @Override
+                                    public void call(Boolean aBoolean) {
+                                        if (aBoolean){
+                                            saveBarcode(latitude,
+                                                    longitude, barcode, model);
+                                        }else {
+                                            view.showError(CoreApplication.getInstance().getString(R.string.text_list_had_enough));
+                                        }
+                                    }
+                                });
+                    }
+
+
                 } else {
                     view.showError(CoreApplication.getInstance().getString(R.string.text_number_input_had_enough));
                 }

@@ -39,19 +39,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorPrimaryDark"
         android:orientation="horizontal"
+        android:gravity="center_vertical"
         android:padding="@dimen/distance_16dp">
 
         <ImageView
-            android:layout_width="96dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_user" />
+            android:layout_width="@dimen/size_60dp"
+            android:layout_height="@dimen/size_60dp"
+            android:src="@drawable/ic_logo" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginStart="@dimen/distance_10dp"
             android:orientation="vertical">
 
             <TextView
@@ -95,7 +97,7 @@
                 <Button
                     android:id="@+id/btn_create_package"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_50dp"
+                    android:layout_height="@dimen/size_60dp"
                     android:background="@drawable/bg_button_stroke_white"
                     android:drawableLeft="@drawable/ic_createcode"
                     android:paddingLeft="@dimen/distance_16dp"
@@ -107,7 +109,7 @@
                 <Button
                     android:id="@+id/btn_history_pack"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_50dp"
+                    android:layout_height="@dimen/size_60dp"
                     android:background="@drawable/bg_button_stroke_white"
                     android:drawableLeft="@drawable/ic_history_create_pack"
                     android:text="@string/text_history_create_code"
@@ -118,7 +120,7 @@
                 <Button
                     android:id="@+id/btn_report_detail"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_50dp"
+                    android:layout_height="@dimen/size_60dp"
                     android:background="@drawable/bg_button_stroke_white"
                     android:drawableLeft="@drawable/ic_report_detail"
                     android:text="@string/text_report_detail_create_pack"
@@ -130,7 +132,7 @@
                 <Button
                     android:id="@+id/btn_warehousing"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_50dp"
+                    android:layout_height="@dimen/size_60dp"
                     android:background="@drawable/bg_button_stroke_white"
                     android:drawableLeft="@drawable/ic_store_arc"
                     android:text="@string/text_scan_warehouse"
@@ -142,7 +144,7 @@
                 <Button
                     android:id="@+id/btn_delivery"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_50dp"
+                    android:layout_height="@dimen/size_60dp"
                     android:background="@drawable/bg_button_stroke_white"
                     android:drawableLeft="@drawable/ic_delivery"
                     android:text="@string/text_scan_delivery"
@@ -154,7 +156,7 @@
                 <Button
                     android:id="@+id/btn_confirm_delivery"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_50dp"
+                    android:layout_height="@dimen/size_60dp"
                     android:background="@drawable/bg_button_stroke_white"
                     android:drawableLeft="@drawable/check"
                     android:text="@string/text_check_code_scan"
@@ -166,7 +168,7 @@
                 <Button
                     android:id="@+id/btn_import_works"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_50dp"
+                    android:layout_height="@dimen/size_60dp"
                     android:background="@drawable/bg_button_stroke_white"
                     android:drawableLeft="@drawable/ic_in_stock"
                     android:paddingLeft="@dimen/distance_16dp"
@@ -179,7 +181,7 @@
                 <Button
                     android:id="@+id/btn_setting"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_50dp"
+                    android:layout_height="@dimen/size_60dp"
                     android:background="@drawable/bg_button_stroke_white"
                     android:drawableLeft="@drawable/ic_info"
                     android:text="@string/text_setting"
@@ -191,7 +193,7 @@
                 <Button
                     android:id="@+id/btn_logout"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/size_50dp"
+                    android:layout_height="@dimen/size_60dp"
                     android:background="@drawable/bg_button_stroke_white"
                     android:drawableLeft="@drawable/ic_exit_24dp"
                     android:text="@string/text_logout"

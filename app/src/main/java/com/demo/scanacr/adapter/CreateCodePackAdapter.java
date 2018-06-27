@@ -74,18 +74,21 @@ public class CreateCodePackAdapter extends RealmBaseAdapter<LogScanCreatePack> i
                                 CoreApplication.getInstance().getText(R.string.text_number_bigger_zero)
                                 , Toast.LENGTH_SHORT).show();
                         holder.edtNumberScan.setText(item.getNumInput() + "");
+                        return;
 
-                    } else if (numberInput - item.getNumInput() > item.getNumRest()) {
+                    }
+                    if (numberInput - item.getNumInput() > item.getNumRest()) {
                         Toast.makeText(CoreApplication.getInstance(),
                                 CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest)
                                 , Toast.LENGTH_SHORT).show();
                         holder.edtNumberScan.setText(item.getNumInput() + "");
-
-                    } else if (numberInput == item.getNumInput()) {
-
-                    } else {
-                        onEditTextChangeListener.onEditTextChange(item, numberInput);
+                        return;
                     }
+                    if (numberInput == item.getNumInput()) {
+                        return;
+                    }
+                    onEditTextChangeListener.onEditTextChange(item, numberInput);
+
 
                 } catch (Exception e) {
 
@@ -104,7 +107,7 @@ public class CreateCodePackAdapter extends RealmBaseAdapter<LogScanCreatePack> i
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
                     holder.edtNumberScan.addTextChangedListener(textWatcher);
-                }else {
+                } else {
 
                     holder.edtNumberScan.removeTextChangedListener(textWatcher);
                 }

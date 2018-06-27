@@ -637,6 +637,22 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
+    public Observable<Boolean> checkExistBarcodeScanCreate(final String barcode) {
+        return Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                try {
+                    Boolean aBoolean = databaseRealm.checkExistScanCreate(barcode);
+                    subscriber.onNext(aBoolean);
+                    subscriber.onCompleted();
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        });
+    }
+
+    @Override
     public Observable<Boolean> checkExistImportWorks(final String barcode) {
         return Observable.create(new Observable.OnSubscribe<Boolean>() {
             @Override

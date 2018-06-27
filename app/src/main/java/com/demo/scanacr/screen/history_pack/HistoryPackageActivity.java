@@ -13,6 +13,8 @@ import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.app.base.BaseActivity;
 import com.demo.scanacr.app.di.Precondition;
+import com.demo.scanacr.constants.Constants;
+import com.demo.scanacr.screen.detail_package.DetailPackageActivity;
 import com.demo.scanacr.screen.print_stemp.PrintStempActivity;
 
 import javax.inject.Inject;
@@ -44,11 +46,11 @@ public class HistoryPackageActivity extends BaseActivity {
                 .plus(new HistoryPackageModule(fragment))
                 .inject(this);
 
-        Window w = getWindow(); // in Activity's onCreate() for instance
-        w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
-        }
+//        Window w = getWindow(); // in Activity's onCreate() for instance
+//        w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
+//        }
     }
 
     private void initFragment() {
@@ -76,9 +78,20 @@ public class HistoryPackageActivity extends BaseActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PrintStempActivity.REQUEST_CODE) {
+        if (requestCode == DetailPackageActivity.REQUEST_CODE) {
             if(resultCode == Activity.RESULT_OK){
-                fragment.showSuccess(getString(R.string.text_delete_success));
+                if (data.getIntExtra(Constants.KEY_RESULT,0) == Constants.DELETE){
+                    fragment.showSuccess(getString(R.string.text_delete_success));
+                }
+               if (data.getIntExtra(Constants.KEY_RESULT,0) == Constants.PRINT){
+                    fragment.showSuccess(getString(R.string.text_print_success));
+               }
+
+                if (data.getIntExtra(Constants.KEY_RESULT,0) == Constants.DONE){
+                    fragment.showSuccess(getString(R.string.text_done_pack_success));
+                }
+
+
             }
         }
     }

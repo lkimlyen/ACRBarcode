@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
@@ -32,6 +33,7 @@ import com.demo.scanacr.util.Precondition;
 import com.demo.scanacr.widgets.spinner.SearchableSpinner;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -95,6 +97,9 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2000) {
+            checkPermissionLocation();
+        }
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() != null) {
@@ -164,6 +169,12 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     public void onPause() {
         super.onPause();
         mPresenter.stop();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mPresenter.deleteAllItemLog();
     }
 
     public void showNotification(String content, int type) {
@@ -260,7 +271,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
         if (mPresenter.countListScan(orderId) > 0) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.text_title_noti))
-                    .setContentText(getString(R.string.text_back_cancel_order_not_print))
+                    .setContentText(getString(R.string.text_not_done_pack_current_refresh))
                     .setConfirmText(getString(R.string.text_yes))
                     .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
@@ -296,9 +307,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
         if (edtBarcode.getText().toString().equals("")) {
             return;
         }
-
-        if (mPresenter.countListScan(orderId) == 11) {
-            showNotification(getString(R.string.text_list_had_enough), SweetAlertDialog.WARNING_TYPE);
+        if (ssProduce.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
             return;
         }
         checkPermissionLocation();
@@ -343,7 +352,12 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
                                 mLocation = location;  // Logic to handle location object
                             }
                         }
-                    });
+                    }).addOnFailureListener(getActivity(), new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    showError(e.getMessage());
+                }
+            });
 
         }
 

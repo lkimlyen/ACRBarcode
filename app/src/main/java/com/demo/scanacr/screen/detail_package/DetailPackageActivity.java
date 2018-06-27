@@ -47,11 +47,11 @@ public class DetailPackageActivity extends BaseActivity {
                 .plus(new DetailPackageModule(fragment))
                 .inject(this);
 
-        Window w = getWindow(); // in Activity's onCreate() for instance
-        w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
-        }
+//        Window w = getWindow(); // in Activity's onCreate() for instance
+//        w.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            getWindow().setStatusBarColor(getResources().getColor(R.color.colorPrimary));
+//        }
     }
 
     private void initFragment() {
@@ -80,11 +80,7 @@ public class DetailPackageActivity extends BaseActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         fragment.onActivityResult(requestCode,resultCode, data);
-        if (requestCode == PrintStempActivity.REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                fragment.showSuccess(getString(R.string.text_print_success));
-            }
-        }
+
     }
 
 }

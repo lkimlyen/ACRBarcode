@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +36,7 @@ import com.demo.scanacr.util.ConvertUtils;
 import com.demo.scanacr.util.Precondition;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -102,6 +104,9 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2000) {
+            checkPermissionLocation();
+        }
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (result != null) {
             if (result.getContents() != null) {
@@ -151,11 +156,15 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
                         public void onSuccess(Location location) {
                             // Got last known location. In some rare situations this can be null.
                             if (location != null) {
-                                mLocation = location;
-                                // Logic to handle location object
+                                mLocation = location;  // Logic to handle location object
                             }
                         }
-                    });
+                    }).addOnFailureListener(getActivity(), new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    showError(e.getMessage());
+                }
+            });
 
         }
 
@@ -261,13 +270,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
         txtTotal.setText(String.valueOf(pack.getNumTotal()));
     }
 
-    @Override
-    public void deletePackSuccess() {
-        Intent returnIntent = new Intent();
-        getActivity().setResult(Activity.RESULT_OK, returnIntent);
-        getActivity().finish();
 
-    }
 
     @Override
     public void showNumTotal(int num) {
@@ -414,5 +417,13 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
                 // Permission was denied. Display an error message.
             }
         }
+    }
+
+    @Override
+    public void backToHistory(int request) {
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra(Constants.KEY_RESULT, request);
+        getActivity().setResult(Activity.RESULT_OK,returnIntent);
+        getActivity().finish();
     }
 }

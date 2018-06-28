@@ -3,12 +3,9 @@ package com.demo.scanacr.screen.create_code_package;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentTransaction;
-import android.view.Window;
-import android.view.WindowManager;
 
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
@@ -71,7 +68,7 @@ public class CreateCodePackageActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         fragment.back();
-       // super.onBackPressed();
+        // super.onBackPressed();
     }
 
     @Override
@@ -79,8 +76,10 @@ public class CreateCodePackageActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         fragment.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PrintStempActivity.REQUEST_CODE) {
-            if(resultCode == Activity.RESULT_OK){
+            if (resultCode == Activity.RESULT_OK) {
                 fragment.showSuccess(getString(R.string.text_print_success));
+            } else {
+                fragment.isClick = false;
             }
         }
     }

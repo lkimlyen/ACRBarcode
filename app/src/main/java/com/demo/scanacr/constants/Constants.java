@@ -17,7 +17,7 @@ public class Constants {
 
     public static final int DELETE = 1;
     public static final int PRINT = 2;
-    public static final int DONE = 2;
+    public static final int DONE = 3;
 
     public static final String KEY_SCAN_RESULT = "SCAN_RESULT";
 
@@ -35,6 +35,10 @@ public class Constants {
     public static final String SERVER_MAIN = "http://acc.imark.com.vn";
 
     public static final String SERVER_TEST = "http://acctest.imark.com.vn";
+
+    public static final int VALUE_SERVER_MAIN = 2;
+
+    public static final int VALUE_SERVER_TEST = 1;
 
     public static final String KEY_SERVER = "SERVER";
 

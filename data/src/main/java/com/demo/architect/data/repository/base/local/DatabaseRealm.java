@@ -1,6 +1,10 @@
 package com.demo.architect.data.repository.base.local;
 
+import android.content.Context;
+
 import com.demo.architect.data.helper.Constants;
+import com.demo.architect.data.helper.RealmHelper;
+import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.architect.data.model.offline.ImportWorksModel;
 import com.demo.architect.data.model.offline.LogCompleteCreatePack;
 import com.demo.architect.data.model.offline.LogCompleteCreatePackList;
@@ -21,17 +25,42 @@ import java.util.HashMap;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
 
 public class DatabaseRealm {
+    private Context context;
 
     public DatabaseRealm() {
+    }
 
+    public DatabaseRealm(Context context) {
+        this.context = context;
     }
 
     public Realm getRealmInstance() {
+        if (!RealmHelper.getInstance().getInitRealm()) {
+            if (SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "").equals(Constants.SERVER_MAIN)) {
+                RealmConfiguration realmConfigurationMain = new RealmConfiguration.Builder()
+                        .name(Constants.DATABASE_MAIN)
+                        .schemaVersion(1)
+                        .build();
+                Realm.setDefaultConfiguration(realmConfigurationMain);
+                RealmHelper.getInstance().initRealm(true);
+            }
+            if (SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "").equals(Constants.SERVER_TEST)) {
+                RealmConfiguration realmConfigurationTest = new RealmConfiguration.Builder()
+                        .name(Constants.DATABASE_TEST)
+                        .schemaVersion(1)
+                        .build();
+                Realm.setDefaultConfiguration(realmConfigurationTest);
+                RealmHelper.getInstance().initRealm(true);
+
+            }
+
+        }
         return Realm.getDefaultInstance();
     }
 
@@ -118,9 +147,9 @@ public class DatabaseRealm {
 
                 int sum = results.sum("numberRest").intValue();
                 if (sum == 0) {
-                    orderModel.setStatus(Constants.COMPLETE);
+                    orderModel.setOrderId(Constants.COMPLETE);
                 } else {
-                    orderModel.setStatus(Constants.DOING);
+                    orderModel.setOrderId(Constants.DOING);
                 }
 
 
@@ -137,7 +166,7 @@ public class DatabaseRealm {
                 for (LogCompleteCreatePack pack : result.getItemList()) {
                     if (pack.getStatus() == Constants.WAITING_UPLOAD) {
                         pack.setStatus(Constants.COMPLETE);
-                       // pack.getProductModel().setNumCompleteScan(pack.getProductModel().getNumCompleteScan() + pack.getNumInput());
+                        // pack.getProductModel().setNumCompleteScan(pack.getProductModel().getNumCompleteScan() + pack.getNumInput());
                     }
                 }
 
@@ -164,11 +193,12 @@ public class DatabaseRealm {
         return getRealmInstance().where(ProductModel.class).equalTo("orderId", orderId).findAll();
     }
 
-    public void addLogScanCreatePackAsync(final LogScanCreatePack item, final int orderId) {
+    public void addLogScanCreatePackAsync(final OrderModel model, final LogScanCreatePack item, final int orderId) {
         Realm realm = getRealmInstance();
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
+                realm.copyToRealmOrUpdate(model);
                 LogScanCreatePack.create(realm, item, orderId);
             }
         });
@@ -187,8 +217,6 @@ public class DatabaseRealm {
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-
-
                 LogScanCreatePackList packList = realm.where(LogScanCreatePackList.class).equalTo("orderId", id).findFirst();
                 for (LogScanCreatePack scanCreatePack : packList.getItemList()) {
                     scanCreatePack.setStatus(Constants.COMPLETE);
@@ -222,9 +250,9 @@ public class DatabaseRealm {
 
                     int sum = results.sum("numberRest").intValue();
                     if (sum == 0) {
-                        orderModel.setStatus(Constants.COMPLETE);
+                        orderModel.setOrderId(Constants.COMPLETE);
                     } else {
-                        orderModel.setStatus(Constants.DOING);
+                        orderModel.setOrderId(Constants.DOING);
                     }
 
                 }
@@ -276,7 +304,17 @@ public class DatabaseRealm {
     }
 
     public LogScanCreatePackList findLogById(int orderId) {
-        return getRealmInstance().where(LogScanCreatePackList.class).equalTo("orderId", orderId).findFirst();
+        Realm realm = getRealmInstance();
+
+        LogScanCreatePackList packList = realm.where(LogScanCreatePackList.class).equalTo("orderId", orderId).findFirst();
+        if (packList == null) {
+            realm.beginTransaction();
+            packList = new LogScanCreatePackList(orderId);
+            packList = realm.copyToRealm(packList);
+
+            realm.commitTransaction();
+        }
+        return packList;
     }
 
     public void deleteLogCreateAsync(final int id) {
@@ -317,8 +355,8 @@ public class DatabaseRealm {
                 LogDeleteCreatePack logDelete = new LogDeleteCreatePack(getIdCurrent() + 1, pack.getBarcode(), pack.getOrderId(),
                         pack.getDeviceTime(), pack.getServerTime(), pack.getLatitude(),
                         pack.getLongitude(), pack.getCreateByPhone(),
-                        pack.getSerial(), 0,
-                        pack.getNumTotal(), 0, pack.getNumInput(), pack.getCreateBy(),
+                        pack.getSerial(),
+                        pack.getNumTotal(), pack.getNumInput(), pack.getCreateBy(),
                         newFormat, pack.getStatus(), logId);
                 realm.copyToRealm(logDelete);
                 // Otherwise it has been deleted already.
@@ -331,6 +369,56 @@ public class DatabaseRealm {
         return packList.getNumTotal();
     }
 
+    public void deleteLogNotComplete(final int logId) {
+        Realm realm = getRealmInstance();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                ArrayList<Integer> idList = new ArrayList<>();
+                LogCompleteCreatePackList packList = realm.where(LogCompleteCreatePackList.class).equalTo("id", logId).findFirst();
+                if (packList != null) {
+                    for (LogCompleteCreatePack pack : packList.getItemList()) {
+                        if (pack.getStatus() == Constants.WAITING_UPLOAD) {
+                            idList.add(pack.getId());
+                            packList.setNumTotal(packList.getNumTotal() - pack.getNumInput());
+                            ProductModel productModel = realm.where(ProductModel.class).equalTo("productId", pack.getProductId())
+                                    .equalTo("orderId", pack.getOrderId()).equalTo("serial", pack.getSerial()).findFirst();
+                            productModel.setNumberRest(productModel.getNumberRest() + pack.getNumInput());
+                            productModel.setNumberScan(productModel.getNumber() - productModel.getNumberRest());
+                            productModel.setNumCompleteScan(productModel.getNumCompleteScan() - pack.getNumInput());
+
+                            if (productModel.getNumberScan() == productModel.getNumber()) {
+                                productModel.setStatus(Constants.COMPLETE);
+                            } else if (productModel.getNumberRest() == productModel.getNumber()) {
+                                productModel.setStatus(Constants.WAITING_UPLOAD);
+                            } else {
+                                productModel.setStatus(Constants.DOING);
+                            }
+
+                            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                            String newFormat = formatter.format(new Date());
+                            LogDeleteCreatePack logDelete = new LogDeleteCreatePack(getIdCurrent() + 1, pack.getBarcode(), pack.getOrderId(),
+                                    pack.getDeviceTime(), pack.getServerTime(), pack.getLatitude(),
+                                    pack.getLongitude(), pack.getCreateByPhone(),
+                                    pack.getSerial(),
+                                    pack.getNumTotal(), pack.getNumInput(), pack.getCreateBy(),
+                                    newFormat, pack.getStatus(), logId);
+                            realm.copyToRealm(logDelete);
+                            // Otherwise it has been deleted already.
+                        }
+                    }
+                }
+                if (idList.size() > 0) {
+                    for (Integer integer : idList) {
+                        LogCompleteCreatePack.delete(realm, integer);
+
+                    }
+                }
+
+            }
+        });
+    }
+
     public int getNumTotalPack(final int logId) {
         Realm realm = getRealmInstance();
         final LogCompleteCreatePackList packList = realm.where(LogCompleteCreatePackList.class).equalTo("id", logId).findFirst();
@@ -340,7 +428,7 @@ public class DatabaseRealm {
     public void deletePack(final int logId, final int orderId) {
         Realm realm = getRealmInstance();
 
-        realm.executeTransactionAsync(new Realm.Transaction() {
+        realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 final LogCompleteCreatePackList packList = realm.where(LogCompleteCreatePackList.class).equalTo("id", logId).findFirst();
@@ -358,8 +446,8 @@ public class DatabaseRealm {
                     LogDeleteCreatePack logDelete = new LogDeleteCreatePack(getIdCurrent() + 1, pack.getBarcode(), pack.getOrderId(),
                             pack.getDeviceTime(), pack.getServerTime(), pack.getLatitude(),
                             pack.getLongitude(), pack.getCreateByPhone(),
-                            pack.getSerial(), 0,
-                            pack.getNumTotal(), 0, pack.getNumInput(), pack.getCreateBy(),
+                            pack.getSerial(),
+                            pack.getNumTotal(), pack.getNumInput(), pack.getCreateBy(),
                             newFormat, pack.getStatus(), logId);
                     realm.copyToRealm(logDelete);
                 }
@@ -369,7 +457,7 @@ public class DatabaseRealm {
                 OrderModel orderModel = realm.where(OrderModel.class).equalTo("id", orderId).findFirst();
                 if (mainList.getItemList().size() == 0) {
                     mainList.deleteFromRealm();
-                    orderModel.setStatus(Constants.WAITING_UPLOAD);
+                    orderModel.setOrderId(Constants.WAITING_UPLOAD);
                 }
 
             }
@@ -496,8 +584,8 @@ public class DatabaseRealm {
                     LogDeleteCreatePack logDelete = new LogDeleteCreatePack(getIdCurrent() + 1, pack.getBarcode(), pack.getOrderId(),
                             pack.getDeviceTime(), pack.getServerTime(), pack.getLatitude(),
                             pack.getLongitude(), pack.getCreateByPhone(),
-                            pack.getSerial(), 0,
-                            pack.getNumTotal(), 0, pack.getNumInput(), pack.getCreateBy(),
+                            pack.getSerial(),
+                            pack.getNumTotal(), pack.getNumInput(), pack.getCreateBy(),
                             newFormat, pack.getStatus(), -1);
                     realm.copyToRealm(logDelete);
 
@@ -564,6 +652,16 @@ public class DatabaseRealm {
         return count;
     }
 
+    public int countDeliveryNotComplete() {
+        Realm realm = getRealmInstance();
+        RealmResults<ScanDeliveryList> results = realm.where(ScanDeliveryList.class).equalTo("status", Constants.WAITING_UPLOAD).findAll();
+        int count = 0;
+        for (ScanDeliveryList list : results) {
+            count += list.getItemList().size();
+        }
+        return count;
+    }
+
     public ScanWarehousingModel addScanWarehousingAsync(final ScanWarehousingModel model) {
         Realm realm = getRealmInstance();
         realm.beginTransaction();
@@ -617,7 +715,8 @@ public class DatabaseRealm {
                 ScanDeliveryList parent = realm.where(ScanDeliveryList.class)
                         .equalTo("codeRequest", codeRequest)
                         .equalTo("status", Constants.WAITING_UPLOAD)
-                        .equalTo("times", times + 1).findFirst();
+                        .equalTo("times", times + 1)
+                        .findFirst();
                 RealmList<ScanDeliveryModel> list = parent.getItemList();
                 ScanDeliveryModel item = realm.copyToRealm(model);
                 list.add(item);

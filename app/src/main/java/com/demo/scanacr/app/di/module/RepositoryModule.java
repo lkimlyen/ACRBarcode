@@ -14,6 +14,7 @@ import com.demo.architect.data.repository.base.product.remote.ProductRepository;
 import com.demo.architect.data.repository.base.product.remote.ProductRepositoryImpl;
 import com.demo.architect.data.repository.base.remote.RemoteRepository;
 import com.demo.architect.data.repository.base.remote.RemoteRepositoryImpl;
+import com.demo.scanacr.app.CoreApplication;
 
 import javax.inject.Singleton;
 
@@ -26,7 +27,7 @@ public class RepositoryModule {
     @Provides
     @Singleton
     public LocalRepository provideMessageRepository() {
-        return new LocalRepositoryImpl();
+        return new LocalRepositoryImpl(CoreApplication.getInstance());
     }
 
     @Provides

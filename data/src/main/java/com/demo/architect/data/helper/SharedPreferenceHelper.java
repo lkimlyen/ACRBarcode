@@ -7,6 +7,8 @@ import android.text.TextUtils;
 import com.demo.architect.data.model.UserResponse;
 import com.google.gson.Gson;
 
+import io.realm.RealmConfiguration;
+
 /**
  * Created by uyminhduc on 4/5/17.
  */

@@ -257,7 +257,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                                                     public void call(String s) {
                                                         if (print) {
                                                             printStemp(orderId, serial, successResponse.getId(), logId);
-                                                        }else {
+                                                        } else {
                                                             view.backToHistory(Constants.DONE);
                                                         }
                                                     }
@@ -401,6 +401,11 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
 
                     }
                 });
+    }
+
+    @Override
+    public void deleteCodeNotComplete(int logId) {
+        localRepository.deleteCodeNotComplete(logId).subscribe();
     }
 
     public void getProduct(int orderId) {

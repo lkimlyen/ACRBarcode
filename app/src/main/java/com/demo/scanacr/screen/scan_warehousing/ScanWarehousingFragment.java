@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -50,7 +51,7 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
     private Location mLocation;
     private ScanWarehousingAdapter adapter;
     private final int MY_LOCATION_REQUEST_CODE = 167;
-
+    public MediaPlayer mp1, mp2;
     @Bind(R.id.edt_barcode)
     EditText edtBarcode;
 
@@ -89,8 +90,9 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_scan, container, false);
-        setHasOptionsMenu(true);
         ButterKnife.bind(this, view);
+        mp1 = MediaPlayer.create(getActivity(), R.raw.beepperrr);
+        mp2 = MediaPlayer.create(getActivity(), R.raw.beepfail);
         checkPermissionLocation();
         initView();
         return view;
@@ -187,6 +189,16 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
     @Override
     public void showListScanWarehousing(ScanWarehousingModel item) {
         adapter.addItem(item);
+    }
+
+    @Override
+    public void startMusicError() {
+        mp2.start();
+    }
+
+    @Override
+    public void startMusicSuccess() {
+        mp1.start();
     }
 
     public void showToast(String message) {

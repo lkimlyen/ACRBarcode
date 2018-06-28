@@ -13,7 +13,7 @@
     <string name="text_upload_all_data">Tải dữ liệu lên server</string>
     <string name="text_setting">Thiết lập - Hướng dẫn</string>
     <string name="text_import_works">Nhập công trình</string>
-    <string name="text_check_code_scan">Xác nhận mã đã quét giao hàng trước khi tải dữ liệu</string>
+    <string name="text_check_code_scan">Xác nhận mã đã quét giao hàng</string>
     <string name="text_cancel">Hủy</string>
     <string name="text_do_you_want_logout">Bạn có muốn đăng xuất không?</string>
     <string name="text_yes">Có</string>
@@ -100,7 +100,8 @@
     <string name="text_choose_server1">Chọn server</string>
     <string name="text_server_null">Bạn chưa chọn server.</string>
     <string name="text_web_report" formatted="true">%s/Report/Account/Login</string>
-    <string name="text_name_database">barcode.realm</string>
+    <string name="text_name_database_test">barcodetest.realm</string>
+    <string name="text_name_database_main">barcodemain.realm</string>
     <string name="text_path_file">/ACR/backup/</string>
     <string name="text_backup_success">Sao lưu thành công</string>
     <string name="text_backup_fail">Sao lưu thất bại</string>

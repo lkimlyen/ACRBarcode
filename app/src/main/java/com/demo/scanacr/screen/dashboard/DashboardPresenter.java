@@ -9,6 +9,8 @@ import com.demo.scanacr.manager.UserManager;
 
 import javax.inject.Inject;
 
+import rx.functions.Action1;
+
 /**
  * Created by MSI on 26/11/2017.
  */
@@ -36,6 +38,7 @@ public class DashboardPresenter implements DashboardContract.Presenter {
     public void start() {
         Log.d(TAG, TAG + ".start() called");
         getUser();
+        countDeliveryNotComplete();
 
     }
 
@@ -55,4 +58,16 @@ public class DashboardPresenter implements DashboardContract.Presenter {
     public void logout() {
         UserManager.getInstance().setUser(null);
     }
+
+    @Override
+    public void countDeliveryNotComplete() {
+        localRepository.countDeliveryNotComplete().subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
+                view.showDeliveryNotComplete(integer);
+            }
+        });
+    }
+
+
 }

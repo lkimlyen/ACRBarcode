@@ -57,68 +57,76 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <Button
                 android:id="@+id/btn_check_update"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_update"
-                android:text="@string/text_check_app_update"
-                android:textStyle="bold"
+                android:layout_height="@dimen/size_60dp"
                 android:background="@drawable/bg_button_stroke_white"
-                android:paddingLeft="@dimen/distance_16dp"
-                android:gravity="left|center_vertical"
+                android:drawableLeft="@drawable/ic_update"
                 android:drawablePadding="@dimen/distance_16dp"
-                android:textAllCaps="false"/>
+                android:gravity="left|center_vertical"
+                android:paddingLeft="@dimen/distance_16dp"
+                android:text="@string/text_check_app_update"
+                android:textAllCaps="false"
+                android:textStyle="bold" />
+
             <Button
                 android:id="@+id/btn_change_ip_address"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_config_address_ip"
-                android:text="@string/text_change_ip_address"
+
+                android:layout_height="@dimen/size_60dp"
                 android:background="@drawable/bg_button_stroke_white"
-                android:paddingLeft="@dimen/distance_16dp"
-                android:gravity="left|center_vertical"
+                android:drawableLeft="@drawable/ic_config_address_ip"
                 android:drawablePadding="@dimen/distance_16dp"
+                android:gravity="left|center_vertical"
+                android:paddingLeft="@dimen/distance_16dp"
+                android:text="@string/text_change_ip_address"
                 android:textAllCaps="false"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btn_clone"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_clone"
-                android:text="Sao lưu data"
+
+                android:layout_height="@dimen/size_60dp"
                 android:background="@drawable/bg_button_stroke_white"
-                android:paddingLeft="@dimen/distance_16dp"
-                android:gravity="left|center_vertical"
+                android:drawableLeft="@drawable/ic_clone"
                 android:drawablePadding="@dimen/distance_16dp"
+                android:gravity="left|center_vertical"
+                android:paddingLeft="@dimen/distance_16dp"
+                android:text="Sao lưu data"
                 android:textAllCaps="false"
                 android:textStyle="bold" />
+
             <Button
                 android:id="@+id/btn_change_password"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_lock"
-                android:text="@string/text_change_password"
-                android:textStyle="bold"
+
+                android:layout_height="@dimen/size_60dp"
                 android:background="@drawable/bg_button_stroke_white"
-                android:paddingLeft="@dimen/distance_16dp"
-                android:gravity="left|center_vertical"
+                android:drawableLeft="@drawable/ic_lock"
                 android:drawablePadding="@dimen/distance_16dp"
-                android:textAllCaps="false" />
+                android:gravity="left|center_vertical"
+                android:paddingLeft="@dimen/distance_16dp"
+                android:text="@string/text_change_password"
+                android:textAllCaps="false"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btn_main_resetAllData"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_delete"
-                android:text="@string/text_reset_all_data"
-                android:textStyle="bold"
+
+                android:layout_height="@dimen/size_60dp"
                 android:background="@drawable/bg_button_stroke_white"
-                android:paddingLeft="@dimen/distance_16dp"
-                android:gravity="left|center_vertical"
+                android:drawableLeft="@drawable/ic_delete"
                 android:drawablePadding="@dimen/distance_16dp"
-                android:textAllCaps="false"/>
+                android:gravity="left|center_vertical"
+                android:paddingLeft="@dimen/distance_16dp"
+                android:visibility="gone"
+                android:text="@string/text_reset_all_data"
+                android:textAllCaps="false"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/txt_version"

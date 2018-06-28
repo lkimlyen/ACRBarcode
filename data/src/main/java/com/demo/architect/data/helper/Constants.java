@@ -15,4 +15,13 @@ public class Constants {
     public static final int DISCONNECT = 2;
 
     public static final String KEY_SERVER = "SERVER";
+
+
+    public static final String SERVER_MAIN = "http://acc.imark.com.vn";
+
+    public static final String SERVER_TEST = "http://acctest.imark.com.vn";
+
+    public static final String DATABASE_MAIN = "barcodemain.realm";
+
+    public static final String DATABASE_TEST = "barcodetest.realm";
 }

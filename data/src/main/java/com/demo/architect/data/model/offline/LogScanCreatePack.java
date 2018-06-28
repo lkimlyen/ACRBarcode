@@ -19,7 +19,6 @@ public class LogScanCreatePack extends RealmObject {
     private int serial;
     private int numCodeScan;
     private int numTotal;
-    private int numPack;
     private int numInput;
     private int numRest;
     private int status;
@@ -29,7 +28,7 @@ public class LogScanCreatePack extends RealmObject {
     public LogScanCreatePack() {
     }
 
-    public LogScanCreatePack(String barcode, String deviceTime, String serverTime, double latitude, double longitude, String createByPhone, int productId, int orderId, int serial, int numCodeScan, int numTotal, int numPack, int numInput, int numRest, int status, int serverId, int createBy) {
+    public LogScanCreatePack(String barcode, String deviceTime, String serverTime, double latitude, double longitude, String createByPhone, int productId, int orderId, int serial, int numCodeScan, int numTotal,  int numInput, int numRest, int status, int serverId, int createBy) {
         this.productId = productId;
         this.orderId = orderId;
         this.numTotal = numTotal;
@@ -43,7 +42,6 @@ public class LogScanCreatePack extends RealmObject {
         this.createByPhone = createByPhone;
         this.serial = serial;
         this.numCodeScan = numCodeScan;
-        this.numPack = numPack;
         this.numInput = numInput;
         this.status = status;
         this.serverId = serverId;
@@ -83,10 +81,6 @@ public class LogScanCreatePack extends RealmObject {
 
     public int getNumCodeScan() {
         return numCodeScan;
-    }
-
-    public int getNumPack() {
-        return numPack;
     }
 
     public int getNumInput() {

@@ -42,7 +42,7 @@ public interface LocalRepository {
 
     Observable<List<ProductModel>> findProductByOrderId(int orderId);
 
-    Observable<String> addLogScanCreatePack(LogScanCreatePack item, int orderId, final String barcode);
+    Observable<String> addLogScanCreatePack(final OrderModel model,LogScanCreatePack item, int orderId, final String barcode);
 
     Observable<String> addLogCompleteCreatePack(int id, final int serverId, final int serial, final int numTotal, final String dateCreate);
 
@@ -88,6 +88,8 @@ public interface LocalRepository {
 
     Observable<Integer> countCodeNotUp(int logId);
 
+    Observable<Integer> countDeliveryNotComplete();
+
     Observable<Boolean> checkExistBarcodeInWarehousing(String barcode);
 
     Observable<Boolean> checkExistBarcodeScanCreate(String barcode);
@@ -116,4 +118,6 @@ public interface LocalRepository {
     Observable<List<ScanDeliveryModel>> deliveryToJson(final String request);
 
     Observable<Boolean> checkStatus(final int id);
+
+    Observable<String> deleteCodeNotComplete(final int logId);
 }

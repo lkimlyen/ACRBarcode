@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -58,6 +59,7 @@ public class ScanDeliveryFragment extends BaseFragment implements ScanDeliveryCo
     private FusedLocationProviderClient mFusedLocationClient;
     private Location mLocation;
     private DeliveryAdapter adapter;
+    public MediaPlayer mp1, mp2;
     private final int MY_LOCATION_REQUEST_CODE = 167;
     private int requestId;
 
@@ -113,8 +115,9 @@ public class ScanDeliveryFragment extends BaseFragment implements ScanDeliveryCo
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_scan, container, false);
-        setHasOptionsMenu(true);
         ButterKnife.bind(this, view);
+        mp1 = MediaPlayer.create(getActivity(), R.raw.beepperrr);
+        mp2 = MediaPlayer.create(getActivity(), R.raw.beepfail);
         initView();
         return view;
     }
@@ -251,6 +254,16 @@ public class ScanDeliveryFragment extends BaseFragment implements ScanDeliveryCo
     public void showListPackage(ScanDeliveryList list) {
         adapter = new DeliveryAdapter(list.getItemList());
         lvCode.setAdapter(adapter);
+    }
+
+    @Override
+    public void startMusicError() {
+        mp2.start();
+    }
+
+    @Override
+    public void startMusicSuccess() {
+        mp1.start();
     }
 
     public void showToast(String message) {

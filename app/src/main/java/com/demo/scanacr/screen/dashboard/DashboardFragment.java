@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.demo.architect.data.helper.RealmHelper;
 import com.demo.architect.data.model.UserResponse;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.base.BaseFragment;
@@ -45,6 +46,26 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     @Bind(R.id.btn_link)
     Button btnLink;
 
+    @Bind(R.id.btn_confirm_delivery)
+    Button btnConfirmDelivery;
+
+    @Bind(R.id.btn_create_package)
+    Button btnCreatePack;
+
+    @Bind(R.id.btn_report_detail)
+    Button btnReportDetail;
+
+    @Bind(R.id.btn_history_pack)
+    Button btnHistoryPack;
+
+    @Bind(R.id.btn_warehousing)
+    Button btnWarehousing;
+
+    @Bind(R.id.btn_delivery)
+    Button btnDelivery;
+
+    @Bind(R.id.btn_import_works)
+    Button btnImportWorks;
     private DashboardContract.Presenter mPresenter;
 
     public DashboardFragment() {
@@ -79,6 +100,12 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
 
     private void initView() {
         btnLink.setText(String.format(getString(R.string.text_web_report), ServerManager.getInstance().getServer()));
+        btnCreatePack.setVisibility(View.GONE);
+        btnHistoryPack.setVisibility(View.GONE);
+        btnWarehousing.setVisibility(View.GONE);
+        btnDelivery.setVisibility(View.GONE);
+        btnConfirmDelivery.setVisibility(View.GONE);
+        btnImportWorks.setVisibility(View.GONE);
     }
 
 
@@ -115,38 +142,35 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
         txtName.setText(user.getFullName());
         if (user.getUserRoleID() == 17) {
             txtPosition.setText("Scan Tạo mã Gói");
-//            btnHisCreatePack.setVisibility(View.VISIBLE);
-//            btnCreateCode.setVisibility(View.VISIBLE);
-//            view1.setVisibility(View.VISIBLE);
-//            view2.setVisibility(View.VISIBLE);
+            btnHistoryPack.setVisibility(View.VISIBLE);
+            btnCreatePack.setVisibility(View.VISIBLE);
         } else if (user.getUserRoleID() == 18) {
             txtPosition.setText("Scan Nhập Kho");
-//            btnStoreInARC.setVisibility(View.VISIBLE);
-//            view3.setVisibility(View.VISIBLE);
+            btnWarehousing.setVisibility(View.VISIBLE);
         } else if (user.getUserRoleID() == 19) {
             txtPosition.setText("Scan Giao Hàng");
-//            btnDelivery.setVisibility(View.VISIBLE);
-//            view4.setVisibility(View.VISIBLE);
-//            btnCheckCodeScan.setVisibility(View.VISIBLE);
-//            view5.setVisibility(View.VISIBLE);
+            btnConfirmDelivery.setVisibility(View.VISIBLE);
+            btnConfirmDelivery.setVisibility(View.VISIBLE);
         } else if (user.getUserRoleID() == 20) {
             txtPosition.setText("Scan Nhập Công Trình");
-//            btnScanIN.setVisibility(View.VISIBLE);
-//            view6.setVisibility(View.VISIBLE);
+            btnImportWorks.setVisibility(View.VISIBLE);
         } else {
             txtPosition.setText("ADMIN APP");
-//            btnCreateCode.setVisibility(View.VISIBLE);
-//            view1.setVisibility(View.VISIBLE);
-//            btnHisCreatePack.setVisibility(View.VISIBLE);
-//            view2.setVisibility(View.VISIBLE);
-//            btnStoreInARC.setVisibility(View.VISIBLE);
-//            view3.setVisibility(View.VISIBLE);
-//            btnDelivery.setVisibility(View.VISIBLE);
-//            view4.setVisibility(View.VISIBLE);
-//            btnCheckCodeScan.setVisibility(View.VISIBLE);
-//            view5.setVisibility(View.VISIBLE);
-//            btnScanIN.setVisibility(View.VISIBLE);
-//            view6.setVisibility(View.VISIBLE);
+            btnCreatePack.setVisibility(View.VISIBLE);
+            btnHistoryPack.setVisibility(View.VISIBLE);
+            btnWarehousing.setVisibility(View.VISIBLE);
+            btnDelivery.setVisibility(View.VISIBLE);
+            btnConfirmDelivery.setVisibility(View.VISIBLE);
+            btnImportWorks.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void showDeliveryNotComplete(int count) {
+        if (count > 0) {
+            btnConfirmDelivery.setText(getString(R.string.text_check_code_scan) + " (" + count + ")");
+        } else {
+            btnConfirmDelivery.setText(getString(R.string.text_check_code_scan));
         }
     }
 
@@ -160,6 +184,7 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         mPresenter.logout();
+                        RealmHelper.getInstance().initRealm(false);
                         LoginActivity.start(getContext());
                         getActivity().finishAffinity();
                     }
@@ -195,28 +220,28 @@ public class DashboardFragment extends BaseFragment implements DashboardContract
     }
 
     @OnClick(R.id.btn_link)
-    public void link(){
+    public void link() {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(btnLink.getText().toString()));
         startActivity(intent);
     }
 
     @OnClick(R.id.btn_warehousing)
-    public void scanWarehousing(){
+    public void scanWarehousing() {
         ScanWarehousingActivity.start(getActivity());
     }
 
     @OnClick(R.id.btn_delivery)
-    public void delivery(){
+    public void delivery() {
         ScanDeliveryActivity.start(getContext());
     }
 
     @OnClick(R.id.btn_confirm_delivery)
-    public void confirmDelivery(){
+    public void confirmDelivery() {
         ConfirmDeliveryActivity.start(getContext());
     }
 
     @OnClick(R.id.btn_import_works)
-    public void importWorks(){
+    public void importWorks() {
         ImportWorksActivity.start(getContext());
     }
 }

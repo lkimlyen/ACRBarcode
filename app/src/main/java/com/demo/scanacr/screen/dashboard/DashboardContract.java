@@ -11,10 +11,12 @@ import com.demo.scanacr.app.base.BaseView;
 public interface DashboardContract {
     interface View extends BaseView<Presenter> {
         void showUser(UserResponse user);
+        void showDeliveryNotComplete(int count);
     }
 
     interface Presenter extends BasePresenter {
         void getUser();
         void logout();
+        void countDeliveryNotComplete();
     }
 }

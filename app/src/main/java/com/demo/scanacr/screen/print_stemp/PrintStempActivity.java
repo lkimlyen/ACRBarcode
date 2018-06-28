@@ -71,6 +71,6 @@ public class PrintStempActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-       super.onBackPressed();
+       fragment.back();
     }
 }

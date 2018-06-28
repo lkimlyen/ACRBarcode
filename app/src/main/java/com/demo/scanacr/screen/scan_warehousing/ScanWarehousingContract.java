@@ -15,6 +15,10 @@ public interface ScanWarehousingContract {
         void showSuccess(String message);
 
         void showListScanWarehousing(ScanWarehousingModel item);
+
+        void startMusicError();
+
+        void startMusicSuccess();
     }
 
     interface Presenter extends BasePresenter {

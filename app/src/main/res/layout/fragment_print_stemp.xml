@@ -25,10 +25,10 @@
 
             <ImageView
                 android:id="@+id/img_back"
-                android:layout_width="@dimen/size_40dp"
-                android:layout_height="@dimen/size_40dp"
+                android:layout_width="@dimen/size_47dp"
+                android:layout_height="@dimen/size_47dp"
                 android:layout_centerVertical="true"
-                android:padding="@dimen/distance_10dp"
+                android:padding="@dimen/distance_12dp"
                 android:src="@drawable/ic_back" />
 
 

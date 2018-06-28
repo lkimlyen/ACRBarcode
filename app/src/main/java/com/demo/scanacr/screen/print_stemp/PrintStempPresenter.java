@@ -177,6 +177,11 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
 
     }
 
+    @Override
+    public void deleteAllLog() {
+        localRepository.deleteAllLog().subscribe();
+    }
+
 
     public void updateData(int orderId, int serial, int numTotal, String json) {
         addPackageACRbyJsonUsecase.executeIO(new AddPackageACRbyJsonUsecase.RequestValue(json),
@@ -204,4 +209,6 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
 
 
     }
+
+
 }

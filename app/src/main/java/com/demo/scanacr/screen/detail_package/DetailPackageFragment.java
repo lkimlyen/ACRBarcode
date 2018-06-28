@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -58,7 +59,9 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     private DetailPackAdapter adapter;
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
     private FusedLocationProviderClient mFusedLocationClient;
+    public MediaPlayer mp1, mp2;
     private Location mLocation;
+    private boolean isClick;
     private int orderId;
     private int logId;
     @Bind(R.id.toolbar)
@@ -112,14 +115,15 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
             if (result.getContents() != null) {
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
-                if (adapter.getCount() == 11){
+                if (adapter.getCount() == 11) {
                     showError(getString(R.string.text_list_had_enough));
-                }else {
+                } else {
                     mPresenter.checkBarcode(barcode, orderId, logId);
                 }
 
             }
         }
+        isClick = false;
     }
 
     @Override
@@ -129,6 +133,8 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
         View view = inflater.inflate(R.layout.fragment_detail_pack, container, false);
         setHasOptionsMenu(true);
         ButterKnife.bind(this, view);
+        mp1 = MediaPlayer.create(getActivity(), R.raw.beepperrr);
+        mp2 = MediaPlayer.create(getActivity(), R.raw.beepfail);
         checkPermissionLocation();
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         orderId = getActivity().getIntent().getIntExtra(Constants.KEY_ORDER_ID, 0);
@@ -271,7 +277,6 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     }
 
 
-
     @Override
     public void showNumTotal(int num) {
         txtTotal.setText(String.valueOf(num));
@@ -404,6 +409,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
         integrator.setBarcodeImageEnabled(true);
         integrator.setOrientationLocked(false);
         integrator.initiateScan();
+        isClick = true;
     }
 
     @Override
@@ -423,7 +429,33 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     public void backToHistory(int request) {
         Intent returnIntent = new Intent();
         returnIntent.putExtra(Constants.KEY_RESULT, request);
-        getActivity().setResult(Activity.RESULT_OK,returnIntent);
+        getActivity().setResult(Activity.RESULT_OK, returnIntent);
         getActivity().finish();
+    }
+
+    @Override
+    public void startMusicError() {
+        mp2.start();
+    }
+
+    @Override
+    public void startMusicSuccess() {
+        mp1.start();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();{
+            if (!isClick) {
+                mPresenter.deleteCodeNotComplete(logId);
+            }
+        }
     }
 }

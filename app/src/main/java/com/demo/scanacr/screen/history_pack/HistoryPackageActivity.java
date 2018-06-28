@@ -78,22 +78,8 @@ public class HistoryPackageActivity extends BaseActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == DetailPackageActivity.REQUEST_CODE) {
-            if(resultCode == Activity.RESULT_OK){
-                if (data.getIntExtra(Constants.KEY_RESULT,0) == Constants.DELETE){
-                    fragment.showSuccess(getString(R.string.text_delete_success));
-                }
-               if (data.getIntExtra(Constants.KEY_RESULT,0) == Constants.PRINT){
-                    fragment.showSuccess(getString(R.string.text_print_success));
-               }
+        fragment.onActivityResult(requestCode, resultCode, data);
 
-                if (data.getIntExtra(Constants.KEY_RESULT,0) == Constants.DONE){
-                    fragment.showSuccess(getString(R.string.text_done_pack_success));
-                }
-
-
-            }
-        }
     }
 
 }

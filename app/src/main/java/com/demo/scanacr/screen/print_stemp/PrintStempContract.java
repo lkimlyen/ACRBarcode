@@ -1,7 +1,6 @@
 package com.demo.scanacr.screen.print_stemp;
 
 import com.demo.architect.data.model.offline.LogScanCreatePack;
-import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.data.model.offline.ProductModel;
 import com.demo.scanacr.app.base.BasePresenter;
@@ -38,5 +37,7 @@ public interface PrintStempContract {
         void getListCreatePack(int orderId);
 
         void printStemp(int orderId, int serial, int serverId, int numTotal);
+
+        void deleteAllLog();
     }
 }

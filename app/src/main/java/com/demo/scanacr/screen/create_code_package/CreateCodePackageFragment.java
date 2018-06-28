@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -58,6 +59,8 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     private CreateCodePackageContract.Presenter mPresenter;
     private FusedLocationProviderClient mFusedLocationClient;
     private CreateCodePackAdapter adapter;
+    public MediaPlayer mp1, mp2;
+    public boolean isClick = false;
     @Bind(R.id.ss_produce)
     SearchableSpinner ssProduce;
 
@@ -117,6 +120,8 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_create_code_pack, container, false);
         ButterKnife.bind(this, view);
+        mp1 = MediaPlayer.create(getActivity(), R.raw.beepperrr);
+        mp2 = MediaPlayer.create(getActivity(), R.raw.beepfail);
         initView();
         return view;
     }
@@ -139,7 +144,6 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
         list.add(CoreApplication.getInstance().getString(R.string.text_choose_request_produce));
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
         ssProduce.setAdapter(adapter);
-
         mPresenter.getData();
     }
 
@@ -174,7 +178,16 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     @Override
     public void onStop() {
         super.onStop();
-        mPresenter.deleteAllItemLog();
+
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (!isClick) {
+            mPresenter.deleteAllItemLog();
+        }
     }
 
     public void showNotification(String content, int type) {
@@ -264,6 +277,16 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
         });
         rvCode.setAdapter(adapter);
 
+    }
+
+    @Override
+    public void startMusicError() {
+        mp2.start();
+    }
+
+    @Override
+    public void startMusicSuccess() {
+        mp1.start();
     }
 
     @OnClick(R.id.ic_refresh)
@@ -408,6 +431,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     @OnClick(R.id.img_print)
     public void print() {
         if (mPresenter.countListScan(orderId) > 0) {
+            isClick = true;
             PrintStempActivity.start(getActivity(), orderId);
         } else {
             showNotification(getString(R.string.text_no_data), SweetAlertDialog.WARNING_TYPE);

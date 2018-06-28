@@ -27,6 +27,10 @@ public interface DetailPackageContract {
         void showDialogNumber(final ProductModel productModel, String barcode);
 
         void backToHistory(int request);
+
+        void startMusicError();
+
+        void startMusicSuccess();
     }
 
     interface Presenter extends BasePresenter {
@@ -47,5 +51,7 @@ public interface DetailPackageContract {
         int countListScan(int logId);
 
         void saveBarcode(double latitude, double longitude, String barcode, int logId, int numberInput);
+
+        void deleteCodeNotComplete(int logId);
     }
 }

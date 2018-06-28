@@ -14,7 +14,6 @@ public class ScanDeliveryList extends RealmObject {
     private int status;
 
     private String codeRequest;
-
     @SuppressWarnings("unused")
     private RealmList<ScanDeliveryModel> itemList;
 

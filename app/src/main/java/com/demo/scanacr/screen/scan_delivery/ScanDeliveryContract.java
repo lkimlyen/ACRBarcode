@@ -22,6 +22,9 @@ public interface ScanDeliveryContract {
         void showListRequest(List<OrderRequestEntity> list);
 
         void showListPackage(ScanDeliveryList list);
+        void startMusicError();
+
+        void startMusicSuccess();
     }
 
     interface Presenter extends BasePresenter {

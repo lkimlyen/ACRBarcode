@@ -1,5 +1,6 @@
 package com.demo.scanacr.screen.history_pack;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -18,6 +19,7 @@ import com.demo.scanacr.R;
 import com.demo.scanacr.adapter.HistoryCreatePackAdapter;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.app.base.BaseFragment;
+import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.screen.detail_package.DetailPackageActivity;
 import com.demo.scanacr.util.Precondition;
 import com.demo.scanacr.widgets.spinner.SearchableSpinner;
@@ -66,6 +68,23 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == DetailPackageActivity.REQUEST_CODE) {
+            if(resultCode == Activity.RESULT_OK){
+                if (data.getIntExtra(Constants.KEY_RESULT,0) == Constants.DELETE){
+                    showSuccess(getString(R.string.text_delete_success));
+                    mPresenter.getRequestProduce();
+                }
+                if (data.getIntExtra(Constants.KEY_RESULT,0) == Constants.PRINT){
+                    showSuccess(getString(R.string.text_print_success));
+                }
+
+                if (data.getIntExtra(Constants.KEY_RESULT,0) == Constants.DONE){
+                    showSuccess(getString(R.string.text_done_pack_success));
+                }
+
+
+            }
+        }
 
     }
 
@@ -170,6 +189,7 @@ public class HistoryPackageFragment extends BaseFragment implements HistoryPacka
 
             }
         });
+        txtCodeSO.setText("");
     }
 
     @Override

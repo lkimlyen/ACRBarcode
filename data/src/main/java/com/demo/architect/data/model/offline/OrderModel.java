@@ -13,7 +13,7 @@ public class OrderModel extends RealmObject {
     private String customerName;
     private int createBy;
     private String createDate;
-    private int status;
+    private int orderId;
 
     public OrderModel() {
     }
@@ -30,7 +30,7 @@ public class OrderModel extends RealmObject {
         this.customerName = customerName;
         this.createBy = createBy;
         this.createDate = createDate;
-        this.status = status;
+        this.orderId = status;
     }
 
     public int getId() {
@@ -70,11 +70,11 @@ public class OrderModel extends RealmObject {
         return codeProduction;
     }
 
-    public int getStatus() {
-        return status;
+    public int getOrderId() {
+        return orderId;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
     }
 }

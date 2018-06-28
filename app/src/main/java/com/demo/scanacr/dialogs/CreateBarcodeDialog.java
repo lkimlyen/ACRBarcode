@@ -130,7 +130,7 @@ public class CreateBarcodeDialog extends DialogFragment {
             @Override
             public void onClick(View view) {
                 dismiss();
-                listener.onSave(Integer.parseInt(edtNumberScan.getText().toString()));
+                listener.onSave(numberOld);
             }
         });
         dialog.setCancelable(false);

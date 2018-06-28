@@ -18,6 +18,7 @@ import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.constants.Constants;
+import com.demo.scanacr.manager.ListOrderManager;
 import com.demo.scanacr.manager.UserManager;
 import com.demo.scanacr.util.ConvertUtils;
 
@@ -79,16 +80,17 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                     @Override
                     public void onSuccess(GetAllSOACRUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
-                        localRepository.deleteAllOrder().subscribe();
+                        //localRepository.deleteAllOrder().subscribe();
                         List<OrderModel> list = new ArrayList<>();
                         list.add(new OrderModel(CoreApplication.getInstance().getString(R.string.text_choose_request_produce)));
                         int userId = UserManager.getInstance().getUser().getUserId();
                         for (OrderACREntity entity : successResponse.getEntity()) {
                             OrderModel model = new OrderModel(entity.getId(), entity.getCustomerID(), entity.getCode(), entity.getCodeSX(), entity.getCustomerName(), userId,
                                     ConvertUtils.getDateTimeCurrent(), Constants.WAITING_UPLOAD);
-                            localRepository.addItemAsyns(model).subscribe();
+//                            localRepository.addItemAsyns(model).subscribe();
                             list.add(model);
                         }
+                        ListOrderManager.getInstance().setListOrder(list);
                         view.showRequestProduction(list);
                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_download_list_prodution_success));
 
@@ -147,27 +149,21 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
     }
 
     private List<ProductModel> list;
-    private OrderModel orderModel;
 
     @Override
     public void checkBarcode(String barcode, int orderId, double latitude, double longitude) {
         list = new ArrayList<>();
-        orderModel = new OrderModel();
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
+            view.startMusicError();
             return;
         }
         if (barcode.length() < 10 || barcode.length() > 13) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_lenght));
+            view.startMusicError();
             return;
         }
-
-        localRepository.findOrder(orderId).subscribe(new Action1<OrderModel>() {
-            @Override
-            public void call(OrderModel model) {
-                orderModel = model;
-            }
-        });
+        OrderModel orderModel = ListOrderManager.getInstance().getOrderById(orderId);
         localRepository.findProductByOrderId(orderId).subscribe(new Action1<List<ProductModel>>() {
             @Override
             public void call(List<ProductModel> productModels) {
@@ -178,6 +174,7 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
 
         if (list.size() == 0) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_product_empty));
+            view.startMusicError();
             return;
         }
 
@@ -190,17 +187,18 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                 if (model.getNumberRest() > 0) {
                     if (countListScan(orderId) < 11) {
                         saveBarcode(latitude,
-                                longitude, barcode, model);
+                                longitude, barcode, model, orderModel);
                     } else {
                         localRepository.checkExistBarcodeScanCreate(barcode)
                                 .subscribe(new Action1<Boolean>() {
                                     @Override
                                     public void call(Boolean aBoolean) {
-                                        if (aBoolean){
+                                        if (aBoolean) {
                                             saveBarcode(latitude,
-                                                    longitude, barcode, model);
-                                        }else {
+                                                    longitude, barcode, model, orderModel);
+                                        } else {
                                             view.showError(CoreApplication.getInstance().getString(R.string.text_list_had_enough));
+                                            view.startMusicError();
                                         }
                                     }
                                 });
@@ -209,6 +207,7 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
 
                 } else {
                     view.showError(CoreApplication.getInstance().getString(R.string.text_number_input_had_enough));
+                    view.startMusicError();
                 }
 
                 return;
@@ -217,10 +216,11 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
 
         if (checkBarcode == 0) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
+            view.startMusicError();
         }
     }
 
-    public void saveBarcode(double latitude, double longitude, String barcode, ProductModel product) {
+    public void saveBarcode(double latitude, double longitude, String barcode, ProductModel product, OrderModel orderModel) {
         view.showProgressBar();
         String deviceTime = ConvertUtils.getDateTimeCurrent();
         int userId = UserManager.getInstance().getUser().getUserId();
@@ -234,12 +234,13 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                         view.hideProgressBar();
                         LogScanCreatePack model = new LogScanCreatePack(barcode, deviceTime, successResponse.getDate(),
                                 latitude, longitude, phone, product.getProductId(), orderModel.getId(), product.getSerial(),
-                                0, product.getNumber(), 0, 1, product.getNumberRest(), Constants.WAITING_UPLOAD, -1, userId);
+                                0, product.getNumber(), 1, product.getNumberRest(), Constants.WAITING_UPLOAD, -1, userId);
 
-                        localRepository.addLogScanCreatePack(model, orderModel.getId(), barcode).subscribe(new Action1<String>() {
+                        localRepository.addLogScanCreatePack(orderModel, model, orderModel.getId(), barcode).subscribe(new Action1<String>() {
                             @Override
                             public void call(String String) {
                                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
+                                view.startMusicSuccess();
                             }
                         });
 

@@ -16,8 +16,10 @@ import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.architect.domain.GetMaxTimesACRUsecase;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
+import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.manager.ListPackageManager;
 import com.demo.scanacr.manager.ListRequestManager;
+import com.demo.scanacr.manager.ServerManager;
 import com.demo.scanacr.manager.UserManager;
 import com.demo.scanacr.util.ConvertUtils;
 
@@ -160,6 +162,8 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
 
     @Override
     public void getMaxTimes(int requestId, String requestCode) {
+
+
         view.showProgressBar();
         getMaxTimesACRUsecase.executeIO(new GetMaxTimesACRUsecase.RequestValue(requestId),
                 new BaseUseCase.UseCaseCallback<GetMaxTimesACRUsecase.ResponseValue,
@@ -168,6 +172,7 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                     public void onSuccess(GetMaxTimesACRUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
                         times = successResponse.getNumber();
+
                         localRepository.findScanDelivery(successResponse.getNumber(), requestCode).subscribe(new Action1<ScanDeliveryList>() {
                             @Override
                             public void call(ScanDeliveryList list) {

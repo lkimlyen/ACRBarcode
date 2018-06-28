@@ -1,9 +1,12 @@
 package com.demo.scanacr.util;
 
+import android.content.Context;
 import android.os.Environment;
 
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
+import com.demo.scanacr.constants.Constants;
+import com.demo.scanacr.manager.ServerManager;
 
 import java.io.File;
 import java.text.ParseException;
@@ -65,9 +68,11 @@ public class ConvertUtils {
         final Realm realm = Realm.getDefaultInstance();
         String filePath = "";
         try {
+            String nameDatabase = ServerManager.getInstance().getServer().equals(Constants.SERVER_MAIN) ? CoreApplication.getInstance()
+                    .getString(R.string.text_name_database_main) : CoreApplication.getInstance()
+                    .getString(R.string.text_name_database_test);
             final File file = new File(Environment.getExternalStorageDirectory().getPath().concat(
-                    CoreApplication.getInstance().getString(R.string.text_path_file) + CoreApplication.getInstance()
-                            .getString(R.string.text_name_database)));
+                    CoreApplication.getInstance().getString(R.string.text_path_file) + nameDatabase));
             if (file.exists()) {
                 //noinspection ResultOfMethodCallIgnored
                 file.delete();

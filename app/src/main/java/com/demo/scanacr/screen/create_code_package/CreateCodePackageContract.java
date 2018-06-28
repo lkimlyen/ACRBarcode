@@ -8,8 +8,6 @@ import com.demo.scanacr.app.base.BaseView;
 
 import java.util.List;
 
-import io.realm.OrderedRealmCollection;
-
 /**
  * Created by MSI on 26/11/2017.
  */
@@ -23,6 +21,10 @@ public interface CreateCodePackageContract {
         void showRequestProduction(List<OrderModel> list);
 
         void showLogScanCreatePack(LogScanCreatePackList list);
+
+        void startMusicError();
+
+        void startMusicSuccess();
     }
 
     interface Presenter extends BasePresenter {
@@ -41,6 +43,8 @@ public interface CreateCodePackageContract {
         void updateNumberInput(int id, int number);
 
         void deleteAllItemLog();
+
         int countListScan(int orderId);
+
     }
 }

@@ -21,6 +21,9 @@ public interface ImportWorksContract {
         void showListRequest(List<OrderRequestEntity> list);
 
        void showListPackage(ImportWorksModel model);
+        void startMusicError();
+
+        void startMusicSuccess();
     }
 
     interface Presenter extends BasePresenter {

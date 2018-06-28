@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -56,6 +57,7 @@ public class ImportWorksFragment extends BaseFragment implements ImportWorksCont
     private ImportWorksContract.Presenter mPresenter;
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
     private FusedLocationProviderClient mFusedLocationClient;
+    public MediaPlayer mp1, mp2;
     private Location mLocation;
     private WorksAdapter adapter;
     private final int MY_LOCATION_REQUEST_CODE = 167;
@@ -113,8 +115,9 @@ public class ImportWorksFragment extends BaseFragment implements ImportWorksCont
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_scan, container, false);
-        setHasOptionsMenu(true);
         ButterKnife.bind(this, view);
+        mp1 = MediaPlayer.create(getActivity(), R.raw.beepperrr);
+        mp2 = MediaPlayer.create(getActivity(), R.raw.beepfail);
         initView();
         return view;
     }
@@ -228,7 +231,7 @@ public class ImportWorksFragment extends BaseFragment implements ImportWorksCont
         ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (ssProduce.getSelectedItem().equals(getString(R.string.text_choose_request_produce))){
+                if (ssProduce.getSelectedItem().equals(getString(R.string.text_choose_request_produce))) {
                     return;
                 }
                 requestId = list.get(position).getId();
@@ -247,6 +250,16 @@ public class ImportWorksFragment extends BaseFragment implements ImportWorksCont
     @Override
     public void showListPackage(ImportWorksModel model) {
         adapter.addItem(model);
+    }
+
+    @Override
+    public void startMusicError() {
+        mp2.start();
+    }
+
+    @Override
+    public void startMusicSuccess() {
+        mp1.start();
     }
 
 

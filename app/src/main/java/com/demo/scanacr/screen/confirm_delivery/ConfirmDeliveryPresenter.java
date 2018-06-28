@@ -15,8 +15,10 @@ import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.GetAllRequestACRUsecase;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
+import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.manager.ListRequestManager;
 import com.demo.scanacr.manager.ScanDeliveryManager;
+import com.demo.scanacr.manager.ServerManager;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;

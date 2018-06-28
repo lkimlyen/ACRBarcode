@@ -24,97 +24,126 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="STT: " />
+                    android:text="STT: "
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_16sp" />
 
                 <TextView
                     android:id="@+id/txt_serial"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_16sp"
+                    android:textStyle="bold" />
             </TableRow>
 
             <TableRow
-                android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:gravity="center_vertical">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Mã màu: " />
+                    android:text="Mã màu: "
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_16sp" />
 
                 <TextView
                     android:id="@+id/txt_code_color"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_16sp" />
             </TableRow>
+
             <LinearLayout
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
                 android:orientation="horizontal">
+
                 <TextView
-                    android:layout_gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Quy cách: " />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <TableLayout
+                    android:layout_gravity="center"
+                    android:text="Quy cách: "
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_16sp" />
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:stretchColumns="*">
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    >
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
+                    <TableLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Dài(L)" />
+                        android:stretchColumns="*">
 
-                    <TextView
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Rộng(W)" />
-                    <TextView
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Dày(H)" />
-                </TableRow>
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Dài(L)"
+                                android:textColor="@android:color/black"
+                                android:textSize="@dimen/text_16sp" />
 
-                    <TextView
-                        android:id="@+id/txt_lenght"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="..." />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Rộng(W)"
+                                android:textColor="@android:color/black"
+                                android:textSize="@dimen/text_16sp" />
 
-                    <TextView
-                        android:id="@+id/txt_width"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="..." />
-                    <TextView
-                        android:id="@+id/txt_height"
-                        android:gravity="center"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="..." />
-                </TableRow>
-                </TableLayout>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Dày(H)"
+                                android:textColor="@android:color/black"
+                                android:textSize="@dimen/text_16sp" />
+                        </TableRow>
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/txt_lenght"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="..."
+                                android:textColor="@android:color/black"
+                                android:textSize="@dimen/text_16sp" />
+
+                            <TextView
+                                android:id="@+id/txt_width"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="..."
+                                android:textColor="@android:color/black"
+                                android:textSize="@dimen/text_16sp" />
+
+                            <TextView
+                                android:id="@+id/txt_height"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="..."
+                                android:textColor="@android:color/black"
+                                android:textSize="@dimen/text_16sp" />
+                        </TableRow>
+                    </TableLayout>
                 </LinearLayout>
 
             </LinearLayout>
@@ -127,11 +156,17 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Số lượng: " />
+                    android:text="Số lượng: "
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/text_16sp" />
+
                 <TextView
                     android:id="@+id/txt_number"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/holo_red_light"
+                    android:textSize="@dimen/text_16sp"
+                    android:textStyle="bold" />
             </TableRow>
 
 

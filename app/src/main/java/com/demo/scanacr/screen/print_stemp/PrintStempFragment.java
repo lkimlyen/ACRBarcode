@@ -61,6 +61,8 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     @Bind(R.id.txt_date_create)
     TextView txtDate;
 
+    private boolean isClick = false;
+
     public PrintStempFragment() {
         // Required empty public constructor
     }
@@ -185,7 +187,7 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     @Override
     public void backToCreatePack() {
         Intent returnIntent = new Intent();
-        getActivity().setResult(Activity.RESULT_OK,returnIntent);
+        getActivity().setResult(Activity.RESULT_OK, returnIntent);
         getActivity().finish();
     }
 
@@ -199,10 +201,25 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     @OnClick(R.id.img_back)
     public void back() {
         getActivity().finish();
+        isClick = true;
     }
 
     @OnClick(R.id.btn_save)
-    public void save(){
-        mPresenter.printStemp(orderId,Integer.parseInt(txtSerial.getText().toString()),0, Integer.parseInt(txtTotal.getText().toString()));
+    public void save() {
+        mPresenter.printStemp(orderId, Integer.parseInt(txtSerial.getText().toString()), 0, Integer.parseInt(txtTotal.getText().toString()));
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (!isClick){
+            mPresenter.deleteAllLog();
+        }
     }
 }

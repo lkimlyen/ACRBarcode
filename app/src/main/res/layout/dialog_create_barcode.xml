@@ -41,6 +41,7 @@
                         android:id="@+id/txt_request_code"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/distance_5dp"
                         android:text="vbvbvb" />
                 </LinearLayout>
 
@@ -60,6 +61,7 @@
                         android:id="@+id/txt_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/distance_5dp"
                         android:text="vbvbvb" />
 
                 </LinearLayout>
@@ -87,6 +89,7 @@
                 <TextView
                     android:id="@+id/txt_quantity_product"
                     android:layout_width="wrap_content"
+                    android:layout_marginStart="@dimen/distance_5dp"
                     android:layout_height="wrap_content" />
             </TableRow>
         </TableLayout>
@@ -109,6 +112,7 @@
                 <TextView
                     android:id="@+id/txt_quantity_rest"
                     android:layout_width="wrap_content"
+                    android:textColor="@android:color/holo_red_light"
                     android:layout_height="wrap_content" />
 
                 <TextView

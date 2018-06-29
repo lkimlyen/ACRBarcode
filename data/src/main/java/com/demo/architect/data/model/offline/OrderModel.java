@@ -13,7 +13,6 @@ public class OrderModel extends RealmObject {
     private String customerName;
     private int createBy;
     private String createDate;
-    private int orderId;
 
     public OrderModel() {
     }
@@ -22,7 +21,7 @@ public class OrderModel extends RealmObject {
         this.codeProduction = codeProduction;
     }
 
-    public OrderModel(int id, int customerId, String codeSO, String codeProduction, String customerName, int createBy, String createDate, int status) {
+    public OrderModel(int id, int customerId, String codeSO, String codeProduction, String customerName, int createBy, String createDate) {
         this.id = id;
         this.customerId = customerId;
         this.codeSO = codeSO;
@@ -30,7 +29,6 @@ public class OrderModel extends RealmObject {
         this.customerName = customerName;
         this.createBy = createBy;
         this.createDate = createDate;
-        this.orderId = status;
     }
 
     public int getId() {
@@ -68,13 +66,5 @@ public class OrderModel extends RealmObject {
     @Override
     public String toString() {
         return codeProduction;
-    }
-
-    public int getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(int orderId) {
-        this.orderId = orderId;
     }
 }

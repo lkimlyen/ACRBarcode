@@ -142,16 +142,6 @@ public class DatabaseRealm {
                     }
 
                 }
-                OrderModel orderModel = realm.where(OrderModel.class).equalTo("codeProduction", result.getCodeRequest()).findFirst();
-                RealmResults<ProductModel> results = realm.where(ProductModel.class).equalTo("orderId", orderModel.getId()).findAll();
-
-                int sum = results.sum("numberRest").intValue();
-                if (sum == 0) {
-                    orderModel.setOrderId(Constants.COMPLETE);
-                } else {
-                    orderModel.setOrderId(Constants.DOING);
-                }
-
 
             }
         });
@@ -242,17 +232,6 @@ public class DatabaseRealm {
                             productMode.setStatus(Constants.DOING);
                         }
 
-                    }
-
-
-                    OrderModel orderModel = realm.where(OrderModel.class).equalTo("id", model.getOrderId()).findFirst();
-                    RealmResults<ProductModel> results = realm.where(ProductModel.class).equalTo("orderId", orderModel.getId()).findAll();
-
-                    int sum = results.sum("numberRest").intValue();
-                    if (sum == 0) {
-                        orderModel.setOrderId(Constants.COMPLETE);
-                    } else {
-                        orderModel.setOrderId(Constants.DOING);
                     }
 
                 }
@@ -457,7 +436,7 @@ public class DatabaseRealm {
                 OrderModel orderModel = realm.where(OrderModel.class).equalTo("id", orderId).findFirst();
                 if (mainList.getItemList().size() == 0) {
                     mainList.deleteFromRealm();
-                    orderModel.setOrderId(Constants.WAITING_UPLOAD);
+                    orderModel.deleteFromRealm();
                 }
 
             }

@@ -86,7 +86,7 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                         int userId = UserManager.getInstance().getUser().getUserId();
                         for (OrderACREntity entity : successResponse.getEntity()) {
                             OrderModel model = new OrderModel(entity.getId(), entity.getCustomerID(), entity.getCode(), entity.getCodeSX(), entity.getCustomerName(), userId,
-                                    ConvertUtils.getDateTimeCurrent(), Constants.WAITING_UPLOAD);
+                                    ConvertUtils.getDateTimeCurrent() );
 //                            localRepository.addItemAsyns(model).subscribe();
                             list.add(model);
                         }

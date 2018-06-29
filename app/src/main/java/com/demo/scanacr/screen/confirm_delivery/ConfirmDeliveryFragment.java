@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.demo.architect.data.model.OrderRequestEntity;
 import com.demo.architect.data.model.offline.ScanDeliveryList;
+import com.demo.architect.data.model.offline.ScanDeliveryModel;
 import com.demo.scanacr.R;
 import com.demo.scanacr.adapter.DeliveryAdapter;
 import com.demo.scanacr.app.CoreApplication;
@@ -31,6 +32,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 
 /**
  * Created by MSI on 26/11/2017.
@@ -196,6 +199,7 @@ public class ConfirmDeliveryFragment extends BaseFragment implements ConfirmDeli
 
     @Override
     public void showListPackage(ScanDeliveryList list) {
+        btnScan.setVisibility(View.VISIBLE);
         if (list == null) {
             new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
                     .setTitleText(getString(R.string.text_title_noti))
@@ -209,11 +213,26 @@ public class ConfirmDeliveryFragment extends BaseFragment implements ConfirmDeli
                     })
                     .show();
             btnScan.setVisibility(View.GONE);
+            lvCode.setAdapter(null);
             return;
+        }
+        if (list != null && list.getItemList().size() == 0){
+            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText(getString(R.string.text_title_noti))
+                    .setContentText(getString(R.string.text_no_data))
+                    .setConfirmText(getString(R.string.text_ok))
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                        }
+                    })
+                    .show();
+            btnScan.setVisibility(View.GONE);
         }
         adapter = new DeliveryAdapter(list.getItemList());
         lvCode.setAdapter(adapter);
-        btnScan.setVisibility(View.VISIBLE);
+
     }
 
     public void showToast(String message) {
@@ -236,7 +255,12 @@ public class ConfirmDeliveryFragment extends BaseFragment implements ConfirmDeli
 
     @OnClick(R.id.btn_check)
     public void check() {
-        if (requestCode.equals("")) {
+//        if (requestCode.equals("")) {
+//            return;
+//        }
+
+        if (ssProduce.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
+            showError(getString(R.string.text_order_id_null));
             return;
         }
         mPresenter.checkRequest(requestCode);

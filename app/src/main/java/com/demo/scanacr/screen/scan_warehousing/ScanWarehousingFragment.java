@@ -22,6 +22,7 @@ import com.demo.architect.data.model.offline.ScanWarehousingModel;
 import com.demo.scanacr.R;
 import com.demo.scanacr.adapter.ScanWarehousingAdapter;
 import com.demo.scanacr.app.base.BaseFragment;
+import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.screen.capture.ScanActivity;
 import com.demo.scanacr.util.Precondition;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -29,6 +30,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 
@@ -83,6 +85,16 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
         if (requestCode == 2000) {
             checkPermissionLocation();
         }
+
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (result != null) {
+            if (result.getContents() != null) {
+                String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
+                String barcode = contents.replace("DEMO", "");
+                checkPermissionLocation();
+                mPresenter.checkBarcode(barcode, mLocation.getLatitude(), mLocation.getLongitude());
+            }
+        }
     }
 
     @Override
@@ -102,6 +114,7 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
         txtTitle.setText(getString(R.string.text_scan_warehouse));
         adapter = new ScanWarehousingAdapter(getContext(), new ArrayList<ScanWarehousingModel>());
         lvCode.setAdapter(adapter);
+        mPresenter.getPackage();
     }
 
     public void checkPermissionLocation() {

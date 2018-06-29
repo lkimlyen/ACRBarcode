@@ -67,7 +67,7 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
     @Override
     public void start() {
         Log.d(TAG, TAG + ".start() called");
-        getRequest();
+     //   getRequest();
     }
 
     @Override
@@ -80,11 +80,13 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
     public void checkBarcode(int requestId, String barcode, double latitude, double longitude) {
         if (!barcode.contains("-")) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
+            view.startMusicError();
             return;
         }
 
         if (barcode.length() < 11 || barcode.length() > 14) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_lenght));
+            view.startMusicError();
             return;
         }
         String[] packageList = barcode.split("-");
@@ -100,11 +102,13 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                         saveBarcode(barcode, latitude, longitude, requestId, packageEntity);
                     } else {
                         view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_saved));
+                        view.startMusicError();
                     }
                 }
             });
         } else {
             view.showError(CoreApplication.getInstance().getString(R.string.text_package_no_create));
+            view.startMusicError();
         }
 
     }
@@ -123,6 +127,7 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                         list.add(new OrderRequestEntity(CoreApplication.getInstance().getString(R.string.text_choose_request_produce)));
                         list.addAll(successResponse.getEntity());
                         view.showListRequest(list);
+                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_download_list_prodution_success));
                     }
 
                     @Override
@@ -209,6 +214,7 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                             @Override
                             public void call(String s) {
                                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
+                                view.startMusicSuccess();
                             }
                         });
 

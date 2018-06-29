@@ -52,7 +52,7 @@ public class ScanWarehousingPresenter implements ScanWarehousingContract.Present
     @Override
     public void start() {
         Log.d(TAG, TAG + ".start() called");
-        getPackage();
+       // getPackage();
     }
 
     @Override
@@ -65,11 +65,13 @@ public class ScanWarehousingPresenter implements ScanWarehousingContract.Present
     public void checkBarcode(String barcode, double latitude, double longitude) {
         if (!barcode.contains("-")) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
+            view.startMusicError();
             return;
         }
 
         if (barcode.length() < 11 || barcode.length() > 14) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_lenght));
+            view.startMusicError();
             return;
         }
         String[] packageList = barcode.split("-");
@@ -85,11 +87,13 @@ public class ScanWarehousingPresenter implements ScanWarehousingContract.Present
                         uploadData(packageEntity, barcode, latitude, longitude);
                     } else {
                         view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_saved));
+                        view.startMusicError();
                     }
                 }
             });
         } else {
             view.showError(CoreApplication.getInstance().getString(R.string.text_package_no_create));
+            view.startMusicError();
         }
 
     }
@@ -104,6 +108,7 @@ public class ScanWarehousingPresenter implements ScanWarehousingContract.Present
                     public void onSuccess(GetAllPackageUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
                         ListPackageManager.getInstance().setListPackage(successResponse.getEntity());
+                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_download_list_package_success));
                     }
 
                     @Override
@@ -141,6 +146,9 @@ public class ScanWarehousingPresenter implements ScanWarehousingContract.Present
                                             @Override
                                             public void call(ScanWarehousingModel scanWarehousingModel) {
                                                 view.showListScanWarehousing(scanWarehousingModel);
+                                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
+                                                view.startMusicSuccess();
+
                                             }
                                         });
                                     }
@@ -149,6 +157,7 @@ public class ScanWarehousingPresenter implements ScanWarehousingContract.Present
                                     public void onError(AddLogScanInStoreACRUsecase.ErrorValue errorResponse) {
                                         view.hideProgressBar();
                                         view.showError(errorResponse.getDescription());
+                                        view.startMusicError();
                                     }
                                 });
                     }

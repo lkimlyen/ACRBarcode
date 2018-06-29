@@ -278,11 +278,15 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                     } else {
                         if (print) {
                             printStemp(orderId, serial, logId, logId);
+                        }else {
+                            view.showSuccess(CoreApplication.getInstance().getString(R.string.text_not_code_scan_new));
                         }
                     }
                 } else {
                     if (print) {
                         printStemp(orderId, serial, logId, logId);
+                    }else {
+                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_not_code_scan_new));
                     }
                 }
             }
@@ -301,10 +305,12 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
         orderModel = new OrderModel();
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
+            view.startMusicError();
             return;
         }
         if (barcode.length() < 10 || barcode.length() > 13) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_lenght));
+            view.startMusicError();
             return;
         }
 
@@ -322,10 +328,11 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
         });
 
 
-        if (list.size() == 0) {
-            view.showError(CoreApplication.getInstance().getString(R.string.text_product_empty));
-            return;
-        }
+//        if (list.size() == 0) {
+//            view.showError(CoreApplication.getInstance().getString(R.string.text_product_empty));
+//            view.startMusicError();
+//            return;
+//        }
 
         int checkBarcode = 0;
 
@@ -341,12 +348,14 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                                 view.showDialogNumber(model, barcode);
                             } else {
                                 view.showError(CoreApplication.getInstance().getString(R.string.text_code_exist_in_pack));
+                                view.startMusicError();
                             }
                         }
                     });
 
                 } else {
                     view.showError(CoreApplication.getInstance().getString(R.string.text_number_input_had_enough));
+                    view.startMusicError();
                 }
 
                 return;
@@ -355,6 +364,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
 
         if (checkBarcode == 0) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
+            view.startMusicError();
         }
     }
 
@@ -390,6 +400,8 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                             @Override
                             public void call(Integer integer) {
                                 view.showNumTotal(integer);
+                                view.startMusicSuccess();
+                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                             }
                         });
                         view.hideProgressBar();

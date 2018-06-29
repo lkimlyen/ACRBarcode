@@ -66,7 +66,7 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
     @Override
     public void start() {
         Log.d(TAG, TAG + ".start() called");
-        getRequest();
+       // getRequest();
     }
 
     @Override
@@ -79,11 +79,13 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
     public void checkBarcode(int requestId, String barcode, double latitude, double longitude) {
         if (!barcode.contains("-")) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
+            view.startMusicError();
             return;
         }
 
         if (barcode.length() < 11 || barcode.length() > 14) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_lenght));
+            view.startMusicError();
             return;
         }
         CodeOutEntity codeOutEntity = ListCodeScanManager.getInstance().getCodeScanByBarcode(barcode);
@@ -95,11 +97,13 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
                         uploadData(codeOutEntity, barcode, latitude, longitude);
                     } else {
                         view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_saved));
+                        view.startMusicError();
                     }
                 }
             });
         } else {
             view.showError(CoreApplication.getInstance().getString(R.string.text_package_no_create));
+            view.startMusicError();
         }
 
 
@@ -119,6 +123,7 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
                         list.add(new OrderRequestEntity(CoreApplication.getInstance().getString(R.string.text_choose_request_produce)));
                         list.addAll(successResponse.getEntity());
                         view.showListRequest(list);
+                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_download_list_prodution_success));
                     }
 
                     @Override
@@ -180,6 +185,8 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
                                     @Override
                                     public void call(ImportWorksModel model) {
                                         view.showListPackage(model);
+                                        view.startMusicSuccess();
+                                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                                     }
                                 });
                             }
@@ -188,6 +195,7 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
                             public void onError(AddLogScanACRUsecase.ErrorValue errorResponse) {
                                 view.hideProgressBar();
                                 view.showError(errorResponse.getDescription());
+                                view.startMusicError();
                             }
                         });
                     }

@@ -190,6 +190,7 @@
         android:id="@+id/lv_code"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="#E6E6FA"
         android:layout_weight="1" />
 
     <LinearLayout

@@ -37,6 +37,7 @@
     <string name="text_report_detail_create_pack">Báo cáo chi tiết tạo gói</string>
     <string name="text_url_report" formatted="true">%s/Report/ReportInOutPackageDetailACRApp</string>
     <string name="text_download_list_prodution_success">Tải danh sách Sản Xuất thành công</string>
+    <string name="text_download_list_package_success">Tải danh sách Gói thành công</string>
     <string name="text_choose_request_produce">Chọn lệnh sản xuất</string>
     <string name="text_save_barcode">Bạn có muốn lưu mã này?</string>
     <string name="text_home">Trang chủ</string>
@@ -75,7 +76,7 @@
     <string name="text_no_ip_address">Vui lòng nhập địa chỉ IP để kết nối máy in.</string>
     <string name="text_no_data">Không có dữ liệu</string>
     <string name="text_search">Tìm</string>
-    <string name="text_order_id_null">Bạn chưa chọn lệnh sản xuất cần tìm</string>
+    <string name="text_order_id_null">Bạn chưa chọn lệnh sản xuất</string>
     <string name="text_detail_package">Chi tiết mã gói</string>
     <string name="text_done">Hoàn tất</string>
     <string name="text_print_again">In lại gói này</string>
@@ -110,6 +111,7 @@
     <string name="text_confirm">Xác nhận</string>
     <string name="text_done_pack_success">Đã hoàn tất gói</string>
     <string name="text_title_close">Bạn có muốn đóng ứng dụng không?</string>
+    <string name="text_not_code_scan_new">Không có mã chi tiết mới để hoàn tất</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

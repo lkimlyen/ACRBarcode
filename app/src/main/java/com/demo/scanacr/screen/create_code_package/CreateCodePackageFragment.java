@@ -233,6 +233,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
                 mPresenter.getProduct(list.get(position).getId());
                 orderId = list.get(position).getId();
                 mPresenter.getListCreateCode(orderId);
+                edtBarcode.setText("");
             }
 
             @Override
@@ -440,6 +441,10 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
 
     @OnClick(R.id.btn_scan)
     public void scan() {
+        if (ssProduce.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
+            showError(getString(R.string.text_order_id_null));
+            return;
+        }
         integrator = new IntentIntegrator(getActivity());
         integrator.setCaptureActivity(ScanActivity.class);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);

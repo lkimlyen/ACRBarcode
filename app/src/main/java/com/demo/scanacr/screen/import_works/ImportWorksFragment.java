@@ -139,6 +139,8 @@ public class ImportWorksFragment extends BaseFragment implements ImportWorksCont
         list.add(CoreApplication.getInstance().getString(R.string.text_choose_request_produce));
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
         ssProduce.setAdapter(adapter);
+
+        mPresenter.getRequest();
     }
 
     public void checkPermissionLocation() {
@@ -296,6 +298,22 @@ public class ImportWorksFragment extends BaseFragment implements ImportWorksCont
 
     @OnClick(R.id.btn_scan)
     public void scan() {
+        if (ssProduce.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
+            new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText(getString(R.string.text_title_noti))
+                    .setContentText(getString(R.string.text_order_id_null))
+                    .setConfirmText(getString(R.string.text_ok))
+                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+
+                        }
+                    })
+
+                    .show();
+            return;
+        }
         integrator = new IntentIntegrator(getActivity());
         integrator.setCaptureActivity(ScanActivity.class);
         integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
@@ -311,6 +329,11 @@ public class ImportWorksFragment extends BaseFragment implements ImportWorksCont
     public void save() {
         checkPermissionLocation();
         if (edtBarcode.getText().toString().equals("")) {
+            return;
+        }
+
+        if (ssProduce.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
+            showError(getString(R.string.text_order_id_null));
             return;
         }
         new SweetAlertDialog(getContext(), SweetAlertDialog.WARNING_TYPE)

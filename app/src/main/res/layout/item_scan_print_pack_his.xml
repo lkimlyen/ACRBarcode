@@ -26,12 +26,17 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Số đơn hàng: " />
+                android:text="Số đơn hàng: "
+                android:textSize="@dimen/text_14sp"
+                android:textColor="@android:color/black"/>
 
             <TextView
                 android:id="@+id/txt_order"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+
+                android:textSize="@dimen/text_14sp"
+                android:textColor="@android:color/black"/>
             </TableRow>
 
             <TableRow
@@ -42,12 +47,19 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="STT Kiện: " />
+                    android:text="STT Kiện: "
+
+                    android:textSize="@dimen/text_14sp"
+                    android:textColor="@android:color/black"/>
 
                 <TextView
                     android:id="@+id/txt_serial"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+
+                    android:textSize="@dimen/text_14sp"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"/>
             </TableRow>
         </TableLayout>
         </LinearLayout>

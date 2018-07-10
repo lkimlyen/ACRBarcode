@@ -1,11 +1,15 @@
 package com.demo.scanacr.screen.scan_delivery;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -60,6 +64,7 @@ public class ScanDeliveryFragment extends BaseFragment implements ScanDeliveryCo
     private Location mLocation;
     private DeliveryAdapter adapter;
     public MediaPlayer mp1, mp2;
+    private Vibrator vibrate;
     private final int MY_LOCATION_REQUEST_CODE = 167;
     private int requestId;
 
@@ -123,6 +128,7 @@ public class ScanDeliveryFragment extends BaseFragment implements ScanDeliveryCo
     }
 
     private void initView() {
+        vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         txtTitle.setText(getString(R.string.text_scan_delivery));
         llRequestCode.setVisibility(View.VISIBLE);
         ssProduce.setTitle(getString(R.string.text_choose_request_produce));
@@ -265,6 +271,16 @@ public class ScanDeliveryFragment extends BaseFragment implements ScanDeliveryCo
     @Override
     public void startMusicSuccess() {
         mp1.start();
+    }
+
+    @Override
+    public void turnOnVibrator() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrate.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            //deprecated in API 26
+            vibrate.vibrate(1000);
+        }
     }
 
     public void showToast(String message) {

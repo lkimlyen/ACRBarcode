@@ -2,7 +2,6 @@ package com.demo.scanacr.screen.import_works;
 
 import com.demo.architect.data.model.OrderRequestEntity;
 import com.demo.architect.data.model.offline.ImportWorksModel;
-import com.demo.architect.data.model.offline.ScanDeliveryList;
 import com.demo.scanacr.app.base.BasePresenter;
 import com.demo.scanacr.app.base.BaseView;
 
@@ -20,10 +19,12 @@ public interface ImportWorksContract {
 
         void showListRequest(List<OrderRequestEntity> list);
 
-       void showListPackage(ImportWorksModel model);
+        void showListPackage(ImportWorksModel model);
+
         void startMusicError();
 
         void startMusicSuccess();
+        void turnOnVibrator();
     }
 
     interface Presenter extends BasePresenter {

@@ -6,6 +6,8 @@ import android.util.Log;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.ChangePasswordUsecase;
+import com.demo.scanacr.R;
+import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.manager.UserManager;
 
 import javax.inject.Inject;
@@ -64,7 +66,14 @@ public class ChangePasswordPresenter implements ChangePasswordContract.Presenter
                     @Override
                     public void onError(ChangePasswordUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.changeError(errorResponse.getDescription());
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.changeError(error);
                     }
                 });
     }

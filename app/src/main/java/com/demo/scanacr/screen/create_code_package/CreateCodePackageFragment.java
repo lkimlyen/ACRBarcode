@@ -1,11 +1,16 @@
 package com.demo.scanacr.screen.create_code_package;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -75,7 +80,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
 
     @Bind(R.id.lv_code)
     ListView rvCode;
-
+    private Vibrator vibrate;
     private int orderId = 0;
     private Location mLocation;
 
@@ -112,6 +117,17 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
                 mPresenter.checkBarcode(barcode, orderId, mLocation.getLatitude(), mLocation.getLongitude());
             }
         }
+
+        if (requestCode == PrintStempActivity.REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                showSuccess(getString(R.string.text_print_success));
+                mPresenter.getProduct(orderId);
+            } else {
+                isClick = false;
+            }
+
+
+        }
     }
 
     @Override
@@ -127,6 +143,9 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     }
 
     private void initView() {
+        vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+        // Vibrate for 500 milliseconds
+
         ssProduce.setTitle(getString(R.string.text_choose_request_produce));
         checkPermissionLocation();
         ssProduce.setPrompt(getString(R.string.text_choose_request_produce));
@@ -273,7 +292,7 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
         }, new CreateCodePackAdapter.OnEditTextChangeListener() {
             @Override
             public void onEditTextChange(LogScanCreatePack item, int number) {
-                mPresenter.updateNumberInput(item.getId(), number);
+                mPresenter.updateNumberInput(item.getId(), number, item.getSerial(), item.getNumInput());
             }
         });
         rvCode.setAdapter(adapter);
@@ -288,6 +307,16 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
     @Override
     public void startMusicSuccess() {
         mp1.start();
+    }
+
+    @Override
+    public void turnOnVibrator() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrate.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            //deprecated in API 26
+            vibrate.vibrate(500);
+        }
     }
 
     @OnClick(R.id.ic_refresh)

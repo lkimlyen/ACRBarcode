@@ -19,6 +19,7 @@ import com.demo.architect.domain.GetMaxPackageForSOUsecase;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.manager.ScanCreatePackManager;
+import com.demo.scanacr.manager.UserManager;
 import com.demo.scanacr.util.ConvertUtils;
 import com.google.gson.Gson;
 
@@ -83,7 +84,14 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
                     @Override
                     public void onError(GetMaxPackageForSOUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
                     }
                 });
     }
@@ -107,10 +115,10 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
 
     @Override
     public void getListCreatePack(int orderId) {
-        localRepository.findLogPrint(orderId).subscribe(new Action1<HashMap<LogScanCreatePack, ProductModel>>() {
+        localRepository.findLogPrint(orderId).subscribe(new Action1<LogScanCreatePackList>() {
             @Override
-            public void call(HashMap<LogScanCreatePack, ProductModel> logScanCreatePackProductModelHashMap) {
-                view.showListCreatePack(logScanCreatePackProductModelHashMap);
+            public void call(LogScanCreatePackList list) {
+                view.showListCreatePack(list);
             }
         });
 
@@ -123,7 +131,8 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
             @Override
             public void call(IPAddress address) {
                 if (address == null) {
-                    view.showError(CoreApplication.getInstance().getString(R.string.text_no_ip_address));
+                    //view.showError(CoreApplication.getInstance().getString(R.string.text_no_ip_address));
+                    view.showDialogCreateIPAddress();
                     return;
                 }
                 view.showProgressBar();
@@ -182,6 +191,19 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
         localRepository.deleteAllLog().subscribe();
     }
 
+    @Override
+    public void saveIPAddress(String ipAddress, int port,int orderId, int serial, int serverId, int numTotal) {
+        int userId = UserManager.getInstance().getUser().getUserId();
+        IPAddress model = new IPAddress(1, ipAddress, port, userId, ConvertUtils.getDateTimeCurrent());
+        localRepository.insertOrUpdateIpAddress(model).subscribe(new Action1<IPAddress>() {
+            @Override
+            public void call(IPAddress address) {
+              //  view.showIPAddress(address);
+                printStemp(orderId, serial, serverId, numTotal);
+            }
+        });
+    }
+
 
     public void updateData(int orderId, int serial, int numTotal, String json) {
         addPackageACRbyJsonUsecase.executeIO(new AddPackageACRbyJsonUsecase.RequestValue(json),
@@ -203,7 +225,14 @@ public class PrintStempPresenter implements PrintStempContract.Presenter {
                     @Override
                     public void onError(AddPackageACRbyJsonUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
                     }
                 });
 

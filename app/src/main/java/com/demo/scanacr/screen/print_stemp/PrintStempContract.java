@@ -1,12 +1,9 @@
 package com.demo.scanacr.screen.print_stemp;
 
-import com.demo.architect.data.model.offline.LogScanCreatePack;
+import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
-import com.demo.architect.data.model.offline.ProductModel;
 import com.demo.scanacr.app.base.BasePresenter;
 import com.demo.scanacr.app.base.BaseView;
-
-import java.util.HashMap;
 
 /**
  * Created by MSI on 26/11/2017.
@@ -22,11 +19,13 @@ public interface PrintStempContract {
 
         void showOrder(OrderModel model);
 
-        void showListCreatePack(HashMap<LogScanCreatePack, ProductModel> list);
+        void showListCreatePack(LogScanCreatePackList list);
 
         void showSumPack(int sum);
 
         void backToCreatePack();
+
+        void showDialogCreateIPAddress();
     }
 
     interface Presenter extends BasePresenter {
@@ -39,5 +38,7 @@ public interface PrintStempContract {
         void printStemp(int orderId, int serial, int serverId, int numTotal);
 
         void deleteAllLog();
+
+        void saveIPAddress(String ipAddress, int port,int orderId, int serial, int serverId, int numTotal);
     }
 }

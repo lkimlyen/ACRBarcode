@@ -37,6 +37,7 @@
     <string name="text_report_detail_create_pack">Báo cáo chi tiết tạo gói</string>
     <string name="text_url_report" formatted="true">%s/Report/ReportInOutPackageDetailACRApp</string>
     <string name="text_download_list_prodution_success">Tải danh sách Sản Xuất thành công</string>
+    <string name="text_download_list_product_success">Tải danh sách Sản Phẩm thành công</string>
     <string name="text_download_list_package_success">Tải danh sách Gói thành công</string>
     <string name="text_choose_request_produce">Chọn lệnh sản xuất</string>
     <string name="text_save_barcode">Bạn có muốn lưu mã này?</string>
@@ -105,6 +106,7 @@
     <string name="text_name_database_main">barcodemain.realm</string>
     <string name="text_path_file">/ACR/backup/</string>
     <string name="text_backup_success">Sao lưu thành công</string>
+    <string name="text_save_success">Lưu thành công</string>
     <string name="text_backup_fail">Sao lưu thất bại</string>
     <string name="text_get_package_success">Tải danh sách mã gói trong Yêu cầu thành công!</string>
     <string name="text_code_null">Không có mã nào trong yêu cầu này!!</string>
@@ -112,6 +114,11 @@
     <string name="text_done_pack_success">Đã hoàn tất gói</string>
     <string name="text_title_close">Bạn có muốn đóng ứng dụng không?</string>
     <string name="text_not_code_scan_new">Không có mã chi tiết mới để hoàn tất</string>
+    <string name="text_progress_dialog">Vui lòng chờ...</string>
+    <string name="text_email">imarkcomp@gmail.com</string>
+    <string name="text_password">Imark2017</string>
+    <string name="text_error_network">Lỗi kết nối mạng. Vui lòng kiểm tra lại mạng</string>
+    <string name="text_error_network_host">Unable to resolve host</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>

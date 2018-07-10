@@ -23,6 +23,7 @@ import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.architect.domain.GetMaxPackageForSOUsecase;
 import com.demo.architect.domain.GetMaxTimesACRUsecase;
 import com.demo.architect.domain.LoginUsecase;
+import com.demo.architect.domain.UpdateSoftUsecase;
 import com.demo.architect.domain.UpdateVersionUsecase;
 
 import dagger.Module;
@@ -135,6 +136,11 @@ public class UseCaseModule {
     @Provides
     GetAllScanTurnOutUsecase provideAllScanTurnOutUsecase(OrderRepository orderRepository) {
         return new GetAllScanTurnOutUsecase(orderRepository);
+    }
+
+    @Provides
+    UpdateSoftUsecase provideUpdateSoftUsecase(AuthRepository authRepository) {
+        return new UpdateSoftUsecase(authRepository);
     }
 }
 

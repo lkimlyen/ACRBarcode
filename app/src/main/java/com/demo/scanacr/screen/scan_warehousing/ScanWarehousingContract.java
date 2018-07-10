@@ -19,6 +19,8 @@ public interface ScanWarehousingContract {
         void startMusicError();
 
         void startMusicSuccess();
+
+        void turnOnVibrator();
     }
 
     interface Presenter extends BasePresenter {

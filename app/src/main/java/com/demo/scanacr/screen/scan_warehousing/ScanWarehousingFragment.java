@@ -1,11 +1,15 @@
 package com.demo.scanacr.screen.scan_warehousing;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -54,6 +58,7 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
     private ScanWarehousingAdapter adapter;
     private final int MY_LOCATION_REQUEST_CODE = 167;
     public MediaPlayer mp1, mp2;
+    private Vibrator vibrate;
     @Bind(R.id.edt_barcode)
     EditText edtBarcode;
 
@@ -111,6 +116,7 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
     }
 
     private void initView() {
+        vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
         txtTitle.setText(getString(R.string.text_scan_warehouse));
         adapter = new ScanWarehousingAdapter(getContext(), new ArrayList<ScanWarehousingModel>());
         lvCode.setAdapter(adapter);
@@ -214,13 +220,21 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
         mp1.start();
     }
 
+    @Override
+    public void turnOnVibrator() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrate.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            //deprecated in API 26
+            vibrate.vibrate(1000);
+        }
+    }
+
     public void showToast(String message) {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
-
     }
-
 
     @OnClick(R.id.img_back)
     public void back() {

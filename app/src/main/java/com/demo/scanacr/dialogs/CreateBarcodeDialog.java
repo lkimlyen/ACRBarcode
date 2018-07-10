@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.offline.ProductModel;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
@@ -23,7 +24,7 @@ public class CreateBarcodeDialog extends DialogFragment {
 
     private OnItemSaveListener listener;
 
-    private ProductModel model;
+    private ProductEntity model;
     private String barcode;
     private int numberOld = 1;
 
@@ -31,7 +32,7 @@ public class CreateBarcodeDialog extends DialogFragment {
         this.listener = listener;
     }
 
-    public void setModel(ProductModel model, String barcode) {
+    public void setModel(ProductEntity model, String barcode) {
         this.model = model;
         this.barcode = barcode;
     }
@@ -56,8 +57,8 @@ public class CreateBarcodeDialog extends DialogFragment {
         txtRequestCode.setText(barcode);
         txtDate.setText(ConvertUtils.ConvertStringToShortDate(ConvertUtils.getDateTimeCurrent()));
         txtQuantityProduct.setText(model.getNumber() + "");
-        txtQuantityRest.setText((model.getNumberRest() - 1) + "");
-        txtQuantityScan.setText(model.getNumCompleteScan() + "");
+        txtQuantityRest.setText(((model.getNumber() - model.getNumScaned()) - 1) + "");
+        txtQuantityScan.setText(model.getNumScaned() + "");
         edtNumberScan.setText("1");
 
         final int numTotal = model.getNumber();

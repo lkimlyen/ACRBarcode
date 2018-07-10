@@ -3,7 +3,6 @@ package com.demo.architect.data.model.offline;
 import io.realm.RealmObject;
 
 public class ProductModel extends RealmObject {
-
     private int productId;
     private int orderId;
     private String codeColor;

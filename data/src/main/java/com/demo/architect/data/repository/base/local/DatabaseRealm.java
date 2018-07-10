@@ -84,7 +84,7 @@ public class DatabaseRealm {
 
     public <T extends RealmObject> void insertOrUpdate(final T item) {
         Realm realm = getRealmInstance();
-        realm.executeTransactionAsync(new Realm.Transaction() {
+        realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 realm.copyToRealmOrUpdate(item);
@@ -183,13 +183,13 @@ public class DatabaseRealm {
         return getRealmInstance().where(ProductModel.class).equalTo("orderId", orderId).findAll();
     }
 
-    public void addLogScanCreatePackAsync(final OrderModel model, final LogScanCreatePack item, final int orderId) {
+    public void addLogScanCreatePackAsync(final ProductModel product, final OrderModel model, final LogScanCreatePack item, final int orderId) {
         Realm realm = getRealmInstance();
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 realm.copyToRealmOrUpdate(model);
-                LogScanCreatePack.create(realm, item, orderId);
+                LogScanCreatePack.create(product, realm, item, orderId);
             }
         });
     }
@@ -241,13 +241,17 @@ public class DatabaseRealm {
     }
 
 
-    public int addLogCompleteCreatePackAsync(final LogCompleteCreatePack model, final int serverId) {
+    public int addLogCompleteCreatePackAsync(final ProductModel product, final LogCompleteCreatePack model, final int serverId) {
         Realm realm = getRealmInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 ProductModel productModel = realm.where(ProductModel.class).equalTo("orderId", model.getOrderId())
-                        .equalTo("serial", Integer.parseInt(model.getBarcode().substring(9))).findFirst();
+                        .equalTo("serial", product.getSerial()).findFirst();
+                if (productModel == null){
+                    productModel = product;
+                    productModel = realm.copyToRealm(productModel);
+                }
                 model.setProductId(productModel.getProductId());
                 model.setProductModel(productModel);
                 model.setSerial(productModel.getSerial());
@@ -296,11 +300,14 @@ public class DatabaseRealm {
         return packList;
     }
 
-    public void deleteLogCreateAsync(final int id) {
+    public void deleteLogCreateAsync(final int id, final LogDeleteCreatePack logDeleteCreatePack) {
         Realm realm = getRealmInstance();
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
+                LogScanCreatePack item = realm.where(LogScanCreatePack.class).equalTo("id", id).findFirst();
+                LogDeleteCreatePack deleteCreatePack =  realm.copyToRealm(logDeleteCreatePack);
+                deleteCreatePack.setProductModel(item.getProductModel());
                 LogScanCreatePack.delete(realm, id);
             }
         });
@@ -332,7 +339,7 @@ public class DatabaseRealm {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                 String newFormat = formatter.format(new Date());
                 LogDeleteCreatePack logDelete = new LogDeleteCreatePack(getIdCurrent() + 1, pack.getBarcode(), pack.getOrderId(),
-                        pack.getDeviceTime(), pack.getServerTime(), pack.getLatitude(),
+                        productModel, pack.getDeviceTime(), pack.getServerTime(), pack.getLatitude(),
                         pack.getLongitude(), pack.getCreateByPhone(),
                         pack.getSerial(),
                         pack.getNumTotal(), pack.getNumInput(), pack.getCreateBy(),
@@ -377,7 +384,7 @@ public class DatabaseRealm {
                             SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                             String newFormat = formatter.format(new Date());
                             LogDeleteCreatePack logDelete = new LogDeleteCreatePack(getIdCurrent() + 1, pack.getBarcode(), pack.getOrderId(),
-                                    pack.getDeviceTime(), pack.getServerTime(), pack.getLatitude(),
+                                    productModel, pack.getDeviceTime(), pack.getServerTime(), pack.getLatitude(),
                                     pack.getLongitude(), pack.getCreateByPhone(),
                                     pack.getSerial(),
                                     pack.getNumTotal(), pack.getNumInput(), pack.getCreateBy(),
@@ -423,7 +430,7 @@ public class DatabaseRealm {
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                     String newFormat = formatter.format(new Date());
                     LogDeleteCreatePack logDelete = new LogDeleteCreatePack(getIdCurrent() + 1, pack.getBarcode(), pack.getOrderId(),
-                            pack.getDeviceTime(), pack.getServerTime(), pack.getLatitude(),
+                            productModel, pack.getDeviceTime(), pack.getServerTime(), pack.getLatitude(),
                             pack.getLongitude(), pack.getCreateByPhone(),
                             pack.getSerial(),
                             pack.getNumTotal(), pack.getNumInput(), pack.getCreateBy(),
@@ -508,7 +515,7 @@ public class DatabaseRealm {
         });
     }
 
-    public void updateLogModel(final LogScanCreatePack model) {
+    public void updateLogModel(final LogScanCreatePack model, final ProductModel productModel) {
         Realm mRealm = getRealmInstance();
         mRealm.executeTransactionAsync(new Realm.Transaction() {
             @Override
@@ -517,11 +524,12 @@ public class DatabaseRealm {
                 final int numberCurrent = current.getNumInput();
                 LogScanCreatePack logScanCreatePack = realm.copyToRealmOrUpdate(model);
                 ProductModel product = realm.where(ProductModel.class).equalTo("productId", model.getProductId()).findFirst();
-                int numberInput = model.getNumInput() - numberCurrent;
-                product.setNumberScan(product.getNumberScan() + numberInput);
-                product.setNumberRest(product.getNumber() - product.getNumberScan());
+
+                product.setNumberScan(productModel.getNumberScan() + (logScanCreatePack.getNumInput() - numberCurrent));
+                product.setNumberRest(productModel.getNumberRest() - (logScanCreatePack.getNumInput() - numberCurrent));
                 logScanCreatePack.setNumRest(product.getNumberRest());
 
+                logScanCreatePack.setProductModel(product);
                 LogCompleteCreatePack logCompleteCreatePack = realm.where(LogCompleteCreatePack.class)
                         .equalTo("productId", model.getProductId()).equalTo("orderId", model.getOrderId())
                         .equalTo("serial", model.getSerial()).findFirst();
@@ -561,7 +569,7 @@ public class DatabaseRealm {
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                     String newFormat = formatter.format(new Date());
                     LogDeleteCreatePack logDelete = new LogDeleteCreatePack(getIdCurrent() + 1, pack.getBarcode(), pack.getOrderId(),
-                            pack.getDeviceTime(), pack.getServerTime(), pack.getLatitude(),
+                            productModel, pack.getDeviceTime(), pack.getServerTime(), pack.getLatitude(),
                             pack.getLongitude(), pack.getCreateByPhone(),
                             pack.getSerial(),
                             pack.getNumTotal(), pack.getNumInput(), pack.getCreateBy(),

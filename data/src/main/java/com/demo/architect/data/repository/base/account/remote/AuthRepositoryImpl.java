@@ -131,6 +131,19 @@ public class AuthRepositoryImpl implements AuthRepository {
     }
 
     @Override
+    public Observable<BaseResponse> updateSoft(final String appCode, final int userId, final String version, final int numNotUpdate, final String dateServer, final String ime) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseResponse>() {
+            @Override
+            public void call(Subscriber<? super BaseResponse> subscriber) {
+                handleBaseResponse(mRemoteApiInterface.updateSoft(
+                        server + "/WS/api/UpdateSoft"
+                        ,appCode, userId, version,numNotUpdate, dateServer, ime), subscriber);
+            }
+        });
+    }
+
+    @Override
     public Observable<UpdateAppResponse> getUpdateVersionACR() {
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
         return Observable.create(new Observable.OnSubscribe<UpdateAppResponse>() {

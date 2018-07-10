@@ -94,7 +94,15 @@ public class SettingPresenter implements SettingContract.Presenter {
 
                     @Override
                     public void onError(UpdateVersionUsecase.ErrorValue errorResponse) {
-
+                        view.hideProgressBar();
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
                     }
                 });
     }
@@ -123,6 +131,7 @@ public class SettingPresenter implements SettingContract.Presenter {
             @Override
             public void call(IPAddress address) {
                 view.showIPAddress(address);
+                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_success));
             }
         });
     }

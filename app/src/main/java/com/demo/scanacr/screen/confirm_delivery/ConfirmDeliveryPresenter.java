@@ -87,7 +87,14 @@ public class ConfirmDeliveryPresenter implements ConfirmDeliveryContract.Present
                     @Override
                     public void onError(GetAllRequestACRUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
                     }
                 });
     }
@@ -103,8 +110,6 @@ public class ConfirmDeliveryPresenter implements ConfirmDeliveryContract.Present
         });
 
     }
-
-    private int count = 0;
 
     @Override
     public void uploadData(String codeRequest) {
@@ -143,7 +148,15 @@ public class ConfirmDeliveryPresenter implements ConfirmDeliveryContract.Present
                             @Override
                             public void onError(AddLogScanbyJsonUsecase.ErrorValue errorResponse) {
                                 view.hideProgressBar();
-                                view.showError(errorResponse.getDescription());
+                                String error = "";
+                                if(errorResponse.getDescription().contains(
+                                        CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                                    error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                                }else {
+                                    error = errorResponse.getDescription();
+                                }
+                                view.showError(error);
+
                             }
                         });
             }

@@ -24,4 +24,5 @@ public class Constants {
     public static final String DATABASE_MAIN = "barcodemain.realm";
 
     public static final String DATABASE_TEST = "barcodetest.realm";
+    public static final String KEY_UPLOAD = "UPLOAD";
 }

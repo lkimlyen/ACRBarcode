@@ -2,11 +2,15 @@ package com.demo.scanacr.screen.detail_package;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -24,6 +28,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.offline.LogCompleteCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.data.model.offline.ProductModel;
@@ -60,6 +65,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     private IntentIntegrator integrator = new IntentIntegrator(getActivity());
     private FusedLocationProviderClient mFusedLocationClient;
     public MediaPlayer mp1, mp2;
+    private Vibrator vibrate;
     private Location mLocation;
     private boolean isClick;
     private int orderId;
@@ -144,7 +150,7 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     }
 
     private void initView() {
-
+        vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     public void checkPermissionLocation() {
@@ -238,6 +244,16 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     }
 
     @Override
+    public void turnOnVibrator() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrate.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            //deprecated in API 26
+            vibrate.vibrate(500);
+        }
+    }
+
+    @Override
     public void showListCreatePack(LogCompleteCreatePackList list) {
         adapter = new DetailPackAdapter(list.getItemList());
         lvCodes.setAdapter(adapter);
@@ -253,7 +269,8 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 sweetAlertDialog.dismiss();
-                                mPresenter.deleteCode(list.getItemList().get(position).getId(), list.getItemList().get(position).getProductId(), logId);
+                                mPresenter.deleteCode(list.getItemList().get(position).getId(), list.getItemList().get(position).getProductId(),
+                                        logId, list.getItemList().get(position).getSerial(),list.getItemList().get(position).getNumInput());
                             }
                         })
                         .setCancelText(getString(R.string.text_no))
@@ -283,16 +300,16 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
     }
 
     @Override
-    public void showDialogNumber(final ProductModel productModel, String barcode) {
+    public void showDialogNumber(final ProductEntity product, String barcode) {
         CreateBarcodeDialog dialog = new CreateBarcodeDialog();
         dialog.show(getActivity().getFragmentManager(), TAG);
-        dialog.setModel(productModel, barcode);
+        dialog.setModel(product, barcode);
         dialog.setListener(new CreateBarcodeDialog.OnItemSaveListener() {
             @Override
             public void onSave(int numberInput) {
                 checkPermissionLocation();
                 mPresenter.saveBarcode(mLocation.getLatitude(), mLocation.getLongitude(), barcode,
-                        logId, numberInput);
+                        logId, numberInput, product.getStt());
             }
         });
     }

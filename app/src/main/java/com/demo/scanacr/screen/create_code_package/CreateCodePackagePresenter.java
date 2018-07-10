@@ -19,6 +19,7 @@ import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.manager.ListOrderManager;
+import com.demo.scanacr.manager.ListProductManager;
 import com.demo.scanacr.manager.UserManager;
 import com.demo.scanacr.util.ConvertUtils;
 
@@ -86,7 +87,7 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                         int userId = UserManager.getInstance().getUser().getUserId();
                         for (OrderACREntity entity : successResponse.getEntity()) {
                             OrderModel model = new OrderModel(entity.getId(), entity.getCustomerID(), entity.getCode(), entity.getCodeSX(), entity.getCustomerName(), userId,
-                                    ConvertUtils.getDateTimeCurrent() );
+                                    ConvertUtils.getDateTimeCurrent());
 //                            localRepository.addItemAsyns(model).subscribe();
                             list.add(model);
                         }
@@ -99,7 +100,14 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                     @Override
                     public void onError(GetAllSOACRUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
                     }
                 });
 
@@ -129,62 +137,75 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                     @Override
                     public void onSuccess(GetAllDetailForSOACRUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
-                        localRepository.deleteProduct().subscribe();
-                        //localRepository.updateStatusAndNumberProduct(orderId).subscribe();
-                        for (ProductEntity item : successResponse.getEntity()) {
-                            ProductModel model = new ProductModel(item.getProductID(), orderId, item.getCodeColor(),
-                                    item.getStt(), item.getLength(), item.getWide(), item.getDeep(), item.getGrain(),
-                                    item.getNumber(), item.getNumber(), 0, 0);
-                            localRepository.addProduct(model).subscribe();
+                        // localRepository.deleteProduct().subscribe();
+                        if (successResponse.getEntity().size() == 0) {
+                            view.showSuccess(CoreApplication.getInstance().getString(R.string.text_product_empty));
+
+                        } else {
+//                            List<ProductModel> list = new ArrayList<>();
+//                            for (ProductEntity item : successResponse.getEntity()) {
+//                                ProductModel model = new ProductModel(item.getProductID(), orderId, item.getCodeColor(),
+//                                        item.getStt(), item.getLength(), item.getWide(), item.getDeep(), item.getGrain(),
+//                                        item.getNumber(), item.getNumber(), 0, 0);
+//                                //localRepository.addProduct(model).subscribe();
+//                                list.add(model);
+//                            }
+                            ListProductManager.getInstance().setListProduct(successResponse.getEntity());
+                            view.showSuccess(CoreApplication.getInstance().getString(R.string.text_download_list_product_success));
                         }
+                        //localRepository.updateStatusAndNumberProduct(orderId).subscribe();
+
                     }
 
                     @Override
                     public void onError(GetAllDetailForSOACRUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
                     }
                 });
 
     }
 
-    private List<ProductModel> list;
-
     @Override
     public void checkBarcode(String barcode, int orderId, double latitude, double longitude) {
-        list = new ArrayList<>();
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             view.startMusicError();
+            view.turnOnVibrator();
             return;
         }
         if (barcode.length() < 10 || barcode.length() > 13) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_lenght));
             view.startMusicError();
+            view.turnOnVibrator();
             return;
         }
         OrderModel orderModel = ListOrderManager.getInstance().getOrderById(orderId);
-        localRepository.findProductByOrderId(orderId).subscribe(new Action1<List<ProductModel>>() {
-            @Override
-            public void call(List<ProductModel> productModels) {
-                list = productModels;
-            }
-        });
+
+        List<ProductEntity> list = ListProductManager.getInstance().getListProduct();
 
 
         if (list.size() == 0) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_product_empty));
             view.startMusicError();
+            view.turnOnVibrator();
             return;
         }
 
         int checkBarcode = 0;
 
-        for (ProductModel model : list) {
-            String barcodeMain = orderModel.getCodeProduction() + model.getSerial();
+        for (ProductEntity model : list) {
+            String barcodeMain = orderModel.getCodeProduction() + model.getStt();
             if (barcode.equals(barcodeMain)) {
                 checkBarcode++;
-                if (model.getNumberRest() > 0) {
+                if (!model.isFull()) {
                     if (countListScan(orderId) < 11) {
                         saveBarcode(latitude,
                                 longitude, barcode, model, orderModel);
@@ -199,6 +220,7 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                                         } else {
                                             view.showError(CoreApplication.getInstance().getString(R.string.text_list_had_enough));
                                             view.startMusicError();
+                                            view.turnOnVibrator();
                                         }
                                     }
                                 });
@@ -208,6 +230,7 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                 } else {
                     view.showError(CoreApplication.getInstance().getString(R.string.text_number_input_had_enough));
                     view.startMusicError();
+                    view.turnOnVibrator();
                 }
 
                 return;
@@ -217,10 +240,11 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
         if (checkBarcode == 0) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
             view.startMusicError();
+            view.turnOnVibrator();
         }
     }
 
-    public void saveBarcode(double latitude, double longitude, String barcode, ProductModel product, OrderModel orderModel) {
+    public void saveBarcode(double latitude, double longitude, String barcode, ProductEntity product, OrderModel orderModel) {
         view.showProgressBar();
         String deviceTime = ConvertUtils.getDateTimeCurrent();
         int userId = UserManager.getInstance().getUser().getUserId();
@@ -232,15 +256,28 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                     @Override
                     public void onSuccess(GetDateServerUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
-                        LogScanCreatePack model = new LogScanCreatePack(barcode, deviceTime, successResponse.getDate(),
-                                latitude, longitude, phone, product.getProductId(), orderModel.getId(), product.getSerial(),
-                                0, product.getNumber(), 1, product.getNumberRest(), Constants.WAITING_UPLOAD, -1, userId);
 
-                        localRepository.addLogScanCreatePack(orderModel, model, orderModel.getId(), barcode).subscribe(new Action1<String>() {
+                        ProductModel productModel = new ProductModel(product.getProductID(), orderModel.getId(),
+                                product.getCodeColor(), product.getStt(), product.getLength(), product.getWide(),
+                                product.getDeep(), product.getGrain(), product.getNumber(), product.getNumber() - product.getNumScaned(),
+                                product.getNumScaned(), product.getNumScaned());
+                        LogScanCreatePack model = new LogScanCreatePack(barcode, deviceTime, successResponse.getDate(),
+                                latitude, longitude, phone, product.getProductID(), orderModel.getId(), product.getStt(),
+                                0, product.getNumber(), 1, productModel.getNumberRest(), Constants.WAITING_UPLOAD, -1, userId);
+
+
+                        localRepository.addLogScanCreatePack(productModel, orderModel, model, orderModel.getId(), barcode).subscribe(new Action1<String>() {
                             @Override
                             public void call(String String) {
                                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                                 view.startMusicSuccess();
+                                view.turnOnVibrator();
+                                product.setNumScaned(product.getNumScaned() + 1);
+                                if (product.getNumber() - product.getNumScaned() == 0) {
+                                    product.setFull(true);
+                                }
+                                ListProductManager.getInstance().updateEntity(product);
+
                             }
                         });
 
@@ -249,7 +286,14 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                     @Override
                     public void onError(GetDateServerUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
                     }
                 });
     }
@@ -267,12 +311,20 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
 
     @Override
     public void deleteItemLog(LogScanCreatePack item) {
+        ProductEntity productEntity = ListProductManager.getInstance().getProductBySerial(item.getSerial());
+        productEntity.setNumScaned(productEntity.getNumScaned() - item.getNumInput());
+        productEntity.setFull(false);
+        ListProductManager.getInstance().updateEntity(productEntity);
         localRepository.deleteLogScanItem(item.getId()).subscribe();
     }
 
     @Override
-    public void updateNumberInput(int id, int number) {
-
+    public void updateNumberInput(int id, int number, int serial, int currentNumber) {
+        ProductEntity productEntity = ListProductManager.getInstance().getProductBySerial(serial);
+        productEntity.setNumScaned(productEntity.getNumScaned() + (number - currentNumber));
+        if (productEntity.getNumber() - productEntity.getNumScaned() == 0) {
+            productEntity.setFull(true);
+        }
         localRepository.updateNumberLog(id, number).subscribe();
     }
 

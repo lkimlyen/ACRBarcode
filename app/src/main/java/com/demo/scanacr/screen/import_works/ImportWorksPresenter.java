@@ -7,12 +7,10 @@ import android.util.Log;
 import com.demo.architect.data.model.CodeOutEntity;
 import com.demo.architect.data.model.OrderRequestEntity;
 import com.demo.architect.data.model.offline.ImportWorksModel;
-import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.AddLogScanACRUsecase;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.GetAllRequestACRInUsecase;
-import com.demo.architect.domain.GetAllRequestACRUsecase;
 import com.demo.architect.domain.GetAllScanTurnOutUsecase;
 import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.scanacr.R;
@@ -66,7 +64,7 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
     @Override
     public void start() {
         Log.d(TAG, TAG + ".start() called");
-       // getRequest();
+        // getRequest();
     }
 
     @Override
@@ -80,12 +78,14 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
         if (!barcode.contains("-")) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             view.startMusicError();
+            view.turnOnVibrator();
             return;
         }
 
         if (barcode.length() < 11 || barcode.length() > 14) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_lenght));
             view.startMusicError();
+            view.turnOnVibrator();
             return;
         }
         CodeOutEntity codeOutEntity = ListCodeScanManager.getInstance().getCodeScanByBarcode(barcode);
@@ -98,12 +98,14 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
                     } else {
                         view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_saved));
                         view.startMusicError();
+                        view.turnOnVibrator();
                     }
                 }
             });
         } else {
             view.showError(CoreApplication.getInstance().getString(R.string.text_package_no_create));
             view.startMusicError();
+            view.turnOnVibrator();
         }
 
 
@@ -129,7 +131,14 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
                     @Override
                     public void onError(GetAllRequestACRInUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
+                        String error = "";
+                        if (errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))) {
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        } else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
                         ListRequestInManager.getInstance().setListRequest(null);
                     }
                 });
@@ -150,7 +159,14 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
                     @Override
                     public void onError(GetAllScanTurnOutUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
                         ListCodeScanManager.getInstance().setListCodeScan(null);
                     }
                 });
@@ -194,7 +210,14 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
                             @Override
                             public void onError(AddLogScanACRUsecase.ErrorValue errorResponse) {
                                 view.hideProgressBar();
-                                view.showError(errorResponse.getDescription());
+                                String error = "";
+                                if(errorResponse.getDescription().contains(
+                                        CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                                    error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                                }else {
+                                    error = errorResponse.getDescription();
+                                }
+                                view.showError(error);
                                 view.startMusicError();
                             }
                         });
@@ -203,7 +226,14 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
                     @Override
                     public void onError(GetDateServerUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
                     }
                 });
 

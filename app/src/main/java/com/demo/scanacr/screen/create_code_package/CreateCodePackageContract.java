@@ -25,6 +25,8 @@ public interface CreateCodePackageContract {
         void startMusicError();
 
         void startMusicSuccess();
+
+        void turnOnVibrator();
     }
 
     interface Presenter extends BasePresenter {
@@ -40,7 +42,7 @@ public interface CreateCodePackageContract {
 
         void deleteItemLog(LogScanCreatePack item);
 
-        void updateNumberInput(int id, int number);
+        void updateNumberInput(int id, int number, int serial, int currentNumber);
 
         void deleteAllItemLog();
 

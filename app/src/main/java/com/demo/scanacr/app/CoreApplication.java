@@ -5,13 +5,13 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
-import com.demo.architect.data.helper.Constants;
-import com.demo.architect.data.helper.SharedPreferenceHelper;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.bus.MainThreadBus;
 import com.demo.scanacr.app.di.component.ApplicationComponent;
@@ -20,12 +20,15 @@ import com.demo.scanacr.app.di.module.ApplicationModule;
 import com.demo.scanacr.app.di.module.NetModule;
 import com.demo.scanacr.app.di.module.UseCaseModule;
 import com.google.android.gms.analytics.Tracker;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.otto.Bus;
 import com.squareup.otto.ThreadEnforcer;
 
 import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 /**
  * Created by uyminhduc on 12/16/16.
@@ -81,6 +84,22 @@ public class CoreApplication extends MultiDexApplication implements Application.
     }
 
     private void initializeFirebase() {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String email = getString(R.string.text_email);
+        String password = getString(R.string.text_password);
+        auth.signInWithEmailAndPassword(email, password).
+                addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (!task.isSuccessful()) {
+                            // there was an error
+                            Log.d(TAG, "Login fail");
+                        } else {
+                            Log.d(TAG, "Success");
+                        }
+                    }
+                });
+
         //  String token = FirebaseInstanceId.getInstance().getToken();
         // Log.d(TAG, "Core FCM Token: " + token);
     }

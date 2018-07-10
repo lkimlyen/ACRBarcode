@@ -1,8 +1,8 @@
 package com.demo.scanacr.screen.detail_package;
 
+import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.offline.LogCompleteCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
-import com.demo.architect.data.model.offline.ProductModel;
 import com.demo.scanacr.app.base.BasePresenter;
 import com.demo.scanacr.app.base.BaseView;
 
@@ -24,13 +24,15 @@ public interface DetailPackageContract {
 
         void showNumTotal(int num);
 
-        void showDialogNumber(final ProductModel productModel, String barcode);
+        void showDialogNumber(final ProductEntity productEntity, String barcode);
 
         void backToHistory(int request);
 
         void startMusicError();
 
         void startMusicSuccess();
+
+        void turnOnVibrator();
     }
 
     interface Presenter extends BasePresenter {
@@ -38,7 +40,7 @@ public interface DetailPackageContract {
 
         void getListHistory(int logId);
 
-        void deleteCode(int id, int productId, int logId);
+        void deleteCode(int id, int productId, int logId, int serial, int number);
 
         void deletePack(int logId, int orderId);
 
@@ -50,7 +52,7 @@ public interface DetailPackageContract {
 
         int countListScan(int logId);
 
-        void saveBarcode(double latitude, double longitude, String barcode, int logId, int numberInput);
+        void saveBarcode(double latitude, double longitude, String barcode, int logId, int numberInput, int serial);
 
         void deleteCodeNotComplete(int logId);
     }

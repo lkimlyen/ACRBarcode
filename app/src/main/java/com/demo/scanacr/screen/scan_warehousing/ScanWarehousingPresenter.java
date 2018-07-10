@@ -114,7 +114,14 @@ public class ScanWarehousingPresenter implements ScanWarehousingContract.Present
                     @Override
                     public void onError(GetAllPackageUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
                         ListPackageManager.getInstance().setListPackage(null);
                     }
                 });
@@ -156,7 +163,14 @@ public class ScanWarehousingPresenter implements ScanWarehousingContract.Present
                                     @Override
                                     public void onError(AddLogScanInStoreACRUsecase.ErrorValue errorResponse) {
                                         view.hideProgressBar();
-                                        view.showError(errorResponse.getDescription());
+                                        String error = "";
+                                        if(errorResponse.getDescription().contains(
+                                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                                        }else {
+                                            error = errorResponse.getDescription();
+                                        }
+                                        view.showError(error);
                                         view.startMusicError();
                                     }
                                 });
@@ -165,7 +179,14 @@ public class ScanWarehousingPresenter implements ScanWarehousingContract.Present
                     @Override
                     public void onError(GetDateServerUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
                     }
                 });
 

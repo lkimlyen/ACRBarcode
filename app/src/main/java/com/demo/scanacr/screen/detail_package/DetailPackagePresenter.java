@@ -23,6 +23,7 @@ import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.constants.Constants;
+import com.demo.scanacr.manager.ListProductManager;
 import com.demo.scanacr.manager.UserManager;
 import com.demo.scanacr.util.ConvertUtils;
 import com.google.gson.Gson;
@@ -118,7 +119,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
     }
 
     @Override
-    public void deleteCode(int id, int productId, int logId) {
+    public void deleteCode(int id, int productId, int logId, int serial, int number) {
         view.showProgressBar();
         int userId = UserManager.getInstance().getUser().getUserId();
 
@@ -132,11 +133,17 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                                 @Override
                                 public void onSuccess(DeletePackageDetailUsecase.ResponseValue successResponse) {
                                     view.hideProgressBar();
+                                    // getProduct(orderId);
                                     localRepository.deleteLogComplete(id, logId).subscribe(new Action1<Integer>() {
                                         @Override
                                         public void call(Integer num) {
                                             view.showNumTotal(num);
                                             view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));
+                                            ProductEntity productEntity = ListProductManager.getInstance().getProductBySerial(serial);
+                                            productEntity.setNumScaned(productEntity.getNumScaned() - number);
+                                            productEntity.setFull(false);
+                                            ListProductManager.getInstance().updateEntity(productEntity);
+
                                         }
                                     });
                                 }
@@ -154,6 +161,10 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                             view.showNumTotal(num);
                             view.hideProgressBar();
                             view.showSuccess(CoreApplication.getInstance().getString(R.string.text_delete_success));
+                            ProductEntity productEntity = ListProductManager.getInstance().getProductBySerial(serial);
+                            productEntity.setNumScaned(productEntity.getNumScaned() - number);
+                            productEntity.setFull(false);
+                            ListProductManager.getInstance().updateEntity(productEntity);
                         }
                     });
                 }
@@ -184,6 +195,14 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                     @Override
                     public void onError(DeletePackageUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
                     }
                 });
 
@@ -271,21 +290,28 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                                     @Override
                                     public void onError(AddPackageACRbyJsonUsecase.ErrorValue errorResponse) {
                                         view.hideProgressBar();
-                                        view.showError(errorResponse.getDescription());
+                                        String error = "";
+                                        if(errorResponse.getDescription().contains(
+                                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                                        }else {
+                                            error = errorResponse.getDescription();
+                                        }
+                                        view.showError(error);
                                     }
                                 });
 
                     } else {
                         if (print) {
                             printStemp(orderId, serial, logId, logId);
-                        }else {
+                        } else {
                             view.showSuccess(CoreApplication.getInstance().getString(R.string.text_not_code_scan_new));
                         }
                     }
                 } else {
                     if (print) {
                         printStemp(orderId, serial, logId, logId);
-                    }else {
+                    } else {
                         view.showSuccess(CoreApplication.getInstance().getString(R.string.text_not_code_scan_new));
                     }
                 }
@@ -306,11 +332,13 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
         if (barcode.contains(CoreApplication.getInstance().getString(R.string.text_minus))) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             view.startMusicError();
+            view.turnOnVibrator();
             return;
         }
         if (barcode.length() < 10 || barcode.length() > 13) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_lenght));
             view.startMusicError();
+            view.turnOnVibrator();
             return;
         }
 
@@ -320,27 +348,17 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                 orderModel = model;
             }
         });
-        localRepository.findProductByOrderId(orderId).subscribe(new Action1<List<ProductModel>>() {
-            @Override
-            public void call(List<ProductModel> productModels) {
-                list = productModels;
-            }
-        });
 
+        List<ProductEntity> list = ListProductManager.getInstance().getListProduct();
 
-//        if (list.size() == 0) {
-//            view.showError(CoreApplication.getInstance().getString(R.string.text_product_empty));
-//            view.startMusicError();
-//            return;
-//        }
 
         int checkBarcode = 0;
 
-        for (ProductModel model : list) {
-            String barcodeMain = orderModel.getCodeProduction() + model.getSerial();
+        for (ProductEntity model : list) {
+            String barcodeMain = orderModel.getCodeProduction() + model.getStt();
             if (barcode.equals(barcodeMain)) {
                 checkBarcode++;
-                if (model.getNumberRest() > 0) {
+                if (!model.isFull()) {
                     localRepository.checkExistCode(logId, barcode).subscribe(new Action1<Boolean>() {
                         @Override
                         public void call(Boolean aBoolean) {
@@ -349,6 +367,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                             } else {
                                 view.showError(CoreApplication.getInstance().getString(R.string.text_code_exist_in_pack));
                                 view.startMusicError();
+                                view.turnOnVibrator();
                             }
                         }
                     });
@@ -356,6 +375,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                 } else {
                     view.showError(CoreApplication.getInstance().getString(R.string.text_number_input_had_enough));
                     view.startMusicError();
+                    view.turnOnVibrator();
                 }
 
                 return;
@@ -365,6 +385,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
         if (checkBarcode == 0) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_no_exist));
             view.startMusicError();
+            view.turnOnVibrator();
         }
     }
 
@@ -381,7 +402,7 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
     }
 
     @Override
-    public void saveBarcode(double latitude, double longitude, String barcode, int logId, int numberInput) {
+    public void saveBarcode(double latitude, double longitude, String barcode, int logId, int numberInput, int serial) {
         view.showProgressBar();
         String deviceTime = ConvertUtils.getDateTimeCurrent();
         int userId = UserManager.getInstance().getUser().getUserId();
@@ -392,16 +413,27 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                         GetDateServerUsecase.ErrorValue>() {
                     @Override
                     public void onSuccess(GetDateServerUsecase.ResponseValue successResponse) {
+                        ProductEntity product = ListProductManager.getInstance().getProductBySerial(serial);
+                        ProductModel productModel = new ProductModel(product.getProductID(), orderModel.getId(),
+                                product.getCodeColor(), product.getStt(), product.getLength(), product.getWide(),
+                                product.getDeep(), product.getGrain(), product.getNumber(), product.getNumber() - product.getNumScaned(),
+                                product.getNumScaned(), product.getNumScaned());
                         LogCompleteCreatePack model = new LogCompleteCreatePack(barcode, deviceTime, successResponse.getDate(),
                                 latitude, longitude, phone, 0, null, orderModel.getId(), 0,
                                 0, numberInput, Constants.WAITING_UPLOAD, userId);
 
-                        localRepository.addLogCompleteCreatePack(model, logId).subscribe(new Action1<Integer>() {
+                        localRepository.addLogCompleteCreatePack(productModel, model, logId).subscribe(new Action1<Integer>() {
                             @Override
                             public void call(Integer integer) {
                                 view.showNumTotal(integer);
                                 view.startMusicSuccess();
                                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
+                                view.turnOnVibrator();
+                                product.setNumScaned(product.getNumScaned() + 1);
+                                if (product.getNumber() - product.getNumScaned() == 0) {
+                                    product.setFull(true);
+                                }
+                                ListProductManager.getInstance().updateEntity(product);
                             }
                         });
                         view.hideProgressBar();
@@ -410,7 +442,15 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
 
                     @Override
                     public void onError(GetDateServerUsecase.ErrorValue errorResponse) {
-
+                        view.hideProgressBar();
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
                     }
                 });
     }
@@ -428,20 +468,29 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                     @Override
                     public void onSuccess(GetAllDetailForSOACRUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
-                        localRepository.deleteProduct().subscribe();
-                        //localRepository.updateStatusAndNumberProduct(orderId).subscribe();
-                        for (ProductEntity item : successResponse.getEntity()) {
-                            ProductModel model = new ProductModel(item.getProductID(), orderId, item.getCodeColor(),
-                                    item.getStt(), item.getLength(), item.getWide(), item.getDeep(), item.getGrain(),
-                                    item.getNumber(), item.getNumber(), 0, 0);
-                            localRepository.addProduct(model).subscribe();
-                        }
+//                        localRepository.deleteProduct().subscribe();
+//                        //localRepository.updateStatusAndNumberProduct(orderId).subscribe();
+//                        for (ProductEntity item : successResponse.getEntity()) {
+//                            ProductModel model = new ProductModel(item.getProductID(), orderId, item.getCodeColor(),
+//                                    item.getStt(), item.getLength(), item.getWide(), item.getDeep(), item.getGrain(),
+//                                    item.getNumber(), item.getNumber(), 0, 0);
+//                            localRepository.addProduct(model).subscribe();
+//                        }
+                        ListProductManager.getInstance().setListProduct(successResponse.getEntity());
                     }
 
                     @Override
                     public void onError(GetAllDetailForSOACRUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
+
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
                     }
                 });
 

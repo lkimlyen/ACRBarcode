@@ -17,8 +17,12 @@ import com.demo.scanacr.dialogs.ChangeIPAddressDialog;
 import com.demo.scanacr.screen.chang_password.ChangePasswordActivity;
 import com.demo.scanacr.util.ConvertUtils;
 import com.demo.scanacr.util.Precondition;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -40,6 +44,7 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
     private SettingContract.Presenter mPresenter;
     private IPAddress mModel;
     private StorageReference storageRef;
+    private FirebaseAuth auth;
     @Bind(R.id.txt_version)
     TextView txtVersion;
 
@@ -55,6 +60,7 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        auth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -68,8 +74,26 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_setting, container, false);
         ButterKnife.bind(this, view);
+
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        storageRef = storage.getReference();
+
+        if (auth.getCurrentUser() != null) {
+            String email = getString(R.string.text_email);
+            String password = getString(R.string.text_password);
+            auth.signInWithEmailAndPassword(email, password).
+                    addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (!task.isSuccessful()) {
+                                // there was an error
+                                Log.d(TAG, "Login fail");
+                            } else {
+                                Log.d(TAG, "Success");
+                            }
+                        }
+                    });
+            storageRef = storage.getReference();
+        }
         return view;
     }
 
@@ -156,9 +180,11 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
 
     @Override
     public void uploadFile(String path, int userId, String userName, String phone) {
+
+        hideProgressBar();
         UploadTask uploadTask;
         Uri file = Uri.fromFile(new File(path));
-        StorageReference riversRef = storageRef.child(userId + "_" + userName + "_" + phone + "/" + ConvertUtils.getTimeMillis() +file.getLastPathSegment());
+        StorageReference riversRef = storageRef.child(userId + "_" + userName + "_" + phone + "/" + ConvertUtils.getTimeMillis() + file.getLastPathSegment());
         uploadTask = riversRef.putFile(file);
 
 // Register observers to listen for when the download is done or if it fails
@@ -166,17 +192,22 @@ public class SettingFragment extends BaseFragment implements SettingContract.Vie
             @Override
             public void onFailure(@NonNull Exception exception) {
                 // Handle unsuccessful uploads
-                showError(getString(R.string.text_backup_fail));
-                Log.d(TAG, exception.getMessage());
-                hideProgressBar();
+                if (isAdded()) {
+                    showError(getString(R.string.text_backup_fail));
+                    Log.d(TAG, exception.getMessage());
+                }
+
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
                 // ...
-                hideProgressBar();
-                showSuccess(getString(R.string.text_backup_success));
+
+                if (isAdded()) {
+                    showSuccess(getString(R.string.text_backup_success));
+                }
+
             }
         });
     }

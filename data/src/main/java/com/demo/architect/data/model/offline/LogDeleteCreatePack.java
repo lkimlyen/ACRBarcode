@@ -9,6 +9,7 @@ public class LogDeleteCreatePack extends RealmObject {
     private int id;
     private String barcode;
     private int orderId;
+    private ProductModel productModel;
     private String deviceTime;
     private String serverTime;
     private double latitude;
@@ -25,10 +26,11 @@ public class LogDeleteCreatePack extends RealmObject {
     public LogDeleteCreatePack() {
     }
 
-    public LogDeleteCreatePack(int id, String barcode, int orderId, String deviceTime, String serverTime, double latitude, double longitude, String createByPhone, int serial, int numTotal, int numInput, int createBy, String timeDelete, int status, int serverId) {
+    public LogDeleteCreatePack(int id, String barcode, int orderId, ProductModel productModel, String deviceTime, String serverTime, double latitude, double longitude, String createByPhone, int serial, int numTotal, int numInput, int createBy, String timeDelete, int status, int serverId) {
         this.id = id;
         this.barcode = barcode;
         this.orderId = orderId;
+        this.productModel = productModel;
         this.deviceTime = deviceTime;
         this.serverTime = serverTime;
         this.latitude = latitude;
@@ -104,5 +106,9 @@ public class LogDeleteCreatePack extends RealmObject {
         // If id is null, set it to 1, else set increment it by 1
         nextId = (maxValue == null) ? 0 : maxValue.intValue();
         return nextId;
+    }
+
+    public void setProductModel(ProductModel productModel) {
+        this.productModel = productModel;
     }
 }

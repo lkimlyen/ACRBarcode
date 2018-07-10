@@ -12,11 +12,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.architect.data.model.offline.LogScanCreatePack;
+import com.demo.architect.data.model.offline.LogScanCreatePackList;
 import com.demo.architect.data.model.offline.OrderModel;
 import com.demo.architect.data.model.offline.ProductModel;
 import com.demo.scanacr.R;
-import com.demo.scanacr.adapter.PrintTempAdapter;
+import com.demo.scanacr.adapter.DetailPrintTempAdapter;
 import com.demo.scanacr.app.base.BaseFragment;
+import com.demo.scanacr.dialogs.ChangeIPAddressDialog;
 import com.demo.scanacr.util.ConvertUtils;
 import com.demo.scanacr.util.Precondition;
 
@@ -38,7 +40,7 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     public static final String ORDER_ID = "order_id";
     private final String TAG = PrintStempFragment.class.getName();
     private PrintStempContract.Presenter mPresenter;
-    private PrintTempAdapter adapter;
+    private DetailPrintTempAdapter adapter;
     private int orderId;
     @Bind(R.id.lv_codes)
     ListView lvCode;
@@ -168,14 +170,9 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
     }
 
     @Override
-    public void showListCreatePack(HashMap<LogScanCreatePack, ProductModel> list) {
-        List<LogScanCreatePack> packList = new ArrayList<>();
-        List<ProductModel> productList = new ArrayList<>();
-        for (Map.Entry<LogScanCreatePack, ProductModel> entry : list.entrySet()) {
-            packList.add(entry.getKey());
-            productList.add(entry.getValue());
-        }
-        adapter = new PrintTempAdapter(getContext(), packList, productList);
+    public void showListCreatePack(LogScanCreatePackList list) {
+
+        adapter = new DetailPrintTempAdapter(list.getItemList());
         lvCode.setAdapter(adapter);
     }
 
@@ -189,6 +186,19 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
         Intent returnIntent = new Intent();
         getActivity().setResult(Activity.RESULT_OK, returnIntent);
         getActivity().finish();
+    }
+
+    @Override
+    public void showDialogCreateIPAddress() {
+        ChangeIPAddressDialog dialog = new ChangeIPAddressDialog();
+        dialog.show(getActivity().getFragmentManager(), TAG);
+        dialog.setListener(new ChangeIPAddressDialog.OnItemSaveListener() {
+            @Override
+            public void onSave(String ipAddress, int port) {
+                mPresenter.saveIPAddress(ipAddress, port,orderId, Integer.parseInt(txtSerial.getText().toString()), 0, Integer.parseInt(txtTotal.getText().toString()));
+                dialog.dismiss();
+            }
+        });
     }
 
     public void showToast(String message) {
@@ -206,6 +216,7 @@ public class PrintStempFragment extends BaseFragment implements PrintStempContra
 
     @OnClick(R.id.btn_save)
     public void save() {
+
         mPresenter.printStemp(orderId, Integer.parseInt(txtSerial.getText().toString()), 0, Integer.parseInt(txtTotal.getText().toString()));
     }
 

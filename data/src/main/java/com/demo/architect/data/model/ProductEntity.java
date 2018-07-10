@@ -36,6 +36,14 @@ public class ProductEntity {
     @Expose
     private int number;
 
+    @SerializedName("Current")
+    @Expose
+    private int numScaned;
+
+    @SerializedName("IsFull")
+    @Expose
+    private boolean isFull;
+
     public int getProductID() {
         return productID;
     }
@@ -66,5 +74,21 @@ public class ProductEntity {
 
     public int getNumber() {
         return number;
+    }
+
+    public int getNumScaned() {
+        return numScaned;
+    }
+
+    public boolean isFull() {
+        return isFull;
+    }
+
+    public void setNumScaned(int numScaned) {
+        this.numScaned = numScaned;
+    }
+
+    public void setFull(boolean full) {
+        isFull = full;
     }
 }

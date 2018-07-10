@@ -213,7 +213,7 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<String> addLogScanCreatePack(final OrderModel orderModel, final LogScanCreatePack item, final int orderId, final String barcode) {
+    public Observable<String> addLogScanCreatePack(final ProductModel product, final OrderModel orderModel, final LogScanCreatePack item, final int orderId, final String barcode) {
         return Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -224,9 +224,9 @@ public class LocalRepositoryImpl implements LocalRepository {
                     if (model != null) {
                         item.setId(model.getId());
                         item.setNumInput(model.getNumInput() + item.getNumInput());
-                        databaseRealm.updateLogModel(item);
+                        databaseRealm.updateLogModel(item,product);
                     } else {
-                        databaseRealm.addLogScanCreatePackAsync(orderModel, item, orderId);
+                        databaseRealm.addLogScanCreatePackAsync(product, orderModel, item, orderId);
                     }
 
 
@@ -258,14 +258,14 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<Integer> addLogCompleteCreatePack(final LogCompleteCreatePack model, final int serverId) {
+    public Observable<Integer> addLogCompleteCreatePack(final ProductModel productModel, final LogCompleteCreatePack model, final int serverId) {
         return Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
                 try {
                     // databaseRealm.updateNumberRestProduct(item.getNumInput(), orderId, item.getProductId(), item.getTimes());
 
-                    int num = databaseRealm.addLogCompleteCreatePackAsync(model, serverId);
+                    int num = databaseRealm.addLogCompleteCreatePackAsync(productModel,model, serverId);
                     subscriber.onNext(num);
                     subscriber.onCompleted();
                 } catch (Exception e) {
@@ -308,20 +308,16 @@ public class LocalRepositoryImpl implements LocalRepository {
     }
 
     @Override
-    public Observable<HashMap<LogScanCreatePack, ProductModel>> findLogPrint(final int orderId) {
-        return Observable.create(new Observable.OnSubscribe<HashMap<LogScanCreatePack, ProductModel>>() {
+    public Observable<LogScanCreatePackList> findLogPrint(final int orderId) {
+        return Observable.create(new Observable.OnSubscribe<LogScanCreatePackList>() {
             @Override
-            public void call(Subscriber<? super HashMap<LogScanCreatePack, ProductModel>> subscriber) {
+            public void call(Subscriber<? super LogScanCreatePackList> subscriber) {
                 try {
 
-                    HashMap<LogScanCreatePack, ProductModel> map = new HashMap<>();
+
                     LogScanCreatePackList model = databaseRealm.findLogById(orderId);
-                    for (LogScanCreatePack pack : model.getItemList()) {
-                        ProductModel product = databaseRealm.findProductByLog(pack.getProductId(),
-                                pack.getOrderId(), pack.getSerial());
-                        map.put(pack, product);
-                    }
-                    subscriber.onNext(map);
+
+                    subscriber.onNext(model);
                     subscriber.onCompleted();
                 } catch (Exception e) {
                     subscriber.onError(e);
@@ -341,14 +337,14 @@ public class LocalRepositoryImpl implements LocalRepository {
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                     String newFormat = formatter.format(new Date());
                     LogDeleteCreatePack model = new LogDeleteCreatePack(databaseRealm.getIdCurrent() + 1, item.getBarcode(), item.getOrderId(),
-                            item.getDeviceTime(), item.getServerTime(), item.getLatitude(),
+                            null, item.getDeviceTime(), item.getServerTime(), item.getLatitude(),
                             item.getLongitude(), item.getCreateByPhone(),
                             item.getSerial(),
                             item.getNumTotal(), item.getNumInput(), item.getCreateBy(),
                             newFormat, item.getStatus(), -1);
                     databaseRealm.updateNumberRestProduct(-item.getNumInput(), item.getOrderId(), item.getProductId(), item.getSerial());
-                    databaseRealm.addItemAsync(model);
-                    databaseRealm.deleteLogCreateAsync(id);
+                    //databaseRealm.addItemAsync(model);
+                    databaseRealm.deleteLogCreateAsync(id, model);
                     subscriber.onNext("");
                     subscriber.onCompleted();
                 } catch (Exception e) {

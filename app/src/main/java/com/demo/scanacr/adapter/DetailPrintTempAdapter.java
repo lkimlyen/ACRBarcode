@@ -1,43 +1,23 @@
 package com.demo.scanacr.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.demo.architect.data.model.offline.LogCompleteCreatePack;
 import com.demo.architect.data.model.offline.LogScanCreatePack;
-import com.demo.architect.data.model.offline.ProductModel;
 import com.demo.scanacr.R;
 
-import java.util.List;
+import io.realm.OrderedRealmCollection;
+import io.realm.RealmBaseAdapter;
 
-public class PrintTempAdapter extends BaseAdapter {
-    public Context context;
-    private List<LogScanCreatePack> packList;
-    private List<ProductModel> productList;
+public class DetailPrintTempAdapter extends RealmBaseAdapter<LogScanCreatePack> implements ListAdapter {
 
-    public PrintTempAdapter(Context context, List<LogScanCreatePack> packList, List<ProductModel> productList) {
-        this.context = context;
-        this.packList = packList;
-        this.productList = productList;
-    }
-
-    @Override
-    public int getCount() {
-        return packList.size();
-    }
-
-    @Override
-    public Object getItem(int position) {
-        return packList;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
+    public DetailPrintTempAdapter(OrderedRealmCollection<LogScanCreatePack> realmResults) {
+        super(realmResults);
     }
 
     @Override
@@ -51,22 +31,23 @@ public class PrintTempAdapter extends BaseAdapter {
         } else {
             viewHolder = (HistoryHolder) convertView.getTag();
         }
-        final LogScanCreatePack pack = packList.get(position);
-        final ProductModel product = productList.get(position);
-        setDataToViews(viewHolder, pack, product);
+        if (adapterData != null) {
+            final LogScanCreatePack item = adapterData.get(position);
+            setDataToViews(viewHolder, item);
+        }
         return convertView;
     }
 
-    private void setDataToViews(HistoryHolder holder, LogScanCreatePack item, ProductModel model) {
-        holder.txtCodeColor.setText(model.getCodeColor());
-        holder.txtHeight.setText(model.getDeep()+"");
-        holder.txtLenght.setText(model.getLenght()+"");
-        holder.txtWidth.setText(model.getWide()+"");
+    private void setDataToViews(HistoryHolder holder, LogScanCreatePack item) {
+        holder.txtCodeColor.setText(item.getProductModel().getCodeColor());
+        holder.txtHeight.setText(item.getProductModel().getDeep()+"");
+        holder.txtLenght.setText(item.getProductModel().getLenght()+"");
+        holder.txtWidth.setText(item.getProductModel().getWide()+"");
         holder.txtNumber.setText(item.getNumInput() + "");
         holder.txtSerial.setText(String.valueOf(item.getSerial()));
     }
 
-    public class HistoryHolder{
+    public class HistoryHolder extends RecyclerView.ViewHolder {
 
         TextView txtSerial;
         TextView txtWidth;
@@ -76,6 +57,7 @@ public class PrintTempAdapter extends BaseAdapter {
         TextView txtNumber;
 
         private HistoryHolder(View v) {
+            super(v);
             txtSerial = (TextView) v.findViewById(R.id.txt_serial);
             txtWidth = (TextView) v.findViewById(R.id.txt_width);
             txtHeight = (TextView) v.findViewById(R.id.txt_height);

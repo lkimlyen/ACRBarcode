@@ -81,12 +81,14 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
         if (!barcode.contains("-")) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_type));
             view.startMusicError();
+            view.turnOnVibrator();
             return;
         }
 
         if (barcode.length() < 11 || barcode.length() > 14) {
             view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_error_lenght));
             view.startMusicError();
+            view.turnOnVibrator();
             return;
         }
         String[] packageList = barcode.split("-");
@@ -103,12 +105,14 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                     } else {
                         view.showError(CoreApplication.getInstance().getString(R.string.text_barcode_saved));
                         view.startMusicError();
+                        view.turnOnVibrator();
                     }
                 }
             });
         } else {
             view.showError(CoreApplication.getInstance().getString(R.string.text_package_no_create));
             view.startMusicError();
+            view.turnOnVibrator();
         }
 
     }
@@ -133,7 +137,14 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                     @Override
                     public void onError(GetAllRequestACRUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
                     }
                 });
     }
@@ -158,7 +169,14 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                     @Override
                     public void onError(GetAllPackageForRequestUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
                         ListPackageManager.getInstance().setListPackage(null);
 
                     }
@@ -189,7 +207,14 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                     @Override
                     public void onError(GetMaxTimesACRUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
 
                     }
                 });
@@ -215,6 +240,7 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                             public void call(String s) {
                                 view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                                 view.startMusicSuccess();
+                                view.turnOnVibrator();
                             }
                         });
 
@@ -223,7 +249,14 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                     @Override
                     public void onError(GetDateServerUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
-                        view.showError(errorResponse.getDescription());
+                        String error = "";
+                        if(errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                        }else {
+                            error = errorResponse.getDescription();
+                        }
+                        view.showError(error);
                     }
                 });
 

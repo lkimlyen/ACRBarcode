@@ -15,6 +15,7 @@ public class LogScanCreatePack extends RealmObject {
     private double longitude;
     private String createByPhone;
     private int productId;
+    private ProductModel productModel;
     private int orderId;
     private int serial;
     private int numCodeScan;
@@ -28,7 +29,7 @@ public class LogScanCreatePack extends RealmObject {
     public LogScanCreatePack() {
     }
 
-    public LogScanCreatePack(String barcode, String deviceTime, String serverTime, double latitude, double longitude, String createByPhone, int productId, int orderId, int serial, int numCodeScan, int numTotal,  int numInput, int numRest, int status, int serverId, int createBy) {
+    public LogScanCreatePack(String barcode, String deviceTime, String serverTime, double latitude, double longitude, String createByPhone, int productId, int orderId, int serial, int numCodeScan, int numTotal, int numInput, int numRest, int status, int serverId, int createBy) {
         this.productId = productId;
         this.orderId = orderId;
         this.numTotal = numTotal;
@@ -135,7 +136,7 @@ public class LogScanCreatePack extends RealmObject {
         this.numCodeScan = numCodeScan;
     }
 
-    public static void create(Realm realm, LogScanCreatePack item, int orderId) {
+    public static void create(ProductModel product, Realm realm, LogScanCreatePack item, int orderId) {
         item.setId(id(realm) + 1);
         LogScanCreatePackList parent = realm.where(LogScanCreatePackList.class).equalTo("orderId", orderId).findFirst();
         if (parent == null) {
@@ -146,8 +147,21 @@ public class LogScanCreatePack extends RealmObject {
         LogScanCreatePack present = realm.copyToRealmOrUpdate(item);
         ProductModel model = realm.where(ProductModel.class).equalTo("productId", present.getProductId())
                 .equalTo("orderId", orderId).equalTo("serial", present.getSerial()).findFirst();
-        model.setNumberScan(model.getNumberScan() + present.getNumInput());
-        model.setNumberRest(model.getNumber() - model.getNumberScan());
+        if (model == null) {
+            model = product;
+            model.setNumberRest(product.getNumberRest() - present.getNumInput());
+            model.setNumberScan(product.getNumberScan() + present.getNumInput());
+            model.setNumCompleteScan(product.getNumCompleteScan());
+            model = realm.copyToRealm(model);
+        } else {
+            model.setNumber(product.getNumber());
+            model.setNumberRest(product.getNumberRest() - present.getNumInput());
+            model.setNumberScan(product.getNumberScan() + present.getNumInput());
+            model.setNumCompleteScan(product.getNumCompleteScan());
+        }
+        present.setProductModel(model);
+        // model.setNumberScan(model.getNumberScan() + present.getNumInput());
+        //model.setNumberRest(model.getNumber() - model.getNumberScan());
         present.setNumRest(model.getNumberRest());
         present.setNumCodeScan(model.getNumCompleteScan());
         items.add(present);
@@ -170,5 +184,11 @@ public class LogScanCreatePack extends RealmObject {
         }
     }
 
+    public void setProductModel(ProductModel productModel) {
+        this.productModel = productModel;
+    }
 
+    public ProductModel getProductModel() {
+        return productModel;
+    }
 }

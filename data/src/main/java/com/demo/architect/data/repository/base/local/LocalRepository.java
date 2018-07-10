@@ -1,6 +1,7 @@
 package com.demo.architect.data.repository.base.local;
 
 import com.demo.architect.data.model.MessageModel;
+import com.demo.architect.data.model.ProductEntity;
 import com.demo.architect.data.model.offline.CustomerModel;
 import com.demo.architect.data.model.offline.IPAddress;
 import com.demo.architect.data.model.offline.ImportWorksModel;
@@ -42,17 +43,17 @@ public interface LocalRepository {
 
     Observable<List<ProductModel>> findProductByOrderId(int orderId);
 
-    Observable<String> addLogScanCreatePack(final OrderModel model,LogScanCreatePack item, int orderId, final String barcode);
+    Observable<String> addLogScanCreatePack(final ProductModel product,final OrderModel model,LogScanCreatePack item, int orderId, final String barcode);
 
     Observable<String> addLogCompleteCreatePack(int id, final int serverId, final int serial, final int numTotal, final String dateCreate);
 
-    Observable<Integer> addLogCompleteCreatePack(final LogCompleteCreatePack model, final int serverId);
+    Observable<Integer> addLogCompleteCreatePack(final ProductModel productModel, final LogCompleteCreatePack model, final int serverId);
 
     Observable<OrderModel> findOrder(int orderId);
 
     Observable<LogScanCreatePackList> findAllLog(int orderId);
 
-    Observable<HashMap<LogScanCreatePack, ProductModel>> findLogPrint(int orderId);
+    Observable<LogScanCreatePackList> findLogPrint(int orderId);
 
     Observable<String> deleteLogScanItem(final int id);
 

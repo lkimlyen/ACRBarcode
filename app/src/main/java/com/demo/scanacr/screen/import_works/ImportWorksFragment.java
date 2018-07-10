@@ -1,11 +1,15 @@
 package com.demo.scanacr.screen.import_works;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -62,6 +66,7 @@ public class ImportWorksFragment extends BaseFragment implements ImportWorksCont
     private WorksAdapter adapter;
     private final int MY_LOCATION_REQUEST_CODE = 167;
     private int requestId;
+    private Vibrator vibrate;
 
     @Bind(R.id.edt_barcode)
     EditText edtBarcode;
@@ -123,7 +128,8 @@ public class ImportWorksFragment extends BaseFragment implements ImportWorksCont
     }
 
     private void initView() {
-        txtTitle.setText(getString(R.string.text_scan_delivery));
+        vibrate = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+        txtTitle.setText(getString(R.string.text_import_works));
         llRequestCode.setVisibility(View.VISIBLE);
         ssProduce.setTitle(getString(R.string.text_choose_request_produce));
         checkPermissionLocation();
@@ -262,6 +268,16 @@ public class ImportWorksFragment extends BaseFragment implements ImportWorksCont
     @Override
     public void startMusicSuccess() {
         mp1.start();
+    }
+
+    @Override
+    public void turnOnVibrator() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrate.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            //deprecated in API 26
+            vibrate.vibrate(500);
+        }
     }
 
 

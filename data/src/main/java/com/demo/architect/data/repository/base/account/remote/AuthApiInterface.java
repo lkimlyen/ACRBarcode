@@ -38,4 +38,11 @@ public interface AuthApiInterface {
 
     @GET("http://sp2t9.imark.com.vn/WS/api/GetDate?pAppCode=ids")
     Call<String> getDateServer();
+
+    @FormUrlEncoded
+    @POST
+    Call<BaseResponse> updateSoft(@Url String url, @Field("pAppCode") String appCode, @Field("pUserID") int userId,
+                                  @Field("pVersion") String version, @Field("pNumberRecodeNotUpdate") int numNotUpdate,
+                                  @Field("pDateServer") String dateServer,
+                                  @Field("pDeviceIme") String imeDevice);
 }

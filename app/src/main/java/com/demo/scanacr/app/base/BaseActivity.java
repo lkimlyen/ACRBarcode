@@ -6,10 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.location.Location;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -26,6 +26,7 @@ import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.app.di.component.ApplicationComponent;
 import com.demo.scanacr.app.permission.PermissionHelper;
 import com.demo.scanacr.app.permission.PermissionListener;
+import com.demo.scanacr.util.ConvertUtils;
 import com.demo.scanacr.util.LocationHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -42,11 +43,12 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
  */
 
 public class BaseActivity extends AppCompatActivity
-        implements iBaseView,GoogleApiClient.ConnectionCallbacks,
+        implements iBaseView, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
     MaterialDialog pDialog;
     private LocationHelper locationHelper;
     private Location mLastLocation;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +92,11 @@ public class BaseActivity extends AppCompatActivity
             // Building the GoogleApi client
             locationHelper.buildGoogleApiClient();
         }
+
+        if (!ConvertUtils.checkConnection(this)){
+            WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            wifiManager.setWifiEnabled(true);
+        }
     }
 
     public int getStatusBarHeight() {
@@ -132,7 +139,6 @@ public class BaseActivity extends AppCompatActivity
     }
 
 
-
     public static void setWindowFlag(Activity activity, final int bits, boolean on) {
         Window win = activity.getWindow();
         WindowManager.LayoutParams winParams = win.getAttributes();
@@ -156,7 +162,7 @@ public class BaseActivity extends AppCompatActivity
 
     private void initProgressDialog() {
         pDialog = new MaterialDialog.Builder(this)
-                //  .content(getString(R.string.text_progress_dialog))
+                .content(getString(R.string.text_progress_dialog))
                 .cancelable(false)
                 .progress(true, 0)
                 .build();

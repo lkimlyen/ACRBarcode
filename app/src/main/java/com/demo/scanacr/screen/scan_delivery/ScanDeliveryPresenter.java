@@ -12,14 +12,11 @@ import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.GetAllPackageForRequestUsecase;
 import com.demo.architect.domain.GetAllRequestACRUsecase;
-import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.architect.domain.GetMaxTimesACRUsecase;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
-import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.manager.ListPackageManager;
 import com.demo.scanacr.manager.ListRequestManager;
-import com.demo.scanacr.manager.ServerManager;
 import com.demo.scanacr.manager.UserManager;
 import com.demo.scanacr.util.ConvertUtils;
 
@@ -39,7 +36,6 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
     private final String TAG = ScanDeliveryPresenter.class.getName();
     private final ScanDeliveryContract.View view;
     private final GetAllRequestACRUsecase allRequestACRUsecase;
-    private final GetDateServerUsecase getDateServerUsecase;
     private final GetAllPackageForRequestUsecase getAllPackageForRequestUsecase;
     private final GetMaxTimesACRUsecase getMaxTimesACRUsecase;
     private int times;
@@ -49,11 +45,10 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
     @Inject
     ScanDeliveryPresenter(@NonNull ScanDeliveryContract.View view,
                           GetAllRequestACRUsecase allRequestACRUsecase,
-                          GetDateServerUsecase getDateServerUsecase, GetAllPackageForRequestUsecase getAllPackageForRequestUsecase,
+                          GetAllPackageForRequestUsecase getAllPackageForRequestUsecase,
                           GetMaxTimesACRUsecase getMaxTimesACRUsecase) {
         this.view = view;
         this.allRequestACRUsecase = allRequestACRUsecase;
-        this.getDateServerUsecase = getDateServerUsecase;
         this.getAllPackageForRequestUsecase = getAllPackageForRequestUsecase;
         this.getMaxTimesACRUsecase = getMaxTimesACRUsecase;
     }
@@ -67,7 +62,7 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
     @Override
     public void start() {
         Log.d(TAG, TAG + ".start() called");
-     //   getRequest();
+        //   getRequest();
     }
 
     @Override
@@ -138,10 +133,10 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                     public void onError(GetAllRequestACRUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
                         String error = "";
-                        if(errorResponse.getDescription().contains(
-                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                        if (errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))) {
                             error = CoreApplication.getInstance().getString(R.string.text_error_network);
-                        }else {
+                        } else {
                             error = errorResponse.getDescription();
                         }
                         view.showError(error);
@@ -159,9 +154,9 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                     public void onSuccess(GetAllPackageForRequestUsecase.ResponseValue successResponse) {
                         view.hideProgressBar();
                         ListPackageManager.getInstance().setListPackage(successResponse.getEntity());
-                        if (successResponse.getEntity().size() == 0){
+                        if (successResponse.getEntity().size() == 0) {
                             view.showWarning(CoreApplication.getInstance().getString(R.string.text_code_null));
-                        }else {
+                        } else {
                             view.showSuccess(CoreApplication.getInstance().getString(R.string.text_get_package_success));
                         }
                     }
@@ -170,10 +165,10 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                     public void onError(GetAllPackageForRequestUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
                         String error = "";
-                        if(errorResponse.getDescription().contains(
-                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                        if (errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))) {
                             error = CoreApplication.getInstance().getString(R.string.text_error_network);
-                        }else {
+                        } else {
                             error = errorResponse.getDescription();
                         }
                         view.showError(error);
@@ -208,10 +203,10 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
                     public void onError(GetMaxTimesACRUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
                         String error = "";
-                        if(errorResponse.getDescription().contains(
-                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                        if (errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))) {
                             error = CoreApplication.getInstance().getString(R.string.text_error_network);
-                        }else {
+                        } else {
                             error = errorResponse.getDescription();
                         }
                         view.showError(error);
@@ -227,38 +222,19 @@ public class ScanDeliveryPresenter implements ScanDeliveryContract.Presenter {
         int userId = UserManager.getInstance().getUser().getUserId();
         String phone = Settings.Secure.getString(CoreApplication.getInstance().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        getDateServerUsecase.executeIO(new GetDateServerUsecase.RequestValue(),
-                new BaseUseCase.UseCaseCallback<GetDateServerUsecase.ResponseValue,
-                        GetDateServerUsecase.ErrorValue>() {
-                    @Override
-                    public void onSuccess(GetDateServerUsecase.ResponseValue successResponse) {
-                        view.hideProgressBar();
-                        ScanDeliveryModel model = new ScanDeliveryModel(barcode, deviceTime, successResponse.getDate(), latitude, longitude, phone,
-                                packageEntity.getId(), packageEntity.getOrderID(), requestId, packageEntity.getSTT(), userId);
-                        localRepository.addScanDelivery(model, times, packageEntity.getCodeSX()).subscribe(new Action1<String>() {
-                            @Override
-                            public void call(String s) {
-                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
-                                view.startMusicSuccess();
-                                view.turnOnVibrator();
-                            }
-                        });
 
-                    }
-
-                    @Override
-                    public void onError(GetDateServerUsecase.ErrorValue errorResponse) {
-                        view.hideProgressBar();
-                        String error = "";
-                        if(errorResponse.getDescription().contains(
-                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
-                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
-                        }else {
-                            error = errorResponse.getDescription();
-                        }
-                        view.showError(error);
-                    }
-                });
+        ScanDeliveryModel model = new ScanDeliveryModel(barcode, deviceTime, deviceTime, latitude, longitude, phone,
+                packageEntity.getId(), packageEntity.getOrderID(), requestId, packageEntity.getSTT(), userId);
+        localRepository.addScanDelivery(model, times, packageEntity.getCodeSX()).subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
+                view.startMusicSuccess();
+                view.turnOnVibrator();
+                view.hideProgressBar();
+            }
+        });
 
     }
+
 }

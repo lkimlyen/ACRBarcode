@@ -17,18 +17,24 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.demo.architect.data.model.OrderRequestEntity;
 import com.demo.architect.data.model.offline.ScanWarehousingModel;
 import com.demo.scanacr.R;
 import com.demo.scanacr.adapter.ScanWarehousingAdapter;
+import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.app.base.BaseFragment;
 import com.demo.scanacr.constants.Constants;
 import com.demo.scanacr.screen.capture.ScanActivity;
+import com.demo.scanacr.screen.import_works.ImportWorksFragment;
 import com.demo.scanacr.util.Precondition;
+import com.demo.scanacr.widgets.spinner.SearchableSpinner;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -37,6 +43,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -68,6 +75,9 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
     @Bind(R.id.lv_code)
     ListView lvCode;
 
+    @Bind(R.id.ss_produce)
+    SearchableSpinner ssProduce;
+
 
     public ScanWarehousingFragment() {
         // Required empty public constructor
@@ -97,7 +107,8 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
                 checkPermissionLocation();
-                mPresenter.checkBarcode(barcode, mLocation.getLatitude(), mLocation.getLongitude());
+                mPresenter.checkBarcode(barcode,  mLocation != null ? mLocation.getLatitude() : 0,
+                        mLocation != null ? mLocation.getLongitude():0);
             }
         }
     }
@@ -120,7 +131,20 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
         txtTitle.setText(getString(R.string.text_scan_warehouse));
         adapter = new ScanWarehousingAdapter(getContext(), new ArrayList<ScanWarehousingModel>());
         lvCode.setAdapter(adapter);
-        mPresenter.getPackage();
+        ssProduce.setTitle(getString(R.string.text_choose_request_produce));
+        checkPermissionLocation();
+        ssProduce.setListener(new SearchableSpinner.OnClickListener() {
+            @Override
+            public boolean onClick() {
+                return false;
+            }
+        });
+
+        List<String> list = new ArrayList<>();
+        list.add(CoreApplication.getInstance().getString(R.string.text_choose_request_produce));
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list);
+        ssProduce.setAdapter(adapter);
+        mPresenter.getCodeProduce();
     }
 
     public void checkPermissionLocation() {
@@ -230,6 +254,27 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
         }
     }
 
+    @Override
+    public void showListRequest(List<OrderRequestEntity> list) {
+        ArrayAdapter<OrderRequestEntity> adapter = new ArrayAdapter<OrderRequestEntity>(getContext(), android.R.layout.simple_spinner_item, list);
+        ssProduce.setAdapter(adapter);
+        ssProduce.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (ssProduce.getSelectedItem().toString().equals(getString(R.string.text_choose_request_produce))) {
+                    return;
+                }
+                ScanWarehousingFragment.this.adapter.clearItem();
+                mPresenter.getPackage(list.get(position).getOrderACRID(), list.get(position).getCodeSX());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
     public void showToast(String message) {
         Toast toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
@@ -256,7 +301,7 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
 
     @OnClick(R.id.img_refresh)
     public void refresh() {
-        mPresenter.getPackage();
+        mPresenter.getCodeProduce();
     }
 
     @OnClick(R.id.btn_scan)
@@ -286,7 +331,8 @@ public class ScanWarehousingFragment extends BaseFragment implements ScanWarehou
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
-                        mPresenter.checkBarcode(edtBarcode.getText().toString().trim(), mLocation.getLatitude(), mLocation.getLongitude());
+                        mPresenter.checkBarcode(edtBarcode.getText().toString().trim(),  mLocation != null ? mLocation.getLatitude() : 0,
+                                mLocation != null ? mLocation.getLongitude():0);
                     }
                 })
                 .setCancelText(getString(R.string.text_no))

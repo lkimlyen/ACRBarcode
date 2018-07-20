@@ -308,7 +308,8 @@ public class DetailPackageFragment extends BaseFragment implements DetailPackage
             @Override
             public void onSave(int numberInput) {
                 checkPermissionLocation();
-                mPresenter.saveBarcode(mLocation.getLatitude(), mLocation.getLongitude(), barcode,
+                mPresenter.saveBarcode( mLocation != null ? mLocation.getLatitude() : 0,
+                        mLocation != null ? mLocation.getLongitude():0, barcode,
                         logId, numberInput, product.getStt());
             }
         });

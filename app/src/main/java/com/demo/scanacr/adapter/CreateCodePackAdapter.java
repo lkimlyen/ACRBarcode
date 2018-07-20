@@ -24,12 +24,14 @@ public class CreateCodePackAdapter extends RealmBaseAdapter<LogScanCreatePack> i
 
     private OnItemClearListener listener;
     private OnEditTextChangeListener onEditTextChangeListener;
+    private onErrorListener onErrorListener;
 
     public CreateCodePackAdapter(OrderedRealmCollection<LogScanCreatePack> realmResults, OnItemClearListener listener,
-                                 OnEditTextChangeListener onEditTextChangeListener) {
+                                 OnEditTextChangeListener onEditTextChangeListener, CreateCodePackAdapter.onErrorListener onErrorListener) {
         super(realmResults);
         this.listener = listener;
         this.onEditTextChangeListener = onEditTextChangeListener;
+        this.onErrorListener = onErrorListener;
     }
 
 
@@ -70,18 +72,14 @@ public class CreateCodePackAdapter extends RealmBaseAdapter<LogScanCreatePack> i
                 try {
                     int numberInput = Integer.parseInt(s.toString());
                     if (numberInput <= 0) {
-                        Toast.makeText(CoreApplication.getInstance(),
-                                CoreApplication.getInstance().getText(R.string.text_number_bigger_zero)
-                                , Toast.LENGTH_SHORT).show();
                         holder.edtNumberScan.setText(item.getNumInput() + "");
+                        onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_number_bigger_zero).toString());
                         return;
 
                     }
                     if (numberInput - item.getNumInput() > item.getNumRest()) {
-                        Toast.makeText(CoreApplication.getInstance(),
-                                CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest)
-                                , Toast.LENGTH_SHORT).show();
                         holder.edtNumberScan.setText(item.getNumInput() + "");
+                        onErrorListener.errorListener(CoreApplication.getInstance().getText(R.string.text_quantity_input_bigger_quantity_rest).toString());
                         return;
                     }
                     if (numberInput == item.getNumInput()) {
@@ -154,4 +152,7 @@ public class CreateCodePackAdapter extends RealmBaseAdapter<LogScanCreatePack> i
         void onEditTextChange(LogScanCreatePack item, int number);
     }
 
+    public interface onErrorListener {
+        void errorListener(String message);
+    }
 }

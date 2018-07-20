@@ -19,9 +19,11 @@ import com.demo.architect.domain.GetAllRequestACRInUsecase;
 import com.demo.architect.domain.GetAllRequestACRUsecase;
 import com.demo.architect.domain.GetAllSOACRUsecase;
 import com.demo.architect.domain.GetAllScanTurnOutUsecase;
+import com.demo.architect.domain.GetCodeSXForInStoreUseCase;
 import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.architect.domain.GetMaxPackageForSOUsecase;
 import com.demo.architect.domain.GetMaxTimesACRUsecase;
+import com.demo.architect.domain.GetPackageForInStoreUseCase;
 import com.demo.architect.domain.LoginUsecase;
 import com.demo.architect.domain.UpdateSoftUsecase;
 import com.demo.architect.domain.UpdateVersionUsecase;
@@ -141,6 +143,16 @@ public class UseCaseModule {
     @Provides
     UpdateSoftUsecase provideUpdateSoftUsecase(AuthRepository authRepository) {
         return new UpdateSoftUsecase(authRepository);
+    }
+
+    @Provides
+    GetCodeSXForInStoreUseCase provideGetCodeSXForInStoreUseCase(OrderRepository authRepository) {
+        return new GetCodeSXForInStoreUseCase(authRepository);
+    }
+
+    @Provides
+    GetPackageForInStoreUseCase provideGetPackageForInStoreUseCase(OrderRepository authRepository) {
+        return new GetPackageForInStoreUseCase(authRepository);
     }
 }
 

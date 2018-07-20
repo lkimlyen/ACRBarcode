@@ -114,7 +114,8 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
                 checkPermissionLocation();
-                mPresenter.checkBarcode(barcode, orderId, mLocation.getLatitude(), mLocation.getLongitude());
+                mPresenter.checkBarcode(barcode, orderId, mLocation != null ? mLocation.getLatitude() : 0,
+                        mLocation != null ? mLocation.getLongitude():0);
             }
         }
 
@@ -294,6 +295,13 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
             public void onEditTextChange(LogScanCreatePack item, int number) {
                 mPresenter.updateNumberInput(item.getId(), number, item.getSerial(), item.getNumInput());
             }
+        }, new CreateCodePackAdapter.onErrorListener() {
+            @Override
+            public void errorListener(String message) {
+                showToast(message);
+                turnOnVibrator();
+                startMusicError();
+            }
         });
         rvCode.setAdapter(adapter);
 
@@ -372,7 +380,8 @@ public class CreateCodePackageFragment extends BaseFragment implements CreateCod
                     @Override
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         mPresenter.checkBarcode(edtBarcode.getText().toString().trim(), orderId,
-                                mLocation.getLatitude(), mLocation.getLongitude());
+                                mLocation != null ? mLocation.getLatitude() : 0,
+                                mLocation != null ? mLocation.getLongitude():0);
                         sweetAlertDialog.dismiss();
                     }
                 })

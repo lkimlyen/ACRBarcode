@@ -45,7 +45,6 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
     private final DetailPackageContract.View view;
     private final DeletePackageDetailUsecase deletePackageDetailUsecase;
     private final DeletePackageUsecase deletePackageUsecase;
-    private final GetDateServerUsecase getDateServerUsecase;
     private final GetAllDetailForSOACRUsecase getAllDetailForSOACRUsecase;
     private final AddPackageACRbyJsonUsecase addPackageACRbyJsonUsecase;
     @Inject
@@ -60,7 +59,6 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
         this.view = view;
         this.deletePackageDetailUsecase = deletePackageDetailUsecase;
         this.deletePackageUsecase = deletePackageUsecase;
-        this.getDateServerUsecase = getDateServerUsecase;
         this.getAllDetailForSOACRUsecase = getAllDetailForSOACRUsecase;
         this.addPackageACRbyJsonUsecase = addPackageACRbyJsonUsecase;
     }
@@ -196,10 +194,10 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                     public void onError(DeletePackageUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
                         String error = "";
-                        if(errorResponse.getDescription().contains(
-                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                        if (errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))) {
                             error = CoreApplication.getInstance().getString(R.string.text_error_network);
-                        }else {
+                        } else {
                             error = errorResponse.getDescription();
                         }
                         view.showError(error);
@@ -291,10 +289,10 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                                     public void onError(AddPackageACRbyJsonUsecase.ErrorValue errorResponse) {
                                         view.hideProgressBar();
                                         String error = "";
-                                        if(errorResponse.getDescription().contains(
-                                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                                        if (errorResponse.getDescription().contains(
+                                                CoreApplication.getInstance().getString(R.string.text_error_network_host))) {
                                             error = CoreApplication.getInstance().getString(R.string.text_error_network);
-                                        }else {
+                                        } else {
                                             error = errorResponse.getDescription();
                                         }
                                         view.showError(error);
@@ -408,51 +406,34 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
         int userId = UserManager.getInstance().getUser().getUserId();
         String phone = Settings.Secure.getString(CoreApplication.getInstance().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        getDateServerUsecase.executeIO(new GetDateServerUsecase.RequestValue(),
-                new BaseUseCase.UseCaseCallback<GetDateServerUsecase.ResponseValue,
-                        GetDateServerUsecase.ErrorValue>() {
-                    @Override
-                    public void onSuccess(GetDateServerUsecase.ResponseValue successResponse) {
-                        ProductEntity product = ListProductManager.getInstance().getProductBySerial(serial);
-                        ProductModel productModel = new ProductModel(product.getProductID(), orderModel.getId(),
-                                product.getCodeColor(), product.getStt(), product.getLength(), product.getWide(),
-                                product.getDeep(), product.getGrain(), product.getNumber(), product.getNumber() - product.getNumScaned(),
-                                product.getNumScaned(), product.getNumScaned());
-                        LogCompleteCreatePack model = new LogCompleteCreatePack(barcode, deviceTime, successResponse.getDate(),
-                                latitude, longitude, phone, 0, null, orderModel.getId(), 0,
-                                0, numberInput, Constants.WAITING_UPLOAD, userId);
 
-                        localRepository.addLogCompleteCreatePack(productModel, model, logId).subscribe(new Action1<Integer>() {
-                            @Override
-                            public void call(Integer integer) {
-                                view.showNumTotal(integer);
-                                view.startMusicSuccess();
-                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
-                                view.turnOnVibrator();
-                                product.setNumScaned(product.getNumScaned() + 1);
-                                if (product.getNumber() - product.getNumScaned() == 0) {
-                                    product.setFull(true);
-                                }
-                                ListProductManager.getInstance().updateEntity(product);
-                            }
-                        });
-                        view.hideProgressBar();
+        ProductEntity product = ListProductManager.getInstance().getProductBySerial(serial);
+        ProductModel productModel = new ProductModel(product.getProductID(), orderModel.getId(),
+                product.getCodeColor(), product.getStt(), product.getLength(), product.getWide(),
+                product.getDeep(), product.getGrain(), product.getNumber(), product.getNumber() - product.getNumScaned(),
+                product.getNumScaned(), product.getNumScaned());
+        LogCompleteCreatePack model = new LogCompleteCreatePack(barcode, deviceTime, deviceTime,
+                latitude, longitude, phone, 0, null, orderModel.getId(), 0,
+                0, numberInput, Constants.WAITING_UPLOAD, userId);
 
-                    }
+        localRepository.addLogCompleteCreatePack(productModel, model, logId).subscribe(new Action1<Integer>() {
+            @Override
+            public void call(Integer integer) {
 
-                    @Override
-                    public void onError(GetDateServerUsecase.ErrorValue errorResponse) {
-                        view.hideProgressBar();
-                        String error = "";
-                        if(errorResponse.getDescription().contains(
-                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
-                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
-                        }else {
-                            error = errorResponse.getDescription();
-                        }
-                        view.showError(error);
-                    }
-                });
+                view.hideProgressBar();
+                view.showNumTotal(integer);
+                view.startMusicSuccess();
+                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
+                view.turnOnVibrator();
+                product.setNumScaned(product.getNumScaned() + 1);
+                if (product.getNumber() - product.getNumScaned() == 0) {
+                    product.setFull(true);
+                }
+                ListProductManager.getInstance().updateEntity(product);
+            }
+        });
+
+
     }
 
     @Override
@@ -484,10 +465,10 @@ public class DetailPackagePresenter implements DetailPackageContract.Presenter {
                         view.hideProgressBar();
 
                         String error = "";
-                        if(errorResponse.getDescription().contains(
-                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                        if (errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))) {
                             error = CoreApplication.getInstance().getString(R.string.text_error_network);
-                        }else {
+                        } else {
                             error = errorResponse.getDescription();
                         }
                         view.showError(error);

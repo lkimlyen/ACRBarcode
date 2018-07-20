@@ -14,7 +14,6 @@ import com.demo.architect.data.repository.base.local.LocalRepository;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.GetAllDetailForSOACRUsecase;
 import com.demo.architect.domain.GetAllSOACRUsecase;
-import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.constants.Constants;
@@ -40,19 +39,16 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
     private final CreateCodePackageContract.View view;
     private final GetAllSOACRUsecase getAllSOACRUsecase;
     private final GetAllDetailForSOACRUsecase getAllDetailForSOACRUsecase;
-    private final GetDateServerUsecase getDateServerUsecase;
     @Inject
     LocalRepository localRepository;
 
     @Inject
     CreateCodePackagePresenter(@NonNull CreateCodePackageContract.View view,
                                GetAllSOACRUsecase getAllSOACRUsecase,
-                               GetAllDetailForSOACRUsecase getAllDetailForSOACRUsecase,
-                               GetDateServerUsecase getDateServerUsecase) {
+                               GetAllDetailForSOACRUsecase getAllDetailForSOACRUsecase) {
         this.view = view;
         this.getAllSOACRUsecase = getAllSOACRUsecase;
         this.getAllDetailForSOACRUsecase = getAllDetailForSOACRUsecase;
-        this.getDateServerUsecase = getDateServerUsecase;
     }
 
     @Inject
@@ -101,10 +97,10 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                     public void onError(GetAllSOACRUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
                         String error = "";
-                        if(errorResponse.getDescription().contains(
-                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                        if (errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))) {
                             error = CoreApplication.getInstance().getString(R.string.text_error_network);
-                        }else {
+                        } else {
                             error = errorResponse.getDescription();
                         }
                         view.showError(error);
@@ -161,10 +157,10 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
                     public void onError(GetAllDetailForSOACRUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
                         String error = "";
-                        if(errorResponse.getDescription().contains(
-                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                        if (errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))) {
                             error = CoreApplication.getInstance().getString(R.string.text_error_network);
-                        }else {
+                        } else {
                             error = errorResponse.getDescription();
                         }
                         view.showError(error);
@@ -250,52 +246,33 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
         int userId = UserManager.getInstance().getUser().getUserId();
         String phone = Settings.Secure.getString(CoreApplication.getInstance().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        getDateServerUsecase.executeIO(new GetDateServerUsecase.RequestValue(),
-                new BaseUseCase.UseCaseCallback<GetDateServerUsecase.ResponseValue,
-                        GetDateServerUsecase.ErrorValue>() {
-                    @Override
-                    public void onSuccess(GetDateServerUsecase.ResponseValue successResponse) {
-                        view.hideProgressBar();
 
-                        ProductModel productModel = new ProductModel(product.getProductID(), orderModel.getId(),
-                                product.getCodeColor(), product.getStt(), product.getLength(), product.getWide(),
-                                product.getDeep(), product.getGrain(), product.getNumber(), product.getNumber() - product.getNumScaned(),
-                                product.getNumScaned(), product.getNumScaned());
-                        LogScanCreatePack model = new LogScanCreatePack(barcode, deviceTime, successResponse.getDate(),
-                                latitude, longitude, phone, product.getProductID(), orderModel.getId(), product.getStt(),
-                                0, product.getNumber(), 1, productModel.getNumberRest(), Constants.WAITING_UPLOAD, -1, userId);
+        ProductModel productModel = new ProductModel(product.getProductID(), orderModel.getId(),
+                product.getCodeColor(), product.getStt(), product.getLength(), product.getWide(),
+                product.getDeep(), product.getGrain(), product.getNumber(), product.getNumber() - product.getNumScaned(),
+                product.getNumScaned(), product.getNumScaned());
+        LogScanCreatePack model = new LogScanCreatePack(barcode, deviceTime, deviceTime,
+                latitude, longitude, phone, product.getProductID(), orderModel.getId(), product.getStt(),
+                0, product.getNumber(), 1, productModel.getNumberRest(), Constants.WAITING_UPLOAD, -1, userId);
 
 
-                        localRepository.addLogScanCreatePack(productModel, orderModel, model, orderModel.getId(), barcode).subscribe(new Action1<String>() {
-                            @Override
-                            public void call(String String) {
-                                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
-                                view.startMusicSuccess();
-                                view.turnOnVibrator();
-                                product.setNumScaned(product.getNumScaned() + 1);
-                                if (product.getNumber() - product.getNumScaned() == 0) {
-                                    product.setFull(true);
-                                }
-                                ListProductManager.getInstance().updateEntity(product);
+        localRepository.addLogScanCreatePack(productModel, orderModel, model, orderModel.getId(), barcode).subscribe(new Action1<String>() {
+            @Override
+            public void call(String String) {
+                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
+                view.startMusicSuccess();
+                view.turnOnVibrator();
+                product.setNumScaned(product.getNumScaned() + 1);
+                if (product.getNumber() - product.getNumScaned() == 0) {
+                    product.setFull(true);
+                }
+                ListProductManager.getInstance().updateEntity(product);
 
-                            }
-                        });
+                view.hideProgressBar();
+            }
+        });
 
-                    }
 
-                    @Override
-                    public void onError(GetDateServerUsecase.ErrorValue errorResponse) {
-                        view.hideProgressBar();
-                        String error = "";
-                        if(errorResponse.getDescription().contains(
-                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
-                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
-                        }else {
-                            error = errorResponse.getDescription();
-                        }
-                        view.showError(error);
-                    }
-                });
     }
 
     @Override
@@ -325,7 +302,14 @@ public class CreateCodePackagePresenter implements CreateCodePackageContract.Pre
         if (productEntity.getNumber() - productEntity.getNumScaned() == 0) {
             productEntity.setFull(true);
         }
-        localRepository.updateNumberLog(id, number).subscribe();
+        localRepository.updateNumberLog(id, number).subscribe(new Action1<String>() {
+            @Override
+            public void call(String s) {
+                view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
+                view.startMusicSuccess();
+                view.turnOnVibrator();
+            }
+        });
     }
 
     @Override

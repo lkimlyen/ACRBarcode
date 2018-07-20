@@ -110,7 +110,8 @@ public class ScanDeliveryFragment extends BaseFragment implements ScanDeliveryCo
                 String contents = data.getStringExtra(Constants.KEY_SCAN_RESULT);
                 String barcode = contents.replace("DEMO", "");
                 checkPermissionLocation();
-                mPresenter.checkBarcode(requestId, barcode, mLocation.getLatitude(), mLocation.getLongitude());
+                mPresenter.checkBarcode(requestId, barcode,  mLocation != null ? mLocation.getLatitude() : 0,
+                        mLocation != null ? mLocation.getLongitude():0);
             }
         }
     }
@@ -363,7 +364,9 @@ public class ScanDeliveryFragment extends BaseFragment implements ScanDeliveryCo
                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                         sweetAlertDialog.dismiss();
 
-                        mPresenter.checkBarcode(requestId, edtBarcode.getText().toString().trim(), mLocation.getLatitude(), mLocation.getLongitude());
+                        mPresenter.checkBarcode(requestId, edtBarcode.getText().toString().trim(),
+                                mLocation != null ? mLocation.getLatitude() : 0,
+                                mLocation != null ? mLocation.getLongitude():0);
                     }
                 })
                 .setCancelText(getString(R.string.text_no))

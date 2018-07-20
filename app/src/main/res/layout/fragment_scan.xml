@@ -69,7 +69,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:weightSum="5"
-            android:visibility="gone"
             android:id="@+id/layout_code"
             android:gravity="center_vertical"
             android:orientation="horizontal">

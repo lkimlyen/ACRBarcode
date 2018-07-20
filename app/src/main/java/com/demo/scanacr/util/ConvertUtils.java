@@ -71,6 +71,12 @@ public class ConvertUtils {
         final Realm realm = Realm.getDefaultInstance();
         String filePath = "";
         try {
+
+             File fileMain = new File(Environment.getExternalStorageDirectory().getPath().concat(
+                    CoreApplication.getInstance().getString(R.string.text_path_file)));
+             if (!fileMain.exists()){
+                 fileMain.mkdirs();
+             }
             String nameDatabase = ServerManager.getInstance().getServer().equals(Constants.SERVER_MAIN) ? CoreApplication.getInstance()
                     .getString(R.string.text_name_database_main) : CoreApplication.getInstance()
                     .getString(R.string.text_name_database_test);

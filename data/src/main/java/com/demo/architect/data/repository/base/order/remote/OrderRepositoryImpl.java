@@ -198,6 +198,31 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public Observable<BaseListResponse<PackageEntity>> getPackageForInStore(final int orderId, final String codeProduce) {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<PackageEntity>>() {
+            @Override
+            public void call(Subscriber<? super BaseListResponse<PackageEntity>> subscriber) {
+                handlePackageResponse(mRemoteApiInterface.getPackageForInStore(
+                        server + "/WS/api/GetPackageForInStore",
+                        orderId, codeProduce), subscriber);
+            }
+        });
+    }
+
+    @Override
+    public Observable<BaseListResponse<OrderRequestEntity>> getCodeSXForInStore() {
+        server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");
+        return Observable.create(new Observable.OnSubscribe<BaseListResponse<OrderRequestEntity>>() {
+            @Override
+            public void call(Subscriber<? super BaseListResponse<OrderRequestEntity>> subscriber) {
+                handleOrderRequestResponse(mRemoteApiInterface.getCodeSXForInStore(
+                        server + "/WS/api/GetCodeSXForInStore"), subscriber);
+            }
+        });
+    }
+
+    @Override
     public Observable<ListCodeOutEntityResponse> getAllScanTurnOutACR(final int requestId) {
 
         server = SharedPreferenceHelper.getInstance(context).getString(Constants.KEY_SERVER, "");

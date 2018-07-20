@@ -34,6 +34,13 @@ public interface OrderApiInterface {
     @GET
     Call<BaseListResponse<PackageEntity>> getAllPackageForRequest(@Url String url, @Query("pRequestacrID") int requestId);
 
+    @FormUrlEncoded
+    @POST
+    Call<BaseListResponse<PackageEntity>> getPackageForInStore(@Url String url, @Field("pOrderACRID") int orderId,
+                                                               @Field("pCodeSX") String codeProduce);
+
+    @GET
+    Call<BaseListResponse<OrderRequestEntity>> getCodeSXForInStore(@Url String url);
 
     @GET
     Call<ListCodeOutEntityResponse> getAllScanTurnOutACR(@Url String url, @Query("_pRequestID") int requestId);

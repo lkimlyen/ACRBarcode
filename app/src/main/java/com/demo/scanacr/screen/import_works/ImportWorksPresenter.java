@@ -12,7 +12,6 @@ import com.demo.architect.domain.AddLogScanACRUsecase;
 import com.demo.architect.domain.BaseUseCase;
 import com.demo.architect.domain.GetAllRequestACRInUsecase;
 import com.demo.architect.domain.GetAllScanTurnOutUsecase;
-import com.demo.architect.domain.GetDateServerUsecase;
 import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.constants.Constants;
@@ -37,7 +36,6 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
     private final String TAG = ImportWorksPresenter.class.getName();
     private final ImportWorksContract.View view;
     private final GetAllRequestACRInUsecase allRequestACRUsecase;
-    private final GetDateServerUsecase getDateServerUsecase;
     private final GetAllScanTurnOutUsecase getAllScanTurnOutUsecase;
     private final AddLogScanACRUsecase addLogScanACRUsecase;
     @Inject
@@ -46,11 +44,9 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
     @Inject
     ImportWorksPresenter(@NonNull ImportWorksContract.View view,
                          GetAllRequestACRInUsecase allRequestACRUsecase,
-                         GetDateServerUsecase getDateServerUsecase,
                          GetAllScanTurnOutUsecase getAllScanTurnOutUsecase, AddLogScanACRUsecase addLogScanACRUsecase) {
         this.view = view;
         this.allRequestACRUsecase = allRequestACRUsecase;
-        this.getDateServerUsecase = getDateServerUsecase;
         this.getAllScanTurnOutUsecase = getAllScanTurnOutUsecase;
         this.addLogScanACRUsecase = addLogScanACRUsecase;
     }
@@ -160,10 +156,10 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
                     public void onError(GetAllScanTurnOutUsecase.ErrorValue errorResponse) {
                         view.hideProgressBar();
                         String error = "";
-                        if(errorResponse.getDescription().contains(
-                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
+                        if (errorResponse.getDescription().contains(
+                                CoreApplication.getInstance().getString(R.string.text_error_network_host))) {
                             error = CoreApplication.getInstance().getString(R.string.text_error_network);
-                        }else {
+                        } else {
                             error = errorResponse.getDescription();
                         }
                         view.showError(error);
@@ -179,63 +175,44 @@ public class ImportWorksPresenter implements ImportWorksContract.Presenter {
         int userId = UserManager.getInstance().getUser().getUserId();
         String phone = Settings.Secure.getString(CoreApplication.getInstance().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        getDateServerUsecase.executeIO(new GetDateServerUsecase.RequestValue(),
-                new BaseUseCase.UseCaseCallback<GetDateServerUsecase.ResponseValue,
-                        GetDateServerUsecase.ErrorValue>() {
-                    @Override
-                    public void onSuccess(GetDateServerUsecase.ResponseValue successResponse) {
-                        String timeServer = successResponse.getDate();
-                        addLogScanACRUsecase.executeIO(new AddLogScanACRUsecase.RequestValue(phone,
-                                codeOutEntity.getOrderId(), codeOutEntity.getPackageId(), barcode, 1, latitude,
-                                longitude, Constants.IN, 0, deviceTime, userId,
-                                codeOutEntity.getRequestId()), new BaseUseCase.UseCaseCallback<AddLogScanACRUsecase.ResponseValue,
-                                AddLogScanACRUsecase.ErrorValue>() {
-                            @Override
-                            public void onSuccess(AddLogScanACRUsecase.ResponseValue successResponse) {
-                                view.hideProgressBar();
-                                ImportWorksModel model = new ImportWorksModel(successResponse.getId(), barcode,
-                                        deviceTime, timeServer, latitude, longitude, phone, codeOutEntity.getPackageId(),
-                                        codeOutEntity.getOrderId(), codeOutEntity.getRequestId(),
-                                        userId);
-                                localRepository.addImportWorks(model).subscribe(new Action1<ImportWorksModel>() {
-                                    @Override
-                                    public void call(ImportWorksModel model) {
-                                        view.showListPackage(model);
-                                        view.startMusicSuccess();
-                                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
-                                    }
-                                });
-                            }
 
-                            @Override
-                            public void onError(AddLogScanACRUsecase.ErrorValue errorResponse) {
-                                view.hideProgressBar();
-                                String error = "";
-                                if(errorResponse.getDescription().contains(
-                                        CoreApplication.getInstance().getString(R.string.text_error_network_host))){
-                                    error = CoreApplication.getInstance().getString(R.string.text_error_network);
-                                }else {
-                                    error = errorResponse.getDescription();
-                                }
-                                view.showError(error);
-                                view.startMusicError();
-                            }
-                        });
-                    }
-
+        addLogScanACRUsecase.executeIO(new AddLogScanACRUsecase.RequestValue(phone,
+                codeOutEntity.getOrderId(), codeOutEntity.getPackageId(), barcode, 1, latitude,
+                longitude, Constants.IN, 0, deviceTime, userId,
+                codeOutEntity.getRequestId()), new BaseUseCase.UseCaseCallback<AddLogScanACRUsecase.ResponseValue,
+                AddLogScanACRUsecase.ErrorValue>() {
+            @Override
+            public void onSuccess(AddLogScanACRUsecase.ResponseValue successResponse) {
+                view.hideProgressBar();
+                ImportWorksModel model = new ImportWorksModel(successResponse.getId(), barcode,
+                        deviceTime, deviceTime, latitude, longitude, phone, codeOutEntity.getPackageId(),
+                        codeOutEntity.getOrderId(), codeOutEntity.getRequestId(),
+                        userId);
+                localRepository.addImportWorks(model).subscribe(new Action1<ImportWorksModel>() {
                     @Override
-                    public void onError(GetDateServerUsecase.ErrorValue errorResponse) {
-                        view.hideProgressBar();
-                        String error = "";
-                        if(errorResponse.getDescription().contains(
-                                CoreApplication.getInstance().getString(R.string.text_error_network_host))){
-                            error = CoreApplication.getInstance().getString(R.string.text_error_network);
-                        }else {
-                            error = errorResponse.getDescription();
-                        }
-                        view.showError(error);
+                    public void call(ImportWorksModel model) {
+                        view.showListPackage(model);
+                        view.startMusicSuccess();
+                        view.showSuccess(CoreApplication.getInstance().getString(R.string.text_save_barcode_success));
                     }
                 });
+            }
+
+            @Override
+            public void onError(AddLogScanACRUsecase.ErrorValue errorResponse) {
+                view.hideProgressBar();
+                String error = "";
+                if (errorResponse.getDescription().contains(
+                        CoreApplication.getInstance().getString(R.string.text_error_network_host))) {
+                    error = CoreApplication.getInstance().getString(R.string.text_error_network);
+                } else {
+                    error = errorResponse.getDescription();
+                }
+                view.showError(error);
+                view.startMusicError();
+            }
+        });
+
 
     }
 }

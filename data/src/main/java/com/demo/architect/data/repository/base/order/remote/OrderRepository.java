@@ -25,6 +25,10 @@ public interface OrderRepository {
 
     Observable<BaseListResponse<PackageEntity>> getAllPackageForRequest(int requestId);
 
+    Observable<BaseListResponse<PackageEntity>> getPackageForInStore(int orderId, String codeProduce);
+
+    Observable<BaseListResponse<OrderRequestEntity>> getCodeSXForInStore();
+
     Observable<ListCodeOutEntityResponse> getAllScanTurnOutACR(int requestId);
 
     Observable<BaseResponse> getMaxPackageForSO(int orderId);

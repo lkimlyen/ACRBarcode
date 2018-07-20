@@ -12,6 +12,7 @@ import com.demo.scanacr.R;
 import com.demo.scanacr.app.CoreApplication;
 import com.demo.scanacr.util.ConvertUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ScanWarehousingAdapter extends BaseAdapter {
@@ -25,6 +26,11 @@ public class ScanWarehousingAdapter extends BaseAdapter {
 
     public void addItem(ScanWarehousingModel item){
         list.add(item);
+        notifyDataSetChanged();
+    }
+
+    public void clearItem(){
+        list = new ArrayList<>();
         notifyDataSetChanged();
     }
 

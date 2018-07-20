@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.demo.scanacr.R;
 
@@ -50,8 +51,13 @@ public class ChangeIPAddressDialog extends DialogFragment {
         dialog.findViewById(R.id.btn_save).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int port = Integer.parseInt(edtPort.getText().toString());
-                listener.onSave(edtIPAddress.getText().toString(), port);
+                try {
+                    int port = Integer.parseInt(edtPort.getText().toString());
+                    listener.onSave(edtIPAddress.getText().toString(), port);
+                } catch (NumberFormatException e) {
+                    Toast.makeText(getActivity(), getString(R.string.text_port_null), Toast.LENGTH_LONG).show();
+                }
+
             }
         });
         return dialog;

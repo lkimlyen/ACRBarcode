@@ -119,6 +119,7 @@
     <string name="text_password">Imark2017</string>
     <string name="text_error_network">Lỗi kết nối mạng. Vui lòng kiểm tra lại mạng</string>
     <string name="text_error_network_host">Unable to resolve host</string>
+    <string name="text_port_null">Vui lòng nhập số port!</string>
     <string-array name="server">
         <item>@string/text_choose_server1</item>
         <item>@string/text_main_address</item>
